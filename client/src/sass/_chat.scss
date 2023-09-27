@@ -1,0 +1,21 @@
+#chat-ctn {
+  width: 100%;
+  height: calc(100vh - 3rem);
+  position: fixed;
+  top: 100%;
+  z-index: 100;
+
+  background-color: $base;
+  border-top: 2px solid $light;
+
+  transition: top ease 0.3s;
+
+  &.in-chat {
+    top: 3rem;
+  }
+}
+
+@import "./chat/chatNav";
+@import "./chat/chatCtn";
+@import "./chat/infoChat";
+@import "./chat/inputChat";

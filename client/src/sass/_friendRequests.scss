@@ -1,0 +1,168 @@
+#notifications-background {
+  width: 100%;
+  height: calc(100vh - 3rem);
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 5000;
+
+  transition: top ease 0.5s;
+  backdrop-filter: blur(2px);
+
+  &.active {
+    top: 3rem;
+  }
+}
+
+#notifications-ctn {
+  min-height: 50%;
+  max-height: 86%;
+  padding: 1rem;
+  padding-top: 0.5rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  margin: auto;
+  background-color: $dark;
+  border-top: 1px solid $light;
+  border-bottom: 1px solid $light;
+
+  overflow-x: hidden;
+  overflow-y: scroll;
+  list-style: none;
+
+  & > p {
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 0;
+
+    color: $light;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+  }
+}
+
+.notification {
+  width: 100%;
+  height: 4.6rem;
+  display: flex;
+  align-items: end;
+
+  background-color: $base;
+  border: 1px solid $light;
+  border-top-left-radius: 10rem;
+  border-bottom-left-radius: 10rem;
+
+  &.rejected {
+    animation: rejectRequest 1s ease 0s 1 forwards;
+  }
+
+  &.accepted {
+    animation: acceptRequest 1s ease 0s 1 forwards;
+  }
+
+  & > img {
+    width: 4.5rem;
+    height: 4.5rem;
+    padding: 0.2rem;
+  }
+
+  & > div {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+
+    overflow: hidden;
+
+    & > p {
+      width: 100%;
+      padding: 0.3rem 0.6rem 0;
+
+      line-height: 1rem;
+      font-size: 0.8rem;
+      text-align: start;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    & > span {
+      width: 100%;
+      padding: 0 0.6rem;
+
+      color: $text-dark;
+
+      line-height: 1rem;
+      font-size: 0.8rem;
+    }
+
+    & button {
+      width: 45%;
+      padding: 0.2rem 0;
+      margin-bottom: 0.4rem;
+
+      color: $text;
+      border: 1px solid $dark;
+
+      &.accept-bttn {
+        background-color: $third;
+      }
+
+      &.reject-bttn {
+        background-color: $light;
+      }
+    }
+  }
+}
+
+@keyframes rejectRequest {
+  0% {
+    margin-top: 0;
+    transform: translateX(0);
+    background-color: $base;
+  }
+  30% {
+    margin-top: 0;
+    transform: translateX(-10%);
+    background-color: red;
+  }
+  80% {
+    margin-top: 0;
+    transform: translateX(110%);
+    background-color: red;
+  }
+  100% {
+    margin-top: calc(-4.6rem - 1rem);
+    transform: translateX(110%);
+    background-color: red;
+  }
+}
+
+@keyframes acceptRequest {
+  0% {
+    margin-top: 0;
+    transform: translateX(0);
+    background-color: $base;
+  }
+  30% {
+    margin-top: 0;
+    transform: translateX(10%);
+    background-color: $third;
+  }
+  80% {
+    margin-top: 0;
+    transform: translateX(-110%);
+    background-color: $third;
+  }
+  100% {
+    margin-top: calc(-4.6rem - 1rem);
+    transform: translateX(-110%);
+    background-color: $third;
+  }
+}

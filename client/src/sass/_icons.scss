@@ -1,0 +1,111 @@
+.icon-add {
+  width: 3rem;
+  height: 3rem;
+  position: relative;
+
+  transition: transform ease 0.3s;
+
+  &:active {
+    transform: scale(120%);
+  }
+
+  &.icon-plus {
+    color: $first;
+  }
+
+  &.icon-cancel {
+    color: red;
+  }
+}
+
+#config-icon,
+.add-friend-mode-icon,
+.friend-requests-icon,
+.log-out-icon {
+  width: 2rem;
+  height: 2rem;
+  color: $first;
+}
+
+.friend-requests-icon.active {
+  transform-origin: 50% 0;
+  animation: newNoti 1s linear 0s 1;
+}
+
+#close-noti-bttn {
+  width: 3rem;
+  height: 3rem;
+  position: absolute;
+  left: calc(50% - 1.5rem);
+  bottom: 1rem;
+
+  color: $light;
+
+  &:active {
+    color: $dark;
+  }
+}
+
+#close-chat-info,
+#back-user-info-bttn {
+  width: 3rem;
+  height: 3rem;
+  padding-right: 0.3rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  border-radius: 2rem;
+
+  &:active {
+    background-color: $light;
+  }
+}
+
+@keyframes newNoti {
+  0% {
+    transform: rotate(0);
+  }
+  10% {
+    transform: rotate(10deg);
+  }
+  18% {
+    transform: rotate(-10deg);
+  }
+  25% {
+    transform: rotate(10deg);
+  }
+  30% {
+    transform: rotate(-10deg);
+  }
+  39% {
+    transform: rotate(9deg);
+  }
+  48% {
+    transform: rotate(-9deg);
+  }
+  55% {
+    transform: rotate(7deg);
+  }
+  62% {
+    transform: rotate(-6deg);
+  }
+  70% {
+    transform: rotate(5deg);
+  }
+  80% {
+    transform: rotate(-4deg);
+  }
+  85% {
+    transform: rotate(3deg);
+  }
+  90% {
+    transform: rotate(-2deg);
+  }
+  95% {
+    transform: rotate(1deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
+}

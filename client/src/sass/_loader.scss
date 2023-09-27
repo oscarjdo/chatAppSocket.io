@@ -1,0 +1,34 @@
+.loader-ctn {
+  width: 100%;
+  height: 0.5rem;
+  position: relative;
+
+  background-color: $dark;
+}
+
+.loader {
+  height: 100%;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  background-color: $first;
+
+  animation: loading 1s linear 0s infinite both;
+}
+
+@keyframes loading {
+  0% {
+    width: 0;
+    left: 0;
+  }
+  50% {
+    width: 50%;
+    left: 20%;
+  }
+  100% {
+    width: 0;
+    left: 100%;
+  }
+}

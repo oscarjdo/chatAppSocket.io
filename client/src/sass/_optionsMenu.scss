@@ -1,0 +1,56 @@
+.chat-options,
+.settings-menu {
+  width: max-content;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+
+  background-color: $dark;
+  border: 1px solid $text-dark;
+  font-size: 0.9rem;
+
+  clip-path: circle(150% at 100% 0);
+
+  transition: clip-path ease 0.6s;
+
+  & ul {
+    list-style: none;
+  }
+
+  & button {
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    position: relative;
+
+    background-color: transparent;
+    border: none;
+    color: $text;
+    text-align: start;
+
+    &::after {
+      content: "";
+      width: 80%;
+      height: 1px;
+      margin: auto;
+      position: absolute;
+      bottom: 0;
+      left: 10%;
+
+      background-color: $text-dark;
+    }
+
+    &:active,
+    &:hover {
+      background-color: $base;
+    }
+  }
+
+  & ul li:last-child button::after {
+    content: none;
+  }
+
+  &.inactive {
+    clip-path: circle(0% at 100px 0);
+  }
+}

@@ -1,0 +1,103 @@
+#chat-mssg-ctn {
+  height: calc(100% - 3.6rem - 3.6rem);
+
+  overflow-y: scroll;
+
+  & h5 {
+    width: fit-content;
+    margin: auto;
+    padding: 0.4rem 0.6rem;
+
+    background-color: $dark;
+    border-radius: 0.4rem;
+    color: $text;
+
+    letter-spacing: 0.2rem;
+    font-weight: 500;
+  }
+
+  & ul {
+    padding: 0.6rem;
+    display: grid;
+    gap: 0.6rem;
+
+    list-style: none;
+  }
+}
+
+.mssg {
+  width: fit-content;
+  max-width: 16rem;
+  padding: 0.6rem 0.5rem 0.2rem 0.6rem;
+  position: relative;
+
+  color: $text;
+  border-radius: 0.8rem;
+
+  word-wrap: break-word;
+
+  transition: background-color ease 0.3s;
+
+  &.me {
+    justify-self: end;
+
+    background-color: $third;
+    border-top-right-radius: 0;
+  }
+
+  &.file {
+    padding: 0.3rem 0.3rem 0.2rem 0.6rem;
+  }
+
+  &.not-me {
+    background-color: $dark;
+    border-top-left-radius: 0;
+  }
+
+  &.intersecting {
+    background-color: red;
+  }
+
+  & p {
+    font-size: 0.7rem;
+
+    &.mssg-text {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.comp-ctn {
+  display: flex;
+  align-items: end;
+  justify-content: end;
+
+  color: $text-dark;
+}
+
+.chat-icon {
+  width: 1.4rem;
+  height: 1.4rem;
+  margin: -0.2rem -0.3rem -0.2rem 0.1rem;
+  padding: -1rem;
+
+  &.clock {
+    width: 1rem;
+    height: 1rem;
+    margin: -0.2rem 0.3rem 0;
+  }
+
+  &.error {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin: -0.1rem 0.3rem;
+
+    color: $error;
+  }
+
+  &.read {
+    color: $read;
+  }
+}
+
+@import "./files/files";

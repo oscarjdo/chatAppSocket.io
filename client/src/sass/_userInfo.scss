@@ -1,0 +1,68 @@
+#user-info-ctn {
+  width: 100%;
+  height: calc(100vh - 3rem);
+  position: absolute;
+  top: 3rem;
+  left: -100%;
+
+  background-color: $dark;
+
+  text-align: center;
+  transition: left ease 0.3s;
+
+  &.active {
+    left: 0;
+  }
+
+  & p {
+    color: $text-dark;
+  }
+
+  & h1 {
+    margin-top: -0.6rem;
+
+    font-size: 1.8rem;
+  }
+}
+
+#user-photo-ctn {
+  width: fit-content;
+  margin: 1rem auto;
+  position: relative;
+
+  & > div {
+    width: 14rem;
+    height: 14rem;
+  }
+
+  & label {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+
+    background-color: $first;
+    border: none;
+    border-radius: 100%;
+    outline: none;
+
+    &:active {
+      background-color: $third;
+    }
+  }
+}
+
+#change-photo-icon {
+  width: 1.6rem;
+  height: 1.6rem;
+
+  color: #fff;
+}
+
+#input-file {
+  display: none;
+}

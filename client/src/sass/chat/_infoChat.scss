@@ -1,0 +1,92 @@
+#info-chat-ctn {
+  width: 100vw;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: -100%;
+  z-index: 3000;
+
+  background-color: $base;
+
+  transition: left ease 0.5s;
+
+  &.active {
+    left: 0;
+  }
+
+  & > h2,
+  & > p {
+    text-align: center;
+  }
+
+  & > button {
+    width: max-content;
+    margin: 0.3rem auto;
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+
+    background-color: transparent;
+    border: none;
+    color: red;
+
+    font-size: 1.2rem;
+
+    &:active,
+    &:hover {
+      text-decoration: underline;
+    }
+
+    & .info-action-icon {
+      width: 1.4rem;
+      height: 1.4rem;
+    }
+  }
+}
+
+#img-ctn {
+  width: fit-content;
+  margin: 1rem auto;
+  padding: 0;
+  position: relative;
+
+  & > div {
+    width: 14rem;
+    height: 14rem;
+  }
+
+  & span {
+    width: 2rem;
+    height: 2rem;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    background-color: $light;
+    border-radius: 1rem;
+
+    &.active {
+      background-color: $first;
+    }
+  }
+}
+
+#files-chat-ctn {
+  margin: 1rem 0;
+
+  background-color: $dark;
+
+  & h3 {
+    padding: 0.4rem 0.8rem;
+
+    letter-spacing: 0.2rem;
+  }
+}
+
+#files-ctn {
+  height: 4rem;
+
+  border-top: 1px solid $light;
+  border-bottom: 1px solid $light;
+}
