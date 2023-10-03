@@ -5,6 +5,8 @@ import { BsHeadphones } from "react-icons/bs";
 
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import MultimediaTimerBar from "../MultimediaTimerBar";
+import { useRef } from "react";
 
 const FilePreview = () => {
   const friendState = useSelector((state) => state.friendState);
@@ -144,6 +146,7 @@ const FilePreview = () => {
           value={currentTime}
           name=""
           id="videoAudioInput"
+          className="timer-bar"
           onTouchStart={() => document.getElementById("multimediaTag").pause()}
           onTouchEnd={() => {
             if (!isPaused) document.getElementById("multimediaTag").play();
@@ -175,34 +178,16 @@ const FilePreview = () => {
               type={videoAudioState.file.type}
             />
           </audio>
-          <div>
-            <button type="button" onClick={handlePause}>
-              {isPaused ? (
-                <FaPlay className="icon" />
-              ) : (
-                <TiMediaPause className="icon bigger" />
-              )}
-            </button>
-            <input
-              type="range"
-              min={0}
-              max={duration}
-              value={currentTime}
-              name=""
-              id="videoAudioInput"
-              onTouchStart={() =>
-                document.getElementById("multimediaTag").pause()
-              }
-              onTouchEnd={() => {
-                if (!isPaused) document.getElementById("multimediaTag").play();
-              }}
-              onChange={(e) => {
-                setCurrentTime(e.target.value);
-                document.getElementById("multimediaTag").currentTime =
-                  e.target.value;
-              }}
-            />
-          </div>
+          <MultimediaTimerBar
+            data={{
+              isPaused,
+              setIsPaused,
+              duration,
+              currentTime,
+              fileRef: { current: document.getElementById("multimediaTag") },
+              setCurrentTime,
+            }}
+          />
 
           <p>
             <span>{`${exactTime(true)} / ${exactTime()}`}</span>

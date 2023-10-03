@@ -1,6 +1,5 @@
 import { IoIosArrowBack } from "react-icons/io";
 import { PiUserCircleMinusBold } from "react-icons/pi";
-import { BiSolidVolumeMute } from "react-icons/bi";
 
 import { useDispatch, useSelector } from "react-redux";
 import { activateInfo } from "../../../app/infoSlice";

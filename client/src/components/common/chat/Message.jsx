@@ -3,11 +3,12 @@ import { LuClock4 } from "react-icons/lu";
 
 import getTime from "../../../utils/getTime.js";
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import Document from "./files/Document.jsx";
 import Audio from "./files/Audio.jsx";
+import Video from "./files/Video.jsx";
 
 function Message({ data }) {
   const { item, index } = data;
@@ -16,6 +17,7 @@ function Message({ data }) {
 
   const friendState = useSelector((state) => state.friendState);
   const userState = useSelector((state) => state.userState);
+  const isScrollingState = useSelector((state) => state.isScrollingState);
 
   const itemDate = new Date(item.date);
 
@@ -76,7 +78,7 @@ function Message({ data }) {
     }
   };
 
-  const setFile = (mimetype, url, who) => {
+  const setFile = (mimetype, url, who, mssg) => {
     switch (mimetype) {
       case "document":
         return <Document data={{ url, who }} />;
@@ -84,8 +86,55 @@ function Message({ data }) {
       case "audio":
         return <Audio data={{ url, who }} />;
 
+      case "video":
+        return <Video data={{ url, who, time: true, mssg, date: date() }} />;
+
       default:
         break;
+    }
+  };
+
+  const [dragStartX, setDragStartX] = useState(null);
+  const [deltaX, setDeltaX] = useState(0);
+  const [messagePosition, setMessagePosition] = useState({ x: 0, y: 0 });
+  const { open } = useSelector((state) => state.fileOpenState);
+
+  const handleDragStart = (e) => {
+    if (!isScrollingState.isScrolling) {
+      setDragStartX(e.touches[0].clientX);
+    }
+  };
+
+  const handleDrag = (e) => {
+    if (!isScrollingState.isScrolling && dragStartX !== null) {
+      setDeltaX(e.touches[0].clientX - dragStartX);
+
+      if (item.sender !== userState.id && deltaX > 0 && deltaX < 40) {
+        setMessagePosition({ x: deltaX, y: 0 });
+      }
+      if (item.sender == userState.id && deltaX < 0 && deltaX > -40) {
+        setMessagePosition({ x: deltaX, y: 0 });
+      }
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDragStartX(null);
+    setMessagePosition({ x: 0, y: 0 });
+
+    if (
+      !isScrollingState.isScrolling &&
+      item.sender !== userState.id &&
+      deltaX > 40
+    ) {
+      console.log(deltaX);
+    }
+    if (
+      !isScrollingState.isScrolling &&
+      item.sender == userState.id &&
+      deltaX < -40
+    ) {
+      console.log(deltaX);
     }
   };
 
@@ -99,13 +148,23 @@ function Message({ data }) {
           className={`mssg ${item.sender == userState.id ? "me" : "not-me"} ${
             item.mimetype ? "file" : ""
           }`}
+          onTouchStart={(e) => (!open ? handleDragStart(e) : null)}
+          onTouchMove={(e) => (!open ? handleDrag(e) : null)}
+          onTouchEnd={(e) => (!open ? handleDragEnd() : null)}
+          style={{
+            transition: !open ? "transform ease-out .3s" : "none",
+            transform: open
+              ? "none"
+              : `translate(${messagePosition.x}px, ${messagePosition.y}px)`,
+          }}
         >
           {item.mimetype ? (
             <>
               {setFile(
                 item.mimetype,
                 item.file_url,
-                item.sender == userState.id ? "me" : "not-me"
+                item.sender == userState.id ? "me" : "not-me",
+                item.content
               )}
             </>
           ) : null}

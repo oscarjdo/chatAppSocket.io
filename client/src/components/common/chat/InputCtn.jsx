@@ -4,7 +4,7 @@ import { BsFillImageFill, BsHeadphones } from "react-icons/bs";
 import { IoDocument } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import FilePreview from "./FilePreview";
@@ -14,6 +14,8 @@ import { useSendMessageMutation } from "../../../app/queries/getMessages";
 import socket from "../../../io";
 
 function InputCtn() {
+  const inputRef = useRef(null);
+
   const userState = useSelector((state) => state.userState);
   const friendState = useSelector((state) => state.friendState);
 
@@ -88,6 +90,11 @@ function InputCtn() {
 
     dispatch(setVideoAudio({}));
     setFile(false);
+    const inputs = document.getElementsByClassName("file-chat");
+
+    for (let i = 0; i < inputs.length; i++) {
+      inputs[i].value = null;
+    }
   };
 
   return friendState.areFriends ? (
@@ -125,6 +132,7 @@ function InputCtn() {
       <div id="multimedia-ctn" className={multimedia ? "active" : ""}>
         <input
           type="file"
+          ref={inputRef}
           className="file-chat"
           name="document"
           id="document"
@@ -142,7 +150,7 @@ function InputCtn() {
           className="file-chat"
           name="gallery"
           id="gallery"
-          accept="image/*, video/*"
+          accept="image/*, video/mp4, video/webm, video/wmv"
           onChange={handleMultimediaChange}
         />
         <button type="button" className="gall">
