@@ -1,16 +1,14 @@
 import { BsHeadphones } from "react-icons/bs";
-import { FaPlay } from "react-icons/fa";
-import { TiMediaPause } from "react-icons/ti";
 
 import { useEffect, useRef, useState } from "react";
 
 import axios from "axios";
+import MultimediaTimerBar from "../../MultimediaTimerBar";
 
 function Audio({ data }) {
   const { url, who } = data;
 
-  const audioRef = useRef(null);
-  const inputRef = useRef(null);
+  const fileRef = useRef(null);
 
   const [isPaused, setIsPaused] = useState(true);
   const [duration, setDuration] = useState(0);
@@ -27,7 +25,7 @@ function Audio({ data }) {
     let time;
 
     if (useCurrentTime) time = currentTime;
-    else time = audioRef.current ? audioRef.current.duration : 0;
+    else time = fileRef.current ? fileRef.current.duration : 0;
 
     let minutes = 0;
     let hours = 0;
@@ -65,33 +63,16 @@ function Audio({ data }) {
     return `${Math.round(changeSize * 100) / 100} ${fileExt[i]}`;
   };
 
-  const handlePause = async () => {
-    if (isPaused) {
-      audioRef.current.play();
-      setIsPaused(false);
-    } else {
-      audioRef.current.pause();
-      setIsPaused(true);
-    }
-  };
-
   useEffect(() => {
     handleCreateFile();
   }, []);
 
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.style.backgroundSize =
-        (inputRef.current.value * 100) / inputRef.current.max + "% 100%";
-    }
-  }, [currentTime, isPaused, duration]);
-
   return (
-    <div className="audio chat">
+    <div className={`audio chat ${who}`}>
       <BsHeadphones className="icon bigger" />
       <div className="data chat">
         <audio
-          ref={audioRef}
+          ref={fileRef}
           onLoadedData={(e) => setDuration(Math.round(e.target.duration))}
           onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)}
           onEnded={(e) => {
@@ -101,31 +82,16 @@ function Audio({ data }) {
         >
           <source src={url} type={"audio/mpeg"} />
         </audio>
-        <div>
-          <button onClick={handlePause}>
-            {isPaused ? (
-              <FaPlay className="icon" />
-            ) : (
-              <TiMediaPause className="icon bigger" />
-            )}
-          </button>
-          <input
-            type="range"
-            min={0}
-            max={duration}
-            value={currentTime}
-            name=""
-            ref={inputRef}
-            onTouchStart={() => audioRef.current.pause()}
-            onTouchEnd={() => {
-              if (!isPaused) audioRef.current.play();
-            }}
-            onChange={(e) => {
-              setCurrentTime(e.target.value);
-              audioRef.current.currentTime = e.target.value;
-            }}
-          />
-        </div>
+        <MultimediaTimerBar
+          data={{
+            isPaused,
+            setIsPaused,
+            duration,
+            currentTime,
+            fileRef,
+            setCurrentTime,
+          }}
+        />
 
         <p>
           <span>{`${exactTime(true)} / ${exactTime()}`}</span>

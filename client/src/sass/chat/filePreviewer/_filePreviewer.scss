@@ -118,28 +118,8 @@
     }
 
     & > input {
-      width: 80%;
-      height: 0.8rem;
-      margin: auto;
       position: absolute;
       bottom: 1rem;
-      left: 10%;
-
-      appearance: none;
-      background: $light;
-      border-radius: 5px;
-      background-image: linear-gradient($second, $second);
-      background-size: 10% 100%;
-      background-repeat: no-repeat;
-
-      &::-webkit-slider-thumb {
-        appearance: none;
-        height: 1rem;
-        width: 1rem;
-        border-radius: 50%;
-        background: $second;
-        box-shadow: 0 0 2px 1px $dark;
-      }
     }
 
     & > p {

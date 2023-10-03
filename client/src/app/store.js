@@ -10,6 +10,8 @@ import friendsOnlineSlice from "./friendsOnlineSlice.js";
 import notificationsSlice from "./notificationsSlice.js";
 import userInfoSlice from "./userInfoSlice.js";
 import videoAudioSlice from "./videoAudioSlice.js";
+import isScrollingSlice from "./isScrollingSlice.js";
+import fileOpenSlice from "./fileOpenSlice.js";
 
 import { getFriendListApi } from "./queries/getFriendList.js";
 import { getMessagesApi } from "./queries/getMessages.js";
@@ -27,6 +29,8 @@ export const store = configureStore({
     notificationsState: notificationsSlice,
     userInfoState: userInfoSlice,
     videoAudioState: videoAudioSlice,
+    isScrollingState: isScrollingSlice,
+    fileOpenState: fileOpenSlice,
     [getFriendListApi.reducerPath]: getFriendListApi.reducer,
     [getMessagesApi.reducerPath]: getMessagesApi.reducer,
     [friendRequestApi.reducerPath]: friendRequestApi.reducer,
