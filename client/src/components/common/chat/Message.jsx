@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import Document from "./files/Document.jsx";
 import Audio from "./files/Audio.jsx";
 import Video from "./files/Video.jsx";
+import Image from "./files/Image.jsx";
 
 function Message({ data }) {
   const { item, index } = data;
@@ -89,6 +90,9 @@ function Message({ data }) {
       case "video":
         return <Video data={{ url, who, time: true, mssg, date: date() }} />;
 
+      case "image":
+        return <Image data={{ url, who, mssg, date: date() }} />;
+
       default:
         break;
     }
@@ -100,7 +104,9 @@ function Message({ data }) {
   const { open } = useSelector((state) => state.fileOpenState);
 
   const handleDragStart = (e) => {
-    if (!isScrollingState.isScrolling) {
+    const isInput = e.target.classList.value.includes("no-move");
+
+    if (!isScrollingState.isScrolling && !isInput) {
       setDragStartX(e.touches[0].clientX);
     }
   };
@@ -121,6 +127,7 @@ function Message({ data }) {
   const handleDragEnd = () => {
     setDragStartX(null);
     setMessagePosition({ x: 0, y: 0 });
+    setDeltaX(0);
 
     if (
       !isScrollingState.isScrolling &&

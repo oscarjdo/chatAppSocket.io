@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import exactTime from "../../utils/exactTime";
 import { FaPlay } from "react-icons/fa";
 import { TiMediaPause } from "react-icons/ti";
 
@@ -11,7 +12,6 @@ function MultimediaTimerBar({ data }) {
     fileRef,
     setIsPaused,
     setCurrentTime,
-    exactTime,
   } = data;
 
   const inputRef = useRef(null);
@@ -42,9 +42,10 @@ function MultimediaTimerBar({ data }) {
           <TiMediaPause className="icon bigger" />
         )}
       </button>
-      {time ? <p>{exactTime(true)}</p> : null}
+      {time ? <p>{exactTime(currentTime, fileRef, true)}</p> : null}
       <input
         type="range"
+        className="no-move"
         min={0}
         max={duration}
         value={currentTime}
@@ -59,7 +60,7 @@ function MultimediaTimerBar({ data }) {
           fileRef.current.currentTime = e.target.value;
         }}
       />
-      {time ? <p>{exactTime()}</p> : null}
+      {time ? <p>{exactTime(currentTime, fileRef)}</p> : null}
     </div>
   );
 }

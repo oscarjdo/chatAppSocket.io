@@ -687,17 +687,21 @@ a.document:active p, a.document:active .download {
   color: #ffffff !important;
 }
 
-.video-message-ctn {
+.video-message-ctn,
+.image-message-ctn {
   padding: 0.3rem 0.3rem 0 0;
   position: relative;
 }
-.video-message-ctn > .ctn-clickable > video {
+.video-message-ctn > .ctn-clickable > video, .video-message-ctn > .ctn-clickable > img,
+.image-message-ctn > .ctn-clickable > video,
+.image-message-ctn > .ctn-clickable > img {
   max-width: 100%;
   max-height: 100%;
   padding: 0;
   margin: 0;
 }
-.video-message-ctn > .ctn-clickable > span {
+.video-message-ctn > .ctn-clickable > span,
+.image-message-ctn > .ctn-clickable > span {
   width: 4rem;
   height: 4rem;
   padding: 1rem;
@@ -711,14 +715,16 @@ a.document:active p, a.document:active .download {
   border-radius: 2rem;
   opacity: 0.7;
 }
-.video-message-ctn > .ctn-clickable > span > .icon-play {
+.video-message-ctn > .ctn-clickable > span > .icon-play,
+.image-message-ctn > .ctn-clickable > span > .icon-play {
   width: 2rem;
   height: 2rem;
   margin-left: 0.3rem;
 }
-.video-message-ctn.active {
+.video-message-ctn.active,
+.image-message-ctn.active {
   width: 100vw;
-  height: calc(100vh - 3.2rem);
+  height: calc(100vh - 3.1rem);
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -729,17 +735,22 @@ a.document:active p, a.document:active .download {
   z-index: 10000;
   background-color: #222324;
 }
-.video-message-ctn > video {
+.video-message-ctn > video .video-message-ctn > img,
+.video-message-ctn > video .image-message-ctn > img,
+.image-message-ctn > video .video-message-ctn > img,
+.image-message-ctn > video .image-message-ctn > img {
   width: 100%;
   max-width: 100%;
   max-height: 100%;
 }
-.video-message-ctn > .multimedia-timer-bar {
+.video-message-ctn > .multimedia-timer-bar,
+.image-message-ctn > .multimedia-timer-bar {
   width: 100%;
   position: absolute;
   bottom: 1rem;
 }
-.video-message-ctn > .up-bar {
+.video-message-ctn > .up-bar,
+.image-message-ctn > .up-bar {
   width: 100%;
   padding: 0.3rem 0.1rem;
   display: grid;
@@ -749,45 +760,58 @@ a.document:active p, a.document:active .download {
   left: 0;
   background-color: rgba(0, 0, 0, 0.5058823529);
 }
-.video-message-ctn > .up-bar > :first-child {
+.video-message-ctn > .up-bar > :first-child,
+.image-message-ctn > .up-bar > :first-child {
   width: 2rem;
   height: 2rem;
 }
-.video-message-ctn > .up-bar > a {
+.video-message-ctn > .up-bar > a,
+.image-message-ctn > .up-bar > a {
   width: 1.8rem;
   height: 1.8rem;
 }
-.video-message-ctn > .up-bar > a:active {
+.video-message-ctn > .up-bar > a:active,
+.image-message-ctn > .up-bar > a:active {
   -webkit-tap-highlight-color: transparent;
 }
-.video-message-ctn > .up-bar > a:active :first-child {
+.video-message-ctn > .up-bar > a:active :first-child,
+.image-message-ctn > .up-bar > a:active :first-child {
   color: rgba(226, 226, 226, 0.4941176471);
 }
-.video-message-ctn > .up-bar > a > :last-child {
+.video-message-ctn > .up-bar > a > :last-child,
+.image-message-ctn > .up-bar > a > :last-child {
   width: 1.8rem;
   height: 1.8rem;
   align-self: center;
   color: #ffffff;
 }
-.video-message-ctn > .up-bar > div {
+.video-message-ctn > .up-bar > div,
+.image-message-ctn > .up-bar > div {
   margin-left: 0.4rem;
 }
-.video-message-ctn > .up-bar > div > div {
+.video-message-ctn > .up-bar > div > div,
+.image-message-ctn > .up-bar > div > div {
   display: flex;
   gap: 1.6rem;
 }
-.video-message-ctn > .down-bar {
+.video-message-ctn > .down-bar,
+.image-message-ctn > .down-bar {
   width: 100%;
   position: absolute;
   bottom: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.5058823529);
 }
-.video-message-ctn > .down-bar > p {
+.video-message-ctn > .down-bar > p,
+.image-message-ctn > .down-bar > p {
   width: 80%;
   margin: 0.8rem auto 0.3rem;
   font-size: 0.9rem;
   text-align: center;
+}
+.video-message-ctn > .down-bar > .up,
+.image-message-ctn > .down-bar > .up {
+  margin-bottom: 0.6rem;
 }
 
 #info-chat-ctn {
