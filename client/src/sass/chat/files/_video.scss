@@ -1,9 +1,11 @@
-.video-message-ctn {
+.video-message-ctn,
+.image-message-ctn {
   padding: 0.3rem 0.3rem 0 0;
   position: relative;
 
   & > .ctn-clickable {
-    & > video {
+    & > video,
+    & > img {
       max-width: 100%;
       max-height: 100%;
       padding: 0;
@@ -35,7 +37,7 @@
 
   &.active {
     width: 100vw;
-    height: calc(100vh - 3.2rem);
+    height: calc(100vh - 3.1rem);
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -48,7 +50,7 @@
     background-color: $base;
   }
 
-  & > video {
+  & > video & > img {
     width: 100%;
     max-width: 100%;
     max-height: 100%;
@@ -121,6 +123,10 @@
 
       font-size: 0.9rem;
       text-align: center;
+    }
+
+    & > .up {
+      margin-bottom: 0.6rem;
     }
   }
 }
