@@ -4,6 +4,7 @@ import { BiSolidDownload } from "react-icons/bi";
 import { useEffect, useRef, useState } from "react";
 
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 function Document({ data }) {
   const fileRef = useRef(null);
@@ -12,6 +13,8 @@ function Document({ data }) {
 
   const [file, setFile] = useState(null);
   const [exactSize, setExactSize] = useState("");
+
+  const { selected } = useSelector((state) => state.messageSelectState);
 
   const handleCreateFile = async () => {
     const response = await axios(url);
@@ -52,7 +55,7 @@ function Document({ data }) {
   return (
     <a
       className={`document chat littler ${who}`}
-      onClick={handleClick}
+      onClick={!selected ? handleClick : null}
       ref={fileRef}
     >
       <IoDocument className={`icon chat ${who}`} />
@@ -61,9 +64,6 @@ function Document({ data }) {
         <p>Type: {file ? file.type : null}</p>
         <p>Size: {file ? exactSize : null}</p>
         <BiSolidDownload className="icon download" />
-        {/* <h3>{videoAudioState.file.name || "x"}</h3>
-        <p>Type: {videoAudioState.file.type || "x"}</p>
-        <p>Size: {exactSize || "x"}</p> */}
       </div>
     </a>
   );

@@ -8,6 +8,7 @@ import { setFriendData } from "../app/friendSlice";
 
 import scrollToBottom from "../utils/scroolToBottom";
 import socket from "../io";
+import Modal from "./common/chat/Modal";
 
 function Chat() {
   const chatState = useSelector((state) => state.chatState);
@@ -51,6 +52,7 @@ function Chat() {
       {isLoading ? <Loader /> : null}
       <InputCtn />
       <InfoChat />
+      <Modal />
     </div>
   );
 }

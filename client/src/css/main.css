@@ -433,18 +433,75 @@ nav p b {
 
 #chat-nav {
   height: 3.6rem;
+  position: relative;
+}
+#chat-nav > div {
+  height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #161618;
 }
-#chat-nav h2 {
+#chat-nav > div h2 {
   margin-top: 0.2rem;
   margin-left: 0.4rem;
   font-size: 0.8rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+#chat-nav > div.message-menu {
+  width: 100%;
+  height: 100%;
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  animation: selectModeOff 0.3s ease 1;
+}
+#chat-nav > div.message-menu.active {
+  display: flex;
+  opacity: 1;
+  animation: selectModeOn 0.3s ease 1;
+}
+#chat-nav > div.message-menu button {
+  width: 1.4rem;
+  height: 1.4rem;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  color: #ffffff;
+}
+#chat-nav > div.message-menu button.disappear {
+  display: none;
+}
+#chat-nav > div.message-menu button > .icon {
+  width: 100%;
+  height: 100%;
+}
+#chat-nav > div.message-menu button > .icon.turn {
+  transform: scaleX(-110%);
+}
+#chat-nav > div.message-menu > .little {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+#chat-nav > div.message-menu > .little > p {
+  width: 2rem;
+  margin-bottom: -0.1rem;
+}
+#chat-nav > div.message-menu > .big {
+  width: 70%;
+  padding-right: 0.3rem;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 1rem;
 }
 
 #info-ctn {
@@ -500,6 +557,28 @@ nav p b {
   background-color: #00fa4b;
 }
 
+@keyframes selectModeOn {
+  from {
+    display: flex;
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes selectModeOff {
+  0% {
+    display: flex;
+    opacity: 1;
+  }
+  99% {
+    display: flex;
+    opacity: 0;
+  }
+  100% {
+    display: none;
+  }
+}
 #chat-mssg-ctn {
   height: calc(100% - 3.6rem - 3.6rem);
   overflow-y: scroll;
@@ -518,7 +597,7 @@ nav p b {
 #chat-mssg-ctn ul {
   padding: 0.6rem;
   display: grid;
-  gap: 0.6rem;
+  gap: 0.4rem;
   list-style: none;
 }
 
@@ -530,12 +609,21 @@ nav p b {
   color: #ffffff;
   border-radius: 0.8rem;
   word-wrap: break-word;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   transition: background-color ease 0.3s;
+}
+.mssg.space {
+  margin-top: 0.4rem;
 }
 .mssg.me {
   justify-self: end;
   background-color: #009225;
   border-top-right-radius: 0;
+}
+.mssg.me > span {
+  right: 0;
 }
 .mssg.file {
   padding: 0.3rem 0.3rem 0.2rem 0.6rem;
@@ -543,6 +631,9 @@ nav p b {
 .mssg.not-me {
   background-color: #161618;
   border-top-left-radius: 0;
+}
+.mssg.not-me > span {
+  left: 0;
 }
 .mssg.intersecting {
   background-color: red;
@@ -552,6 +643,34 @@ nav p b {
 }
 .mssg p.mssg-text {
   font-size: 0.9rem;
+}
+.mssg p.deleted {
+  color: #7b8186;
+  font-size: 0.8rem;
+}
+.mssg div.deleted {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.mssg div.deleted .icon {
+  width: 1.4rem;
+  height: 1.4rem;
+  color: #7b8186;
+}
+.mssg.deleted {
+  background-color: #161618;
+}
+.mssg > span {
+  width: calc(100vw - 1.2rem);
+  height: calc(100% + 0.4rem);
+  display: none;
+  position: absolute;
+  top: -0.2rem;
+  background-color: rgba(0, 255, 128, 0.349);
+}
+.mssg > span.active {
+  display: block;
 }
 
 .comp-ctn {
@@ -735,10 +854,9 @@ a.document:active p, a.document:active .download {
   z-index: 10000;
   background-color: #222324;
 }
-.video-message-ctn > video .video-message-ctn > img,
-.video-message-ctn > video .image-message-ctn > img,
-.image-message-ctn > video .video-message-ctn > img,
-.image-message-ctn > video .image-message-ctn > img {
+.video-message-ctn > video, .video-message-ctn > img,
+.image-message-ctn > video,
+.image-message-ctn > img {
   width: 100%;
   max-width: 100%;
   max-height: 100%;
@@ -1106,6 +1224,47 @@ a.document:active p, a.document:active .download {
 #file-preview > .image > img, #file-preview > .image video, #file-preview > .video-ctn > img, #file-preview > .video-ctn video {
   max-width: 100%;
   max-height: calc(100% - 3.2rem);
+}
+
+#modal-background {
+  width: 100%;
+  height: 100%;
+  padding: 0 2rem;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.3215686275);
+}
+#modal-background.active {
+  display: flex;
+}
+
+#modal {
+  padding: 1rem 1.6rem;
+  background-color: #222324;
+  border: 1px solid #7b8186;
+}
+#modal > p {
+  margin-bottom: 1rem;
+  color: rgba(226, 226, 226, 0.4941176471);
+  font-size: 0.9rem;
+}
+#modal > div {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  gap: 1rem;
+}
+#modal > div > button {
+  background-color: transparent;
+  color: #00fa4b;
+  border: none;
+}
+#modal > div > button:active {
+  color: #00ff9d;
 }
 
 .multimedia-timer-bar {

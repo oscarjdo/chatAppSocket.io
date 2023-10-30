@@ -1,0 +1,49 @@
+#modal-background {
+  width: 100%;
+  height: 100%;
+  padding: 0 2rem;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  background-color: $dark-transparent;
+
+  &.active {
+    display: flex;
+  }
+}
+
+#modal {
+  padding: 1rem 1.6rem;
+
+  background-color: $base;
+  border: 1px solid $light;
+
+  & > p {
+    margin-bottom: 1rem;
+
+    color: $text-dark;
+
+    font-size: 0.9rem;
+  }
+
+  & > div {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
+
+    & > button {
+      background-color: transparent;
+      color: $first;
+      border: none;
+
+      &:active {
+        color: $second;
+      }
+    }
+  }
+}

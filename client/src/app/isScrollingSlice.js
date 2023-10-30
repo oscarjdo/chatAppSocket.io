@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  isScrolling: true,
+  isScrolling: false,
 };
 
 const isScrollingSlice = createSlice({

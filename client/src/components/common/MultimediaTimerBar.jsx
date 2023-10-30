@@ -12,6 +12,7 @@ function MultimediaTimerBar({ data }) {
     fileRef,
     setIsPaused,
     setCurrentTime,
+    selected,
   } = data;
 
   const inputRef = useRef(null);
@@ -35,7 +36,7 @@ function MultimediaTimerBar({ data }) {
 
   return (
     <div className="multimedia-timer-bar">
-      <button type="button" onClick={handlePause}>
+      <button type="button" onClick={!selected ? handlePause : null}>
         {isPaused ? (
           <FaPlay className="icon" />
         ) : (
@@ -51,13 +52,15 @@ function MultimediaTimerBar({ data }) {
         value={currentTime}
         name=""
         ref={inputRef}
-        onTouchStart={() => fileRef.current.pause()}
-        onTouchEnd={() => {
-          if (!isPaused) fileRef.current.play();
-        }}
+        onTouchStart={() => (!selected ? fileRef.current.pause() : null)}
+        onTouchEnd={() =>
+          !isPaused && !selected ? fileRef.current.play() : null
+        }
         onChange={(e) => {
-          setCurrentTime(e.target.value);
-          fileRef.current.currentTime = e.target.value;
+          if (!selected) {
+            setCurrentTime(e.target.value);
+            fileRef.current.currentTime = e.target.value;
+          }
         }}
       />
       {time ? <p>{exactTime(currentTime, fileRef)}</p> : null}

@@ -6,6 +6,7 @@ import axios from "axios";
 import exactSize from "../../../../utils/exactSize";
 import exactTime from "../../../../utils/exactTime";
 import MultimediaTimerBar from "../../MultimediaTimerBar";
+import { useSelector } from "react-redux";
 
 function Audio({ data }) {
   const { url, who } = data;
@@ -16,6 +17,8 @@ function Audio({ data }) {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [size, setSize] = useState(0);
+
+  const { selected } = useSelector((state) => state.messageSelectState);
 
   const handleCreateFile = async () => {
     const response = await axios(url);
@@ -50,6 +53,7 @@ function Audio({ data }) {
             currentTime,
             fileRef,
             setCurrentTime,
+            selected,
           }}
         />
 

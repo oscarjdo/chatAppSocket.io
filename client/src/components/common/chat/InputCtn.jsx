@@ -71,6 +71,7 @@ function InputCtn() {
 
     const message = {
       userId: userState.id,
+      friendId: friendState.id,
       mssg,
       conversationId: friendState.conversationId,
     };

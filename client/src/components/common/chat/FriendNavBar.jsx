@@ -1,10 +1,18 @@
 import { FaPhone } from "react-icons/fa";
-import { BsFillCameraVideoFill } from "react-icons/bs";
+import {
+  BsFillCameraVideoFill,
+  BsFillTrashFill,
+  BsStarFill,
+} from "react-icons/bs";
 import { IoIosArrowBack } from "react-icons/io";
+import { BiSolidShare } from "react-icons/bi";
 import { SlOptionsVertical } from "react-icons/sl";
 
 import { useDispatch, useSelector } from "react-redux";
 import { changeChatState } from "../../../app/chatSlice.js";
+import { selectMessage } from "../../../app/messageSelectSlice.js";
+import { setModalState } from "../../../app/modalSlice.js";
+import { useDeleteMessagesMutation } from "../../../app/queries/getMessages.js";
 import { notify } from "../../../utils/notify.js";
 import { useState } from "react";
 
@@ -15,6 +23,9 @@ function FriendNavBar() {
   const [optionsOpen, setOptionsOpen] = useState(false);
   const friendState = useSelector((state) => state.friendState);
   const friendsOnlineState = useSelector((state) => state.friendsOnlineState);
+  const { selected, messages } = useSelector(
+    (state) => state.messageSelectState
+  );
 
   const dispatch = useDispatch();
 
@@ -38,50 +49,92 @@ function FriendNavBar() {
     });
   };
 
+  const handleClickOnTrash = () => {
+    dispatch(setModalState({ open: true, func: "deleteMessagesForAll" }));
+  };
+
   return (
     <div id="chat-nav">
-      <div id="info-ctn">
-        <IoIosArrowBack id="back-chat-bttn" onClick={handleCloseChat} />
-        <div
-          id="click-info-ctn"
-          onClick={() => {
-            dispatch(activateInfo(true));
-          }}
-        >
-          <div className="friend-photo-ctn">
-            <div
-              className="photo"
-              style={{
-                "--p": friendState.imgUrl
-                  ? `url("${friendState.imgUrl}")`
-                  : "url('/profile-img.jpg')",
-              }}
-            ></div>
+      <div>
+        <div id="info-ctn">
+          <IoIosArrowBack id="back-chat-bttn" onClick={handleCloseChat} />
+          <div
+            id="click-info-ctn"
+            onClick={() => {
+              dispatch(activateInfo(true));
+            }}
+          >
+            <div className="friend-photo-ctn">
+              <div
+                className="photo"
+                style={{
+                  "--p": friendState.imgUrl
+                    ? `url("${friendState.imgUrl}")`
+                    : "url('/profile-img.jpg')",
+                }}
+              ></div>
+            </div>
+            <span
+              className={`online-in-chat ${
+                friendsOnlineState.list[friendState.id] &&
+                friendState.areFriends
+                  ? "active"
+                  : ""
+              }`}
+            ></span>
+            <h2>{friendState.username}</h2>
           </div>
-          <span
-            className={`online-in-chat ${
-              friendsOnlineState.list[friendState.id] && friendState.areFriends
-                ? "active"
-                : ""
-            }`}
-          ></span>
-          <h2>{friendState.username}</h2>
+        </div>
+        <div id="action-ctn">
+          <FaPhone className="icon-action" onClick={notify} />
+          <BsFillCameraVideoFill className="icon-action" onClick={notify} />
+
+          <SlOptionsVertical
+            id="icon-action-options"
+            className="icon-action"
+            onClick={handleClick}
+          />
+          <div
+            id="chat-options-ctn"
+            className={`chat-options ${!optionsOpen ? "inactive" : ""}`}
+          >
+            <ChatOptions />
+          </div>
         </div>
       </div>
-      <div id="action-ctn">
-        <FaPhone className="icon-action" onClick={notify} />
-        <BsFillCameraVideoFill className="icon-action" onClick={notify} />
+      <div className={`message-menu ${selected ? "active" : ""}`}>
+        <div className="little">
+          <button type="button">
+            <IoIosArrowBack className="icon" />
+          </button>
+          <p>{Object.keys(messages).length}</p>
+        </div>
+        <div className="big">
+          <button
+            type="button"
+            className={`${Object.keys(messages).length > 1 ? "disappear" : ""}`}
+          >
+            <BiSolidShare className="icon" />
+          </button>
 
-        <SlOptionsVertical
-          id="icon-action-options"
-          className="icon-action"
-          onClick={handleClick}
-        />
-        <div
-          id="chat-options-ctn"
-          className={`chat-options ${!optionsOpen ? "inactive" : ""}`}
-        >
-          <ChatOptions />
+          <button type="button">
+            <BsStarFill className="icon" />
+          </button>
+
+          <button type="button" onClick={handleClickOnTrash}>
+            <BsFillTrashFill className="icon" />
+          </button>
+
+          <button type="button">
+            <BiSolidShare className="icon turn" />
+          </button>
+
+          <button
+            type="button"
+            className={`${Object.keys(messages).length > 1 ? "disappear" : ""}`}
+          >
+            <SlOptionsVertical className="icon" />
+          </button>
         </div>
       </div>
     </div>
