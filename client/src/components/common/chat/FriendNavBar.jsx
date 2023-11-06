@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { changeChatState } from "../../../app/chatSlice.js";
 import { selectMessage } from "../../../app/messageSelectSlice.js";
 import { setModalState } from "../../../app/modalSlice.js";
-import { useDeleteMessagesMutation } from "../../../app/queries/getMessages.js";
 import { notify } from "../../../utils/notify.js";
 import { useState } from "react";
 
@@ -50,7 +49,7 @@ function FriendNavBar() {
   };
 
   const handleClickOnTrash = () => {
-    dispatch(setModalState({ open: true, func: "deleteMessagesForAll" }));
+    dispatch(setModalState({ open: true, messages }));
   };
 
   return (
@@ -104,7 +103,12 @@ function FriendNavBar() {
       </div>
       <div className={`message-menu ${selected ? "active" : ""}`}>
         <div className="little">
-          <button type="button">
+          <button
+            type="button"
+            onClick={() =>
+              dispatch(selectMessage({ data: false, selected: false }))
+            }
+          >
             <IoIosArrowBack className="icon" />
           </button>
           <p>{Object.keys(messages).length}</p>

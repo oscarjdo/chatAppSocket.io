@@ -56,8 +56,8 @@ export const deleteMessagesForAll = async (req, res) => {
   const values = Object.values(req.body);
 
   values.map((item) => {
-    if (item) {
-      const name = item.split("3000/").at(-1);
+    if (item[0]) {
+      const name = item[0].split("3000/").at(-1);
 
       try {
         fs.unlinkSync(join(currentDir, "../public", name));
@@ -72,16 +72,68 @@ export const deleteMessagesForAll = async (req, res) => {
     keys.length - 1
   )}`;
 
-  // const query = `delete from messages where message_id = ?${" or message_id = ?".repeat(
-  //   keys.length - 1
-  // )};`;
-
   const [response] = await pool.query(query, keys);
 
   if (response.affectedRows <= 0)
     return res.json({
       message: `Error on ${currentDir} functions deleteMessagesForAll.`,
     });
+
+  res.sendStatus(200);
+};
+
+export const deleteMessagesForMe = async (req, res) => {
+  const { messages, userId } = req.body;
+  const keys = Object.keys(messages);
+
+  const UpdateQuery = `update not_show_messages set deleted = true
+    where user_id = ${userId}
+    and message_id = ?${` or user_id = ${userId} and message_id = ?`.repeat(
+      keys.length - 1
+    )}`;
+
+  const [response] = await pool.query(UpdateQuery, keys);
+
+  if (response.affectedRows <= 0)
+    return res.json({
+      message: `Error on ${currentDir} functions deleteMessagesForAll.`,
+    });
+
+  const selectQuery = `SELECT nsm.message_id, MIN(nsm.deleted) as deleted, m.file_url
+    FROM not_show_messages nsm
+    LEFT JOIN messages m on nsm.message_id = m.message_id
+    where nsm.message_id = ?${" or nsm.message_id = ?".repeat(keys.length - 1)}
+  GROUP BY nsm.message_id`;
+
+  const [validationRes] = await pool.query(selectQuery, keys);
+
+  const messagesToDelete = validationRes.filter((item) => item.deleted);
+
+  for (let i = 0; i < messagesToDelete.length; i++) {
+    const id = messagesToDelete[i].message_id;
+    const url = messagesToDelete[i].file_url;
+
+    if (url) {
+      const name = url.split("3000/").at(-1);
+
+      try {
+        fs.unlinkSync(join(currentDir, "../public", name));
+      } catch (error) {
+        console.log(error);
+        return res.json(error);
+      }
+    }
+
+    try {
+      await pool.query("delete from not_show_messages where message_id = ?", [
+        id,
+      ]);
+      await pool.query("delete from messages where message_id = ?", [id]);
+    } catch (error) {
+      console.log(error);
+      return res.json(error);
+    }
+  }
 
   res.sendStatus(200);
 };
@@ -128,26 +180,28 @@ export const getOutOfChat = async (req, res) => {
       [conversationId]
     );
 
-    allImages.map((item) => {
-      const name = item.file_url.split("3000/").at(-1);
+    if (allImages.lenght > 0) {
+      allImages.map((item) => {
+        const name = item.file_url.split("3000/").at(-1);
 
-      try {
-        fs.unlinkSync(join(currentDir, "../public", name));
-      } catch (error) {
-        console.log(error);
-        return res.json(error);
-      }
-    });
+        try {
+          fs.unlinkSync(join(currentDir, "../public", name));
+        } catch (error) {
+          console.log(error);
+          return res.json(error);
+        }
+      });
+    }
     // ------------------------------------------------------------
-
-    await pool.query(`delete from messages where conversation_id = ?`, [
-      conversationId,
-    ]);
 
     await pool.query(
       `delete from not_show_messages where conversation_id = ?`,
       [conversationId]
     );
+
+    await pool.query(`delete from messages where conversation_id = ?`, [
+      conversationId,
+    ]);
 
     const [membersDeleted] = await pool.query(
       `delete from conversation_members where member_id = ?${" or member_id = ?".repeat(

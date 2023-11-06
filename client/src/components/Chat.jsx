@@ -22,21 +22,19 @@ function Chat() {
 
   const dispatch = useDispatch();
 
+  const update = () => {
+    setTimeout(() => {
+      refetch();
+    }, 100);
+  };
+
   useEffect(() => {
     if (isError) console.log(error);
     if (isSuccess) dispatch(setFriendData(data));
-    if (data && !data.areFriends) refetch();
     scrollToBottom();
-  }, [data]);
-
-  useEffect(() => {
-    const update = () => {
-      setTimeout(() => {
-        refetch();
-      }, 100);
-    };
 
     socket.on("server:recieveMssg", () => update());
+    socket.on("server:updateChat", () => update());
     socket.on("server:hasBeenDeleted", () => update());
     socket.on("server:photoChanged", (e) =>
       (e === chatState.friendId || !chatState.open) && e !== userState.id
@@ -44,6 +42,10 @@ function Chat() {
         : null
     );
   }, [socket, data]);
+
+  useEffect(() => {
+    if (data) refetch();
+  }, [chatState.open]);
 
   return (
     <div id="chat-ctn" className={chatState.open ? "in-chat" : null}>

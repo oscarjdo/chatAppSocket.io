@@ -17,9 +17,17 @@ export const getMessagesApi = createApi({
       }),
       invalidatesTags: ["getMessages"],
     }),
-    deleteMessages: builder.mutation({
+    deleteMessagesForAll: builder.mutation({
       query: (body) => ({
         url: "/deleteMessagesForAll",
+        method: "DELETE",
+        body,
+      }),
+      invalidatesTags: ["getMessages"],
+    }),
+    deleteMessagesForMe: builder.mutation({
+      query: (body) => ({
+        url: "/deleteMessagesForMe",
         method: "DELETE",
         body,
       }),
@@ -31,5 +39,6 @@ export const getMessagesApi = createApi({
 export const {
   useGetMessagesQuery,
   useSendMessageMutation,
-  useDeleteMessagesMutation,
+  useDeleteMessagesForAllMutation,
+  useDeleteMessagesForMeMutation,
 } = getMessagesApi;

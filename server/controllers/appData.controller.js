@@ -129,11 +129,7 @@ export const getFriendData = async (req, res) => {
       LEFT JOIN users u1 ON u1.id = cm1.user_id
       LEFT JOIN users u2 ON u2.id = cm2.user_id
       LEFT JOIN messages m ON m.conversation_id = c.conversation_id  -- Cambio la unión a c.conversation_id
-      LEFT JOIN (
-          SELECT message_id, MAX(deleted) as deleted, MAX(is_show) AS is_show
-      		  FROM not_show_messages
-      		  GROUP BY message_id
-      ) nsm ON nsm.message_id = m.message_id
+      LEFT JOIN not_show_messages nsm ON nsm.message_id = m.message_id and nsm.user_id = u1.id
       LEFT JOIN users us ON us.id = m.user_id
       WHERE u1.id = ? AND u2.id = ?
       ORDER BY m.sent_date;`,

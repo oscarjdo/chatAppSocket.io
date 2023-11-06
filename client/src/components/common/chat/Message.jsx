@@ -1,5 +1,6 @@
 import { BiCheck, BiCheckDouble, BiError } from "react-icons/bi";
 import { LuClock4 } from "react-icons/lu";
+import { MdDeleteForever } from "react-icons/md";
 
 import getTime from "../../../utils/getTime.js";
 
@@ -12,7 +13,6 @@ import Audio from "./files/Audio.jsx";
 import Video from "./files/Video.jsx";
 import Image from "./files/Image.jsx";
 import { useEffect } from "react";
-import { MdDeleteForever } from "react-icons/md";
 
 function Message({ data }) {
   const { item, index, day, space } = data;

@@ -16,7 +16,11 @@ const messageSelectSlice = createSlice({
       } else {
         state.messages = {
           ...state.messages,
-          [data.message_id]: data.file_url,
+          [data.message_id]: [
+            data.file_url,
+            data.sender,
+            { isShown: data.is_show },
+          ],
         };
       }
       state.selected = selected;

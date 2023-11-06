@@ -1256,7 +1256,7 @@ a.document:active p, a.document:active .download {
   width: 100%;
   display: flex;
   justify-content: end;
-  gap: 1rem;
+  gap: 2rem;
 }
 #modal > div > button {
   background-color: transparent;
