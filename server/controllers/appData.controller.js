@@ -122,16 +122,17 @@ export const getFriendData = async (req, res) => {
   );
 
   const [messages] = await pool.query(
-    `select m.message_id, m.user_id as sender, m.content, m.sent_date as date, m.message_read, m.mimetype, m.file_url
-      from conversation c
-      left join conversation_members cm1 on cm1.conversation_id = c.conversation_id
-      left join conversation_members cm2 on cm2.conversation_id = c.conversation_id
-      left join users u1 on u1.id = cm1.user_id
-      left join users u2 on u2.id = cm2.user_id
-      left join messages m on m.conversation_id = cm1.conversation_id
-      left join users us on us.id = m.user_id
-      where u1.id = ? and u2.id = ?
-      order by m.sent_date`,
+    `SELECT m.message_id, m.user_id AS sender, m.content, m.sent_date AS date, m.message_read, m.mimetype, nsm.is_show, nsm.deleted, m.file_url
+      FROM conversation c
+      LEFT JOIN conversation_members cm1 ON c.conversation_id = cm1.conversation_id
+      LEFT JOIN conversation_members cm2 ON c.conversation_id = cm2.conversation_id
+      LEFT JOIN users u1 ON u1.id = cm1.user_id
+      LEFT JOIN users u2 ON u2.id = cm2.user_id
+      LEFT JOIN messages m ON m.conversation_id = c.conversation_id  -- Cambio la unión a c.conversation_id
+      LEFT JOIN not_show_messages nsm ON nsm.message_id = m.message_id and nsm.user_id = u1.id
+      LEFT JOIN users us ON us.id = m.user_id
+      WHERE u1.id = ? AND u2.id = ?
+      ORDER BY m.sent_date;`,
     [ids[0], ids[1]]
   );
 

@@ -10,8 +10,10 @@ import { useDispatch, useSelector } from "react-redux";
 import FilePreview from "./FilePreview";
 
 import { setVideoAudio } from "../../../app/videoAudioSlice";
+import { changeChatState } from "../../../app/chatSlice";
 import { useSendMessageMutation } from "../../../app/queries/getMessages";
 import socket from "../../../io";
+import { useGetOutOfChatMutation } from "../../../app/queries/getFriendList";
 
 function InputCtn() {
   const inputRef = useRef(null);
@@ -26,6 +28,7 @@ function InputCtn() {
   const dispatch = useDispatch();
 
   const [sendMessage] = useSendMessageMutation();
+  const [getOutOfChat] = useGetOutOfChatMutation();
 
   const handleChange = (e) => {
     setMssg(e.target.value);
@@ -71,6 +74,7 @@ function InputCtn() {
 
     const message = {
       userId: userState.id,
+      friendId: friendState.id,
       mssg,
       conversationId: friendState.conversationId,
     };
@@ -95,6 +99,17 @@ function InputCtn() {
     for (let i = 0; i < inputs.length; i++) {
       inputs[i].value = null;
     }
+  };
+
+  const handleLeaveChat = () => {
+    getOutOfChat({
+      userId: userState.id,
+      conversationId: friendState.conversationId,
+    });
+
+    setTimeout(() => {
+      dispatch(changeChatState({ active: false }));
+    }, 500);
   };
 
   return friendState.areFriends ? (
@@ -182,7 +197,7 @@ function InputCtn() {
       <div>
         <h2 id="is-not-friend-text">This user is not your friend anymore</h2>
         <p id="delete-text">
-          Do you want to <span>Leave the chat</span>?
+          Do you want to <span onClick={handleLeaveChat}>Leave the chat</span>?
         </p>
       </div>
     </div>

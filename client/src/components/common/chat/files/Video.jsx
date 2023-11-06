@@ -22,6 +22,7 @@ function Video({ data }) {
   const [currentTime, setCurrentTime] = useState(0);
 
   const friendState = useSelector((state) => state.friendState);
+  const { selected } = useSelector((state) => state.messageSelectState);
 
   const dispatch = useDispatch();
 
@@ -51,8 +52,10 @@ function Video({ data }) {
         <div
           className="ctn-clickable"
           onClick={() => {
-            setOpen(true);
-            dispatch(setFileOpen(true));
+            if (!selected) {
+              setOpen(true);
+              dispatch(setFileOpen(true));
+            }
           }}
         >
           <video>

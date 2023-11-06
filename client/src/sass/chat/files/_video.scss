@@ -50,7 +50,8 @@
     background-color: $base;
   }
 
-  & > video & > img {
+  & > video,
+  & > img {
     width: 100%;
     max-width: 100%;
     max-height: 100%;

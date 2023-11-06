@@ -1,26 +1,34 @@
 import { BiCheck, BiCheckDouble, BiError } from "react-icons/bi";
 import { LuClock4 } from "react-icons/lu";
+import { MdDeleteForever } from "react-icons/md";
 
 import getTime from "../../../utils/getTime.js";
 
-import React, { Fragment, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { Fragment, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { selectMessage } from "../../../app/messageSelectSlice.js";
 
 import Document from "./files/Document.jsx";
 import Audio from "./files/Audio.jsx";
 import Video from "./files/Video.jsx";
 import Image from "./files/Image.jsx";
+import { useEffect } from "react";
 
 function Message({ data }) {
-  const { item, index } = data;
+  const { item, index, day, space } = data;
 
-  let day = null;
+  const messageRef = useRef(null);
 
   const friendState = useSelector((state) => state.friendState);
   const userState = useSelector((state) => state.userState);
-  const isScrollingState = useSelector((state) => state.isScrollingState);
+  const { isScrolling } = useSelector((state) => state.isScrollingState);
+  const { selected: selectMode, messages } = useSelector(
+    (state) => state.messageSelectState
+  );
 
   const itemDate = new Date(item.date);
+
+  const dispatch = useDispatch();
 
   const date = () => {
     const res = (new Date().getTime() - itemDate.getTime()) / 1000 / 60 / 60;
@@ -98,21 +106,46 @@ function Message({ data }) {
     }
   };
 
+  const [selected, setSelected] = useState(false);
   const [dragStartX, setDragStartX] = useState(null);
   const [deltaX, setDeltaX] = useState(0);
   const [messagePosition, setMessagePosition] = useState({ x: 0, y: 0 });
   const { open } = useSelector((state) => state.fileOpenState);
 
   const handleDragStart = (e) => {
-    const isInput = e.target.classList.value.includes("no-move");
+    if (!selectMode) {
+      messageRef.current = setTimeout(() => {
+        dispatch(selectMessage({ data: item, selected: true }));
+        setSelected(true);
+      }, 1000);
 
-    if (!isScrollingState.isScrolling && !isInput) {
-      setDragStartX(e.touches[0].clientX);
+      const isInput = e.target.classList.value.includes("no-move");
+
+      if (!isScrolling && !isInput) {
+        setDragStartX(e.touches[0].clientX);
+      }
+    }
+  };
+
+  const handleClick = () => {
+    if (!selected) {
+      dispatch(selectMessage({ data: item, selected: true }));
+      setSelected(true);
+    } else {
+      setSelected(false);
+      if (Object.keys(messages).length <= 1)
+        dispatch(
+          selectMessage({ data: item, selected: false, unselect: true })
+        );
+      else
+        dispatch(selectMessage({ data: item, selected: true, unselect: true }));
     }
   };
 
   const handleDrag = (e) => {
-    if (!isScrollingState.isScrolling && dragStartX !== null) {
+    clearTimeout(messageRef.current);
+
+    if (!isScrolling && dragStartX !== null) {
       setDeltaX(e.touches[0].clientX - dragStartX);
 
       if (item.sender !== userState.id && deltaX > 0 && deltaX < 40) {
@@ -125,36 +158,37 @@ function Message({ data }) {
   };
 
   const handleDragEnd = () => {
+    clearTimeout(messageRef.current);
+
     setDragStartX(null);
     setMessagePosition({ x: 0, y: 0 });
     setDeltaX(0);
 
-    if (
-      !isScrollingState.isScrolling &&
-      item.sender !== userState.id &&
-      deltaX > 40
-    ) {
+    if (!isScrolling && item.sender !== userState.id && deltaX > 40) {
       console.log(deltaX);
     }
-    if (
-      !isScrollingState.isScrolling &&
-      item.sender == userState.id &&
-      deltaX < -40
-    ) {
+    if (!isScrolling && item.sender == userState.id && deltaX < -40) {
       console.log(deltaX);
     }
   };
 
-  if (friendState.messages[0].sender) {
+  useEffect(() => {
+    if (!selectMode) {
+      setSelected(false);
+    }
+  }, [selectMode]);
+
+  if (friendState.messages[0].sender && !item.deleted) {
     return (
       <Fragment key={index}>
-        {day !== itemDate.getDate()
+        {/* {day !== itemDate.getDate()
           ? ((day = itemDate.getDate()), (<h5>{date()}</h5>))
-          : null}
+          : null} */}
         <li
           className={`mssg ${item.sender == userState.id ? "me" : "not-me"} ${
             item.mimetype ? "file" : ""
-          }`}
+          } ${space ? "space" : ""} ${!item.is_show ? "deleted" : ""}`}
+          onClick={selectMode ? handleClick : null}
           onTouchStart={(e) => (!open ? handleDragStart(e) : null)}
           onTouchMove={(e) => (!open ? handleDrag(e) : null)}
           onTouchEnd={(e) => (!open ? handleDragEnd() : null)}
@@ -165,21 +199,35 @@ function Message({ data }) {
               : `translate(${messagePosition.x}px, ${messagePosition.y}px)`,
           }}
         >
-          {item.mimetype ? (
+          {item.is_show ? (
             <>
-              {setFile(
-                item.mimetype,
-                item.file_url,
-                item.sender == userState.id ? "me" : "not-me",
-                item.content
-              )}
+              {item.mimetype ? (
+                <>
+                  {setFile(
+                    item.mimetype,
+                    item.file_url,
+                    item.sender == userState.id ? "me" : "not-me",
+                    item.content
+                  )}
+                </>
+              ) : null}
+              <p className="mssg-text">{item.content}</p>
             </>
-          ) : null}
-          <p className="mssg-text">{item.content}</p>
+          ) : (
+            <div className="deleted">
+              <MdDeleteForever className="icon" />
+              <p className="mssg-text deleted">
+                {userState.id !== item.sender
+                  ? `${friendState.username} has deleted this message.`
+                  : "You have deleted this message"}
+              </p>
+            </div>
+          )}
           <div className="comp-ctn">
             <p>{getTime(itemDate)}</p>
             {item.sender == userState.id ? setIcon() : null}
           </div>
+          <span className={selected ? "active" : ""}></span>
         </li>
       </Fragment>
     );

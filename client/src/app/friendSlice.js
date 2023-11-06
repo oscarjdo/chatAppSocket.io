@@ -21,6 +21,7 @@ const friendSlice = createSlice({
       }
 
       if (messages && messages.length > 0) {
+        state.messages = [];
         messages.map((item, index) => {
           state.messages[index] = item;
         });

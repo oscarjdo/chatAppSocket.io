@@ -74,6 +74,14 @@ io.on("connection", (socket) => {
     io.to([socketToSend, socketToUpdate]).emit("server:recieveMssg", null);
   });
 
+  socket.on("client:messageDeleted", (e) => {
+    const { friendId, userId } = e;
+    const socketToSend = usersOnline[friendId];
+    const socketToUpdate = usersOnline[userId];
+
+    io.to([socketToSend, socketToUpdate]).emit("server:updateChat", null);
+  });
+
   socket.on("client:newFriendRequest", (e) => {
     const { id } = e;
     const socketToSend = usersOnline[id];

@@ -17,6 +17,7 @@ function Image({ data }) {
   const [size, setSize] = useState("00:00");
 
   const friendState = useSelector((state) => state.friendState);
+  const { selected } = useSelector((state) => state.messageSelectState);
 
   const dispatch = useDispatch();
 
@@ -36,8 +37,10 @@ function Image({ data }) {
         <div
           className="ctn-clickable"
           onClick={() => {
-            setOpen(true);
-            dispatch(setFileOpen(true));
+            if (!selected) {
+              setOpen(true);
+              dispatch(setFileOpen(true));
+            }
           }}
         >
           <img src={url} alt="image" />

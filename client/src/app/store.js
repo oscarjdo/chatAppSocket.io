@@ -12,6 +12,8 @@ import userInfoSlice from "./userInfoSlice.js";
 import videoAudioSlice from "./videoAudioSlice.js";
 import isScrollingSlice from "./isScrollingSlice.js";
 import fileOpenSlice from "./fileOpenSlice.js";
+import messageSelectSlice from "./messageSelectSlice.js";
+import modalSlice from "./modalSlice.js";
 
 import { getFriendListApi } from "./queries/getFriendList.js";
 import { getMessagesApi } from "./queries/getMessages.js";
@@ -31,6 +33,8 @@ export const store = configureStore({
     videoAudioState: videoAudioSlice,
     isScrollingState: isScrollingSlice,
     fileOpenState: fileOpenSlice,
+    messageSelectState: messageSelectSlice,
+    modalState: modalSlice,
     [getFriendListApi.reducerPath]: getFriendListApi.reducer,
     [getMessagesApi.reducerPath]: getMessagesApi.reducer,
     [friendRequestApi.reducerPath]: friendRequestApi.reducer,
