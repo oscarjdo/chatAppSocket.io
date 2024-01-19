@@ -8,7 +8,8 @@ const currentDir = dirname(fileURLToPath(import.meta.url));
 export const sendMessage = async (req, res) => {
   const { mssgData } = req.body;
 
-  const { userId, members, mssg, conversationId } = JSON.parse(mssgData);
+  const { userId, members, mssg, conversationId, answeredMssgId } =
+    JSON.parse(mssgData);
 
   const fileUrl = req.file
     ? `http://localhost:3000/${req.file.filename}`
@@ -20,11 +21,11 @@ export const sendMessage = async (req, res) => {
 
   const [messageCreated] = await pool.query(
     `
-    insert into messages (conversation_id, user_id, content, sent_date, mimetype, file_url)
+    insert into messages (conversation_id, user_id, content, sent_date, mimetype, file_url, answeredMessage)
       values
-      (?,?,?,now(),?,?);
+      (?,?,?,now(),?,?,?);
     `,
-    [conversationId, userId, mssg, mimetype, fileUrl]
+    [conversationId, userId, mssg, mimetype, fileUrl, answeredMssgId]
   );
 
   if (messageCreated.insertId <= 0)
