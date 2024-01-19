@@ -27,7 +27,10 @@ function Modal() {
     deleteMessagesAll(messages);
     dispatch(selectMessage({ data: false, selected: false }));
     socket.emit("client:messageDeleted", {
-      friendId: friendState.id,
+      members:
+        friendState.groupData && friendState.groupData.isGroup
+          ? friendState.members.map((item) => item.id)
+          : [friendState.id],
       userId: userState.id,
     });
     dispatch(setModalState({ open: false }));

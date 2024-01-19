@@ -4,13 +4,11 @@ export const getFriendList = async (req, res) => {
   const { id } = req.params;
 
   const [conversations] = await pool.query(
-    `select u2.id as friend_id, u2.username as friend, u2.img_url as imgUrl from conversation c
-      left join conversation_members cm1 on cm1.conversation_id = c.conversation_id
-      left join conversation_members cm2 on cm2.conversation_id = c.conversation_id
-      left join users u1 on u1.id = cm1.user_id
-      left join users u2 on u2.id = cm2.user_id
-      where u1.id = ? and u2.id != ? and cm1.isInside = true;`,
-    [id, id]
+    `select c.conversation_id as conversationId, c.isGroup, c.img_url as groupImg, c.group_name as groupName, c.group_description as groupDescription
+        from conversation c
+          left join conversation_members cm on cm.conversation_id = c.conversation_id
+          where cm.user_id = ? and cm.isInside = true;`,
+    [id]
   );
 
   if (conversations.length <= 0) return res.json([]);
@@ -18,39 +16,52 @@ export const getFriendList = async (req, res) => {
   const [friendList] = await pool.query(
     `select uf.id as friend_id from users as u
     left join friend_list as fl on fl.user_id = u.id
-      left join users as uf on fl.friend_id = uf.id 
-      where u.id = ?;`,
+    left join users as uf on fl.friend_id = uf.id
+    where u.id = ?;`,
     [id]
   );
 
   let response = [...conversations];
 
   for (let i = 0; i < conversations.length; i++) {
+    const [data] = await pool.query(
+      `
+      select cm.member_id memberId, cm.conversation_id conversationId, cm.user_id userId, u.username, u.img_url imgUrl, cm.isInside, cm.is_leader isLeader, cm.left_group_at leftGroupAt
+          from conversation_members cm
+          left join users u on u.id = cm.user_id
+            where cm.conversation_id = ? and cm.user_id != ?;
+    `,
+      [response[i].conversationId, id]
+    );
+
+    response[i] = {
+      ...response[i],
+      members: !response[i].isGroup ? data[0] : data,
+    };
+
     friendList.map((item) => {
-      if (response[i].friend_id == item.friend_id)
+      if (!response[i].isGroup && response[i].members.userId == item.friend_id)
         response[i] = { ...response[i], areFriends: true };
     });
 
-    const [data] = await pool.query(
-      `select um.id sender, m.content, m.sent_date, m.message_read from conversation c
-      left join conversation_members cm1 on cm1.conversation_id = c.conversation_id
-        left join conversation_members cm2 on cm2.conversation_id = c.conversation_id
-        left join users u1 on u1.id = cm1.user_id
-        left join users u2 on u2.id = cm2.user_id
-        left join messages m on m.conversation_id = cm1.conversation_id
-        left join users um on um.id = m.user_id
-        where u1.id = ? and u2.id = ? 
+    const [lastMessage] = await pool.query(
+      `select m.user_id sender, m.content, m.sent_date sentDate, m.mimetype, m.message_read messageRead from conversation c 
+	      left join messages m on m.conversation_id = c.conversation_id
+	      where c.conversation_id = ?
         order by m.sent_date desc
         limit 1;`,
-      [id, conversations[i].friend_id]
+      [conversations[i].conversationId]
     );
 
-    response[i] = { ...response[i], lastMessage: data[0] };
+    response[i] = {
+      ...response[i],
+      lastMessage: lastMessage[0],
+    };
   }
 
   if (response.length >= 2) {
     response.sort((a, b) =>
-      b.lastMessage ? b.lastMessage.sent_date - a.lastMessage.sent_date : a
+      b.lastMessage ? b.lastMessage.sentDate - a.lastMessage.sentDate : a
     );
   }
 
@@ -72,7 +83,7 @@ export const getUserList = async (req, res) => {
 
   if (!response[0].id) {
     [userList] = await pool.query(
-      `select username as friend, id from users where id != ?`,
+      `select username as friend, id, img_url as imgUrl from users where id != ?`,
       [id]
     );
   } else {
@@ -106,55 +117,100 @@ export const getFriendData = async (req, res) => {
   const { id } = req.params;
   const ids = id.split("&");
 
-  if (ids[1] === "undefined") return res.json([]);
+  const userId = ids[0];
+  const conversationId = ids[1];
+
+  if (userId === "undefined") return res.json([]);
+  if (conversationId === "undefined") return res.json([]);
+
+  // const [conversations] = await pool.query(
+  //   `select c.conversation_id as conversationId, c.isGroup, c.img_url as groupImg, c.group_name as groupName, c.group_description as groupDescription
+  //       from conversation c
+  //         left join conversation_members cm on cm.conversation_id = c.conversation_id
+  //         where cm.user_id = ? and cm.isInside = true and c.isGroup = false;`,
+  //   [userId]
+  // );
+
+  // console.log(conversations);
 
   const [friend] = await pool.query(
-    `select u.username, u.email, u.id, u.img_url as imgUrl from users u where id = ?`,
-    [ids[1]]
+    `
+    select u.username, u.email, u.id, u.img_url imgUrl, cm.is_leader isLeader from conversation c
+      left join conversation_members cm on cm.conversation_id = c.conversation_id
+      left join users u on u.id = cm.user_id
+      where c.conversation_id = ? and cm.user_id != ?`,
+    [conversationId, userId]
   );
 
-  const [friendVerification] = await pool.query(
-    `select u.id, uf.id as friendId from users u
-      left join friend_list fl on fl.user_id = u.id
-      left join users uf on uf.id = fl.friend_id
-      where u.id = ? and uf.id = ?`,
-    [ids[0], ids[1]]
+  for (let i = 0; i < friend.length; i++) {
+    const [friendVerification] = await pool.query(
+      `select c.conversation_id, cm1.user_id, u1.username, cm2.user_id, u2.username from conversation c 
+      left join conversation_members cm1 on cm1.conversation_id = c.conversation_id
+        left join conversation_members cm2 on cm2.conversation_id = c.conversation_id
+        left join users u1 on u1.id = cm1.user_id
+      left join friend_list fl on fl.user_id = u1.id
+        left join users u2 on u2.id = fl.friend_id and u2.id = cm2.user_id
+        where cm1.user_id = ? and u2.id = ? and c.isGroup = false;`,
+      [userId, friend[i].id, conversationId]
+    );
+
+    friend[i] = {
+      ...friend[i],
+      areFriends: friendVerification.length > 0 ? true : false,
+      conversationId:
+        friendVerification.length > 0
+          ? friendVerification[0].conversation_id
+          : null,
+    };
+
+    const [friendRequest] = await pool.query(
+      `
+      select * from friend_request
+        where request_sender_id = ? and request_reciever_id = ?;
+    `,
+      [userId, friend[i].id]
+    );
+
+    friend[i] = {
+      ...friend[i],
+      pendingFriendRequest: friendRequest.length > 0 ? true : false,
+    };
+  }
+
+  const [user] = await pool.query(
+    `
+    select u.id, u.img_url imgUrl, cm.is_leader isLeader from conversation c
+      left join conversation_members cm on cm.conversation_id = c.conversation_id
+      left join users u on u.id = cm.user_id
+      where c.conversation_id = ? and cm.user_id = ?`,
+    [conversationId, userId]
+  );
+
+  const [groupData] = await pool.query(
+    `
+  select * from conversation where conversation_id = ?
+  `,
+    [conversationId]
   );
 
   const [messages] = await pool.query(
-    `SELECT m.message_id, m.user_id AS sender, m.content, m.sent_date AS date, m.message_read, m.mimetype, nsm.is_show, nsm.deleted, m.file_url
-      FROM conversation c
-      LEFT JOIN conversation_members cm1 ON c.conversation_id = cm1.conversation_id
-      LEFT JOIN conversation_members cm2 ON c.conversation_id = cm2.conversation_id
-      LEFT JOIN users u1 ON u1.id = cm1.user_id
-      LEFT JOIN users u2 ON u2.id = cm2.user_id
-      LEFT JOIN messages m ON m.conversation_id = c.conversation_id  -- Cambio la unión a c.conversation_id
-      LEFT JOIN not_show_messages nsm ON nsm.message_id = m.message_id and nsm.user_id = u1.id
-      LEFT JOIN users us ON us.id = m.user_id
-      WHERE u1.id = ? AND u2.id = ?
-      ORDER BY m.sent_date;`,
-    [ids[0], ids[1]]
-  );
-
-  const [conversationData] = await pool.query(
     `
-    select c.conversation_id, cm1.isInside 
-      from conversation c
-      left join conversation_members cm1 on cm1.conversation_id = c.conversation_id
-      left join conversation_members cm2 on cm2.conversation_id = c.conversation_id
-      left join users u1 on u1.id = cm1.user_id
-      left join users u2 on u2.id = cm2.user_id
-      where u1.id = ? and u2.id = ?`,
-    [ids[0], ids[1]]
+    SELECT c.conversation_id, m.message_id, m.user_id sender, u.username, u.img_url imgUrl, m.content, m.sent_date date, m.message_read, m.mimetype, nsm.is_show, nsm.deleted, m.file_url
+	    FROM conversation c
+	    LEFT JOIN conversation_members cm ON cm.conversation_id = c.conversation_id
+      LEFT JOIN users u ON u.id = cm.user_id
+	    LEFT JOIN messages m ON m.conversation_id = c.conversation_id and m.user_id = u.id
+	    LEFT JOIN not_show_messages nsm ON nsm.user_id = ? and nsm.message_id = m.message_id
+	    WHERE m.conversation_id = ?
+	    ORDER BY m.sent_date;`,
+    [userId, conversationId]
   );
-
-  if (friend.length <= 0 || conversationData.length <= 0)
-    return res.status(404).json([]);
 
   res.json({
-    friend: friend[0],
+    user: user[0],
+    friend: friend.length > 2 ? friend : friend[0],
     messages,
-    conversationId: conversationData[0].conversation_id,
-    areFriends: friendVerification.length > 0 ? true : false,
+    groupData: groupData[0],
+    conversationId,
   });
 };

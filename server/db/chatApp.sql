@@ -32,6 +32,9 @@ create table friend_request (
 create table conversation (
 	conversation_id int not null auto_increment,
     isGroup boolean default false,
+    img_url varchar(255) default null,
+    group_name varchar(25),
+    group_description varchar(255),
     primary key (conversation_id)
 );
 
@@ -40,6 +43,9 @@ create table conversation_members (
     conversation_id int not null,
     user_id int not null,
     isInside boolean default true,
+    left_group_at datetime default null,
+    is_leader boolean default false,
+    is_creator boolean default false,
     primary key (member_id),
     foreign key (conversation_id) references conversation(conversation_id),
     foreign key (user_id) references users(id)
@@ -70,3 +76,12 @@ create table not_show_messages(
     foreign key (message_id) references messages (message_id),
     foreign key (user_id) references users (id)
 );
+    
+    
+select c.conversation_id, cm1.user_id, u1.username, cm2.user_id, u2.username from conversation c 
+	left join conversation_members cm1 on cm1.conversation_id = c.conversation_id
+    left join conversation_members cm2 on cm2.conversation_id = c.conversation_id
+    left join users u1 on u1.id = cm1.user_id
+	left join friend_list fl on fl.user_id = u1.id
+    left join users u2 on u2.id = fl.friend_id and u2.id = cm2.user_id
+    where cm1.user_id = 1 and u2.id = 8;

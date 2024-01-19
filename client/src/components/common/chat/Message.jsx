@@ -15,7 +15,7 @@ import Image from "./files/Image.jsx";
 import { useEffect } from "react";
 
 function Message({ data }) {
-  const { item, index, day, space } = data;
+  const { item, index, day, space, colorList } = data;
 
   const messageRef = useRef(null);
 
@@ -187,7 +187,13 @@ function Message({ data }) {
         <li
           className={`mssg ${item.sender == userState.id ? "me" : "not-me"} ${
             item.mimetype ? "file" : ""
-          } ${space ? "space" : ""} ${!item.is_show ? "deleted" : ""}`}
+          } ${space ? "space" : ""} ${!item.is_show ? "deleted" : ""} ${
+            friendState.groupData &&
+            friendState.groupData.isGroup &&
+            item.sender != userState.id
+              ? "left"
+              : ""
+          }`}
           onClick={selectMode ? handleClick : null}
           onTouchStart={(e) => (!open ? handleDragStart(e) : null)}
           onTouchMove={(e) => (!open ? handleDrag(e) : null)}
@@ -199,6 +205,22 @@ function Message({ data }) {
               : `translate(${messagePosition.x}px, ${messagePosition.y}px)`,
           }}
         >
+          {friendState.groupData &&
+          friendState.groupData.isGroup &&
+          item.sender != userState.id &&
+          space ? (
+            <>
+              <div
+                className="photo"
+                style={{
+                  "--p": item.imgUrl
+                    ? `url("${item.imgUrl}")`
+                    : `url("/profile-img.jpg")`,
+                }}
+              ></div>
+              <h4 style={{ color: colorList[item.sender] }}>{item.username}</h4>
+            </>
+          ) : null}
           {item.is_show ? (
             <>
               {item.mimetype ? (
@@ -211,23 +233,33 @@ function Message({ data }) {
                   )}
                 </>
               ) : null}
-              <p className="mssg-text">{item.content}</p>
+
+              <p className="mssg-text">
+                {item.content}&nbsp;&nbsp;
+                <i className="date">{getTime(itemDate)}</i>
+              </p>
             </>
           ) : (
             <div className="deleted">
               <MdDeleteForever className="icon" />
               <p className="mssg-text deleted">
                 {userState.id !== item.sender
-                  ? `${friendState.username} has deleted this message.`
+                  ? `${item.username} has deleted this message.`
                   : "You have deleted this message"}
               </p>
             </div>
           )}
-          <div className="comp-ctn">
+          {/* <div className="comp-ctn">
             <p>{getTime(itemDate)}</p>
             {item.sender == userState.id ? setIcon() : null}
-          </div>
-          <span className={selected ? "active" : ""}></span>
+          </div> */}
+          <span
+            className={`${selected ? "active" : ""} ${
+              friendState.groupData && friendState.groupData.isGroup
+                ? "right"
+                : ""
+            }`}
+          ></span>
         </li>
       </Fragment>
     );

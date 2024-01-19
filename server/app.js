@@ -67,19 +67,34 @@ io.on("connection", (socket) => {
   });
 
   socket.on("client:newMessage", (e) => {
-    const { friendId, userId } = e;
-    const socketToSend = usersOnline[friendId];
+    const { recieverId, userId } = e;
+    const socketToSend = recieverId
+      .map((item) => usersOnline[item])
+      .filter((item) => item);
     const socketToUpdate = usersOnline[userId];
 
-    io.to([socketToSend, socketToUpdate]).emit("server:recieveMssg", null);
+    io.to([socketToSend, socketToUpdate].flat()).emit(
+      "server:recieveMssg",
+      null
+    );
   });
 
   socket.on("client:messageDeleted", (e) => {
-    const { friendId, userId } = e;
-    const socketToSend = usersOnline[friendId];
+    const { members, userId } = e;
+
+    const socketToSend = members.map((item) => usersOnline[item]);
     const socketToUpdate = usersOnline[userId];
 
-    io.to([socketToSend, socketToUpdate]).emit("server:updateChat", null);
+    io.to([socketToSend, socketToUpdate].flat()).emit(
+      "server:updateChat",
+      null
+    );
+  });
+
+  socket.on("client:updateChat", (e) => {
+    const socketToUpdate = usersOnline[e.id];
+
+    io.to([socketToUpdate]).emit("server:updateChat", null);
   });
 
   socket.on("client:newFriendRequest", (e) => {
@@ -99,8 +114,6 @@ io.on("connection", (socket) => {
 
   socket.on("client:hasBeenDeleted", (e) => {
     const { friendId, userId } = e;
-    // const socketToSend = usersOnline[friendId];
-    // const socketToUpdate = usersOnline[userId];
 
     const socketsToUpdate = [usersOnline[friendId], usersOnline[userId]];
 

@@ -22,12 +22,23 @@ nav {
     height: fit-content;
     display: inline;
 
+    &.no-very-with {
+      max-width: 50%;
+
+      // background-color: blue;
+      color: $first;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     & b {
       margin: 0 0.4rem;
 
       color: $first;
 
       letter-spacing: 0.2rem;
+      text-wrap: nowrap;
     }
   }
 }

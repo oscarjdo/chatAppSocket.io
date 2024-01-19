@@ -1,8 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  username: undefined,
-  email: undefined,
+  areFriends: null,
   messages: [],
 };
 
@@ -11,13 +10,19 @@ const friendSlice = createSlice({
   initialState,
   reducers: {
     setFriendData: (state, action) => {
-      const { friend, messages, conversationId, areFriends } = action.payload;
+      const { friend, user, messages, conversationId, groupData } =
+        action.payload;
 
       state.conversationId = conversationId;
-      state.areFriends = areFriends;
+      state.me = user;
+      state.groupData = groupData;
 
-      for (const it in friend) {
-        state[it] = friend[it];
+      if (groupData && groupData.isGroup) {
+        state.members = friend;
+      } else {
+        for (const it in friend) {
+          state[it] = friend[it];
+        }
       }
 
       if (messages && messages.length > 0) {
@@ -28,6 +33,8 @@ const friendSlice = createSlice({
       } else {
         state.messages = [];
       }
+
+      state.areFriends = friend && friend.areFriends ? friend.areFriends : null;
     },
   },
 });

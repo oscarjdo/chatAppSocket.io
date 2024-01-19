@@ -14,7 +14,12 @@ function Navbar() {
         <p className="offline">Offline</p>
       )}
       <motion.p
-        whileHover={{ rotate: 10, scale: 1.1, textShadow: "0 0 10px #00fa68" }}
+        className="no-very-with"
+        whileHover={{
+          rotate: 10,
+          scale: 1.1,
+          textShadow: "0 0 10px #00fa68",
+        }}
         transition={{ duration: 0.2 }}
       >
         <b>

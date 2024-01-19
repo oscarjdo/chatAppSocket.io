@@ -4,7 +4,7 @@ import { BsFillImageFill, BsHeadphones } from "react-icons/bs";
 import { IoDocument } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import FilePreview from "./FilePreview";
@@ -70,11 +70,16 @@ function InputCtn() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const members =
+      friendState.groupData && friendState.groupData.isGroup
+        ? friendState.members.map((item) => item.id)
+        : null;
+
     const formData = new FormData();
 
     const message = {
       userId: userState.id,
-      friendId: friendState.id,
+      members: members || [friendState.id],
       mssg,
       conversationId: friendState.conversationId,
     };
@@ -86,7 +91,7 @@ function InputCtn() {
     if (mssg.trim().length > 0 || file) {
       sendMessage(formData);
       socket.emit("client:newMessage", {
-        friendId: friendState.id,
+        recieverId: members || [friendState.id],
         userId: userState.id,
       });
       setMssg("");
@@ -112,7 +117,8 @@ function InputCtn() {
     }, 500);
   };
 
-  return friendState.areFriends ? (
+  return (friendState.groupData && friendState.groupData.isGroup) ||
+    friendState.areFriends ? (
     <form id="input-chat-ctn" onSubmit={handleSubmit}>
       <div className="textarea-ctn">
         <textarea type="text" value={mssg} onChange={handleChange} />

@@ -3,15 +3,15 @@ const getTime = (itemDate) => {
     return `${itemDate.getHours() - 12}:${itemDate
       .getMinutes()
       .toString()
-      .padStart(2, "0")} p. m.`;
+      .padStart(2, "0")} p.m.`;
   }
   if (itemDate.getHours() == 0) {
-    return `12:${itemDate.getMinutes().toString().padStart(2, "0")} a. m.`;
+    return `12:${itemDate.getMinutes().toString().padStart(2, "0")} a.m.`;
   }
   return `${itemDate.getHours()}:${itemDate
     .getMinutes()
     .toString()
-    .padStart(2, "0")} a. m.`;
+    .padStart(2, "0")} a.m.`;
 };
 
 export default getTime;

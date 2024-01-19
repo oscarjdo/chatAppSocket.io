@@ -10,9 +10,11 @@ import {
   useSendFriendRequestMutation,
   useCancelFriendRequestMutation,
 } from "../app/queries/getFriendList.js";
+import { useAcceptFrienRequestMutation } from "../app/queries/friendRequestApi.js";
 
 import getTime from "../utils/getTime.js";
 import { notify } from "../utils/notify.js";
+import matchFriendRequets from "../utils/matchFriendRequests.js";
 import socket from "../io.js";
 
 import Loader from "./common/loader/Loader.jsx";
@@ -23,11 +25,12 @@ function friendList() {
   const friendsOnlineState = useSelector((state) => state.friendsOnlineState);
 
   const dispatch = useDispatch();
-  const [sendFriendRequest] = useSendFriendRequestMutation();
+  const [sendFriendRequest, result] = useSendFriendRequestMutation();
   const [cancelFriendRequest] = useCancelFriendRequestMutation();
+  const [acceptFriendRequest] = useAcceptFrienRequestMutation();
 
-  const handleOpenChat = (friendId) => {
-    dispatch(changeChatState({ active: true, friendId }));
+  const handleOpenChat = (conversationId, userId) => {
+    dispatch(changeChatState({ active: true, conversationId, userId }));
   };
 
   const handleClickPlus = (friend) => {
@@ -72,9 +75,7 @@ function friendList() {
     socket.on("server:recieveMssg", () =>
       !addFriendModeState.open ? update() : null
     );
-    socket.on("server:updateFriendList", () =>
-      !addFriendModeState.open ? update() : null
-    );
+    socket.on("server:updateFriendList", () => update());
     socket.on("server:hasBeenDeleted", () =>
       !addFriendModeState.open ? update() : null
     );
@@ -82,6 +83,15 @@ function friendList() {
       e !== userState.id ? update() : null
     );
   }, [socket, data]);
+
+  useEffect(() => {
+    matchFriendRequets(acceptFriendRequest, result);
+  }, [result]);
+
+  // useEffect(() => {
+  //   if (isError) console.log(error);
+  //   if (data) console.log(data);
+  // }, [data]);
 
   return (
     <div id="friends-ctn">
@@ -93,8 +103,20 @@ function friendList() {
         {isSuccess && data.length > 0 ? (
           data.map((item, index) => {
             const itemDate = item.lastMessage
-              ? new Date(item.lastMessage.sent_date)
+              ? new Date(item.lastMessage.sentDate)
               : false;
+
+            const setImg = () => {
+              if (item.isGroup)
+                return `url("${item.groupImg || "/group-photo.jpg"}")`;
+
+              if (item.members && item.members.imgUrl)
+                return `url("${item.members.imgUrl}")`;
+
+              if (item.imgUrl) return `url("${item.imgUrl}")`;
+
+              return `url("/profile-img.jpg")`;
+            };
 
             return (
               <li
@@ -102,7 +124,7 @@ function friendList() {
                 className="user-ctn"
                 onClick={() =>
                   !addFriendModeState.open
-                    ? handleOpenChat(item.friend_id)
+                    ? handleOpenChat(item.conversationId, item.members.userId)
                     : null
                 }
               >
@@ -110,20 +132,20 @@ function friendList() {
                   <div
                     className="photo"
                     style={{
-                      "--p": item.imgUrl
-                        ? `url("${item.imgUrl}")`
-                        : "url('/profile-img.jpg')",
+                      "--p": setImg(),
                     }}
                   ></div>
                 </div>
                 <div className="text-ctn">
-                  <h4>{item.friend}</h4>
+                  <h4>
+                    {item.friend || item.members.username || item.groupName}
+                  </h4>
                   <div className="p-ctn">
                     {itemDate && item.lastMessage.sender == userState.id ? (
                       <>
                         <BiCheckDouble
                           className={`chat-icon preview ${
-                            item.lastMessage.message_read ? "read" : ""
+                            item.lastMessage.messageRead ? "read" : ""
                           }`}
                         />
                       </>
@@ -135,13 +157,17 @@ function friendList() {
                   </div>
                 </div>
                 {!addFriendModeState.open ? (
-                  <span
-                    className={
-                      friendsOnlineState.list[item.friend_id] && item.areFriends
-                        ? "isOnline online"
-                        : "online"
-                    }
-                  ></span>
+                  !item.isGroup ? (
+                    <span
+                      className={
+                        item.members &&
+                        friendsOnlineState.list[item.members.userId] &&
+                        item.areFriends
+                          ? "isOnline online"
+                          : "online"
+                      }
+                    ></span>
+                  ) : null
                 ) : (
                   <>
                     {item.sentRequest ? (
@@ -157,7 +183,7 @@ function friendList() {
                     )}
                   </>
                 )}
-                {itemDate ? (
+                {itemDate && item.lastMessage.content ? (
                   <p className="mssg-hour">{getTime(itemDate)}</p>
                 ) : null}
               </li>

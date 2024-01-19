@@ -13,6 +13,18 @@ function ChatCtn() {
   let { current: sender } = useRef(null);
 
   const [touchStart, setTouchStart] = useState(false);
+  const [colorList, setColorList] = useState({});
+  const [colorsIndex, setColorsIndex] = useState(0);
+  const colors = [
+    "#a867d3",
+    "#f36d4c",
+    "#00eeb2",
+    "#ee3800",
+    "#eea300",
+    "#5179ff",
+    "#db5c78",
+    "#7adb5c",
+  ];
 
   const chatState = useSelector((state) => state.chatState);
   const friendState = useSelector((state) => state.friendState);
@@ -55,15 +67,30 @@ function ChatCtn() {
     >
       <ul>
         {friendState.messages.map((item, index) => {
-          let space = false;
+          if (!colorList[item.sender]) {
+            setColorList({ ...colorList, [item.sender]: colors[colorsIndex] });
 
-          if (sender == null) sender = item.sender;
-          else if (item.sender != sender) {
+            if (!colors[colorsIndex]) {
+              setColorsIndex(0);
+            } else {
+              setColorsIndex(colorsIndex + 1);
+            }
+          }
+
+          let space = undefined;
+
+          if (item.sender != sender) {
             space = true;
             sender = item.sender;
           }
+          if (sender == null) sender = item.sender;
 
-          return <Message key={index} data={{ item, index, day, space }} />;
+          return (
+            <Message
+              key={index}
+              data={{ item, index, day, space, colorList }}
+            />
+          );
         })}
       </ul>
     </div>

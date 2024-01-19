@@ -106,7 +106,13 @@ const FilePreview = () => {
       <div className="image">
         <img src={videoAudioState.url} alt="image" />
         <p>
-          <span>{friendState.username}</span>
+          {friendState.groupData && friendState.groupData.isGroup ? (
+            friendState.members.map((item, index) => (
+              <span key={index}>{item.username.split(" ")[0]}</span>
+            ))
+          ) : (
+            <span>{friendState.username.split(" ")[0]}</span>
+          )}
         </p>
       </div>
     );
@@ -114,10 +120,16 @@ const FilePreview = () => {
     return (
       <div className="video-ctn">
         <p>
-          <span>{friendState.username}</span>
-          <span>{exactSize}</span>
-          <span>{exactTime()}</span>
+          {friendState.groupData && friendState.groupData.isGroup ? (
+            friendState.members.map((item, index) => (
+              <span key={index}>{item.username.split(" ")[0]}</span>
+            ))
+          ) : (
+            <span>{friendState.username.split(" ")[0]}</span>
+          )}
         </p>
+        {/* <span>{exactSize}</span>
+          <span>{exactTime()}</span> */}
         <div id="video-controller" onClick={handlePause}>
           <video
             id="multimediaTag"

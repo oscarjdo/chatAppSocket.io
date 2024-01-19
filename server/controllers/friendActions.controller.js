@@ -3,6 +3,16 @@ import pool from "../db.js";
 export const sendFriendRequest = async (req, res) => {
   const { sender, reciever } = req.body;
 
+  const [response] = await pool.query(
+    `
+    select * from friend_request where request_sender_id = ? and request_reciever_id = ?;
+  `,
+    [reciever, sender]
+  );
+
+  if (response.length >= 1)
+    return res.json({ result: true, reciever: sender, sender: reciever });
+
   await pool.query(
     `insert into friend_request (request_sender_id, request_reciever_id) values (?,?)`,
     [sender, reciever]
@@ -33,7 +43,7 @@ export const getFriendRequest = async (req, res) => {
   const { id } = req.params;
 
   const [requests] = await pool.query(
-    `select r.request_id, r.request_sender_id, u.username
+    `select r.request_id, r.request_sender_id, u.username, u.img_url
       from friend_request r
       left join users u on u.id = r.request_sender_id
       where request_reciever_id = ?`,
@@ -47,13 +57,13 @@ export const acceptFriendRequest = async (req, res) => {
   const { sender, reciever } = req.body;
 
   const [thereIsAConversation] = await pool.query(
-    `select c.conversation_id as conversation, u1.id as u1Id, cm1.isInside as u1IsInside, u2.id as u2Id, cm2.isInside as u2IsInside 
+    `select c.conversation_id as conversation, u1.id as u1Id, cm1.isInside as u1IsInside, u2.id as u2Id, cm2.isInside as u2IsInside
       from conversation c
-	    left join conversation_members cm1 on cm1.conversation_id = c.conversation_id
+      left join conversation_members cm1 on cm1.conversation_id = c.conversation_id
       left join conversation_members cm2 on cm2.conversation_id = c.conversation_id
       left join users u1 on u1.id = cm1.user_id
       left join users u2 on u2.id = cm2.user_id
-      where u1.id = ? and u2.id = ?;`,
+      where u1.id = ? and u2.id = ? and c.isGroup = false;`,
     [sender, reciever]
   );
 

@@ -66,13 +66,15 @@
     animation: acceptRequest 1s ease 0s 1 forwards;
   }
 
-  & > img {
-    width: 4.5rem;
-    height: 4.5rem;
-    padding: 0.2rem;
+  & > .photo {
+    min-width: 4.5rem;
+    min-height: 4.5rem;
+    display: inline;
+
+    border: 1px solid $light;
   }
 
-  & > div {
+  & > .ctn {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
