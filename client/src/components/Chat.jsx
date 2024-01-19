@@ -17,7 +17,7 @@ function Chat() {
   const { data, error, isError, isLoading, isSuccess, refetch } =
     useGetMessagesQuery({
       userId: userState.id,
-      friendId: chatState.friendId,
+      conversationId: chatState.conversationId,
     });
 
   const dispatch = useDispatch();
@@ -37,7 +37,7 @@ function Chat() {
     socket.on("server:updateChat", () => update());
     socket.on("server:hasBeenDeleted", () => update());
     socket.on("server:photoChanged", (e) =>
-      (e === chatState.friendId || !chatState.open) && e !== userState.id
+      (e === chatState.userId || !chatState.open) && e !== userState.id
         ? update()
         : null
     );

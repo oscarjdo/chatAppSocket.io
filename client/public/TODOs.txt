@@ -1,0 +1,34 @@
+-✔Give the function of leaving the chat to the text at the bottom of the chat input.✔
+
+-Show the type pf file on friend list.
+
+-Create a chat cleaning function.
+
+-Create a message reply function.
+
+-Create a feature that allows users to save some messages in a section called "Featured Messages"
+  and when the user clicks on one of the messages in that section,
+  they will be able to send them to the message in the chat.
+
+-Create a message forwarding function.
+
+-Give functions (info & copy) to the "plus button" in the selected message.
+
+-Create a search and filtering bar in the chat.
+
+-Fix the file box in each friend's information 
+  so that it can show all the files that are in the chat.
+
+-Make the message reading function work.
+
+-Update the timer of day in the chats.
+
+-Delete time at friend list if chat does not have any message.
+
+-Fix all buttons and menus that close and open again.
+
+-Create a button to send voice notes.
+
+-Create the menu of settings.
+
+-Create a verification email function.

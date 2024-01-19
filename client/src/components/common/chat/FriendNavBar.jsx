@@ -66,22 +66,35 @@ function FriendNavBar() {
             <div className="friend-photo-ctn">
               <div
                 className="photo"
-                style={{
-                  "--p": friendState.imgUrl
-                    ? `url("${friendState.imgUrl}")`
-                    : "url('/profile-img.jpg')",
-                }}
+                style={
+                  friendState.groupData
+                    ? {
+                        "--p": !friendState.groupData.isGroup
+                          ? `url("${friendState.imgUrl || "/profile-img.jpg"}")`
+                          : `url("${
+                              friendState.groupData.img_url ||
+                              "/group-photo.jpg"
+                            }")`,
+                      }
+                    : null
+                }
               ></div>
             </div>
-            <span
-              className={`online-in-chat ${
-                friendsOnlineState.list[friendState.id] &&
-                friendState.areFriends
-                  ? "active"
-                  : ""
-              }`}
-            ></span>
-            <h2>{friendState.username}</h2>
+            {friendState.groupData && !friendState.groupData.isGroup ? (
+              <span
+                className={`online-in-chat ${
+                  friendsOnlineState.list[friendState.id] &&
+                  friendState.areFriends
+                    ? "active"
+                    : ""
+                }`}
+              ></span>
+            ) : null}
+            <h2>
+              {friendState.groupData && friendState.groupData.isGroup
+                ? friendState.groupData.group_name
+                : friendState.username}
+            </h2>
           </div>
         </div>
         <div id="action-ctn">

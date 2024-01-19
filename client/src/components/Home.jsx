@@ -3,7 +3,7 @@ import Chat from "./Chat";
 import ActionsBar from "./ActionsBar";
 import AddFriendModeTransition from "./common/loader/addFriendModeTransition.jsx";
 import FriendRequests from "./common/FriendRequests";
-import UserInfo from "./common/actionBarBttns/settings/UserInfo";
+import Options from "./common/actionBarBttns/options/Options.jsx";
 
 import { setFriendsOnline } from "../app/friendsOnlineSlice";
 import socket from "../io.js";
@@ -25,8 +25,8 @@ function Home() {
 
     data.forEach((item) => {
       for (const key in e) {
-        if (key == item.friend_id) {
-          onlineUserList[item.friend_id] = true;
+        if (key == item.members.userId) {
+          onlineUserList[item.members.userId] = true;
         }
       }
     });
@@ -40,11 +40,11 @@ function Home() {
     }
 
     socket.on("server:usersOnline", (e) => handleOnline(e));
-    socket.on("server:updateFriendList", (e) => {
-      setTimeout(() => {
-        handleOnline(e);
-      }, 600);
-    });
+    // socket.on("server:updateFriendList", (e) => {
+    //   setTimeout(() => {
+    //     handleOnline(e);
+    //   }, 600);
+    // });
   }, [socket]);
 
   return (
@@ -54,7 +54,7 @@ function Home() {
       <Chat />
       <FriendRequests />
       <AddFriendModeTransition />
-      <UserInfo />
+      <Options />
     </div>
   );
 }

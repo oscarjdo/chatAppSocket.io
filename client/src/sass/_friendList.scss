@@ -1,7 +1,14 @@
 #friends-ctn {
+  height: calc(100vh - 6.8rem);
   display: flex;
   flex-direction: column;
   position: relative;
+
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 #search-bar-ctn {
@@ -105,7 +112,13 @@
     overflow: hidden;
 
     & h4 {
-      padding: 0 0.6rem;
+      width: calc(100% - 2.8rem);
+
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-wrap: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }

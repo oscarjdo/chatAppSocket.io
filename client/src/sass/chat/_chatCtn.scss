@@ -2,6 +2,7 @@
   height: calc(100% - 3.6rem - 3.6rem);
 
   overflow-y: scroll;
+  overflow-x: hidden;
 
   & h5 {
     width: fit-content;
@@ -38,15 +39,44 @@
 
   transition: background-color ease 0.3s;
 
+  & > h4 {
+    margin-top: -0.5rem;
+    margin-bottom: -0.2rem;
+
+    font-weight: 400;
+  }
+
+  & > .photo {
+    width: 2rem;
+    height: 2rem;
+    position: absolute;
+    top: 0;
+    left: -2.2rem;
+    z-index: 500;
+
+    border: 1px solid $light;
+  }
+
   &.space {
     margin-top: 0.4rem;
+
+    &.not-me {
+      border-top-left-radius: 0;
+    }
+
+    &.me {
+      border-top-right-radius: 0;
+    }
+  }
+
+  &.left {
+    margin-left: 2rem;
   }
 
   &.me {
     justify-self: end;
 
     background-color: $third;
-    border-top-right-radius: 0;
 
     & > span {
       right: 0;
@@ -59,7 +89,6 @@
 
   &.not-me {
     background-color: $dark;
-    border-top-left-radius: 0;
 
     & > span {
       left: 0;
@@ -70,11 +99,21 @@
     background-color: red;
   }
 
-  & p {
-    font-size: 0.7rem;
+  & .mssg-text {
+    display: flex;
+    font-size: 0.9rem;
 
-    &.mssg-text {
-      font-size: 0.9rem;
+    flex-wrap: wrap;
+
+    & > .date {
+      height: min-content;
+      margin-left: auto;
+      align-self: flex-end;
+
+      color: $text-dark;
+
+      font-size: 0.7rem;
+      text-wrap: nowrap;
     }
 
     &.deleted {
@@ -107,11 +146,16 @@
     display: none;
     position: absolute;
     top: -0.2rem;
+    z-index: 200;
 
     background-color: rgba(0, 255, 128, 0.349);
 
     &.active {
       display: block;
+    }
+
+    &.right {
+      width: calc(100vw - 1.2rem - 2rem);
     }
   }
 }
@@ -146,6 +190,14 @@
 
   &.read {
     color: $read;
+    color: #a867d3;
+    color: #53e4bf;
+    color: #f36d4c;
+    color: #ee3800;
+    color: #eea300;
+    color: #5179ff;
+    color: #db5c78;
+    color: #7adb5c;
   }
 }
 

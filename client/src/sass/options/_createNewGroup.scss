@@ -1,0 +1,381 @@
+#new-group-nav {
+  height: 3rem;
+  padding: 0 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  z-index: 100;
+
+  background-color: $dark;
+  border-top: 1px solid $light;
+  border-bottom: 1px solid $light;
+
+  & > .icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+#create-new-group-form {
+  width: 100%;
+  height: calc(100vh - 6rem);
+  padding: 1rem;
+  position: relative;
+
+  background-color: $base;
+
+  overflow: hidden;
+
+  & .data-input {
+    width: 100%;
+    position: relative;
+
+    overflow: hidden;
+
+    & label {
+      position: absolute;
+      top: 0.2rem;
+      left: 0.4rem;
+
+      color: $text-dark;
+
+      transition: left ease 0.3s;
+    }
+
+    & input {
+      width: 100%;
+      height: 2rem;
+      padding: 0 0.4rem;
+
+      background-color: transparent;
+      color: $text;
+      border: 1px solid $light;
+      outline: none;
+
+      &:not(:placeholder-shown) ~ label,
+      &:focus ~ label {
+        left: -100%;
+      }
+    }
+  }
+
+  & > button {
+    padding: 0.4rem 0.6rem;
+    position: absolute;
+    bottom: 1rem;
+    right: -50%;
+
+    background-color: $first;
+    color: $text;
+    border: none;
+    border-radius: 0.8rem;
+    outline: none;
+
+    font-size: 1rem;
+
+    transition: right ease 0.3s;
+
+    &.active {
+      right: 1rem;
+    }
+  }
+}
+
+#group-photo-ctn {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+
+  & .photo {
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid $light;
+  }
+}
+
+#members {
+  width: 100vw;
+  height: calc(100vh - 6rem);
+  position: relative;
+  top: -7rem;
+  left: -1rem;
+
+  transition-property: top left width height border;
+  transition-timing-function: ease;
+  transition-duration: 0.3s;
+
+  background-color: $base;
+  border: 1px solid transparent;
+
+  overflow: hidden;
+
+  &.active {
+    width: 100%;
+    height: 2rem;
+    top: 1rem;
+    left: 0;
+
+    border: 1px solid $light;
+  }
+
+  &.changed {
+    height: 20.4rem;
+  }
+
+  & > .member-count {
+    height: 0;
+    padding-left: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    transition: height ease 0.15s;
+    overflow: hidden;
+
+    &.active {
+      height: 2rem;
+
+      background-color: $dark;
+      border-bottom: 1px solid $light;
+    }
+  }
+
+  & > .member-list {
+    padding: 0;
+    height: 5.2rem;
+    display: flex;
+    gap: 0.8rem;
+    position: relative;
+    z-index: 1;
+
+    background-color: $dark;
+    border-bottom: 1px solid transparent;
+
+    transition-property: padding border-bottom;
+    transition-timing-function: ease;
+    transition-duration: 0.15s;
+    transform: translateY(-5.2rem);
+
+    overflow-x: scroll;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    &.active {
+      padding: 0.6rem 0.6rem 0.1rem;
+
+      border-bottom: 1px solid $light;
+
+      transform: translateY(0);
+    }
+
+    & > li {
+      width: 4.4rem;
+      height: fit-content;
+      position: relative;
+
+      text-align: center;
+
+      &.in {
+        animation: openMember 0.15s ease;
+      }
+
+      &.go {
+        animation: closeMember 0.2s ease forwards;
+      }
+
+      & > .photo {
+        width: 3.2rem;
+        height: 3.2rem;
+        margin: 0 auto;
+      }
+
+      & > p {
+        margin-top: 0.1rem;
+        margin-left: -0.15rem;
+
+        color: $text-dark;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-wrap: nowrap;
+        font-size: 0.8rem;
+      }
+
+      & > button {
+        width: 1.6rem;
+        height: 1.6rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        background-color: transparent;
+        border: none;
+        outline: none;
+
+        & > .icon {
+          width: 1.2rem;
+          height: 1.2rem;
+
+          background-color: $light;
+          color: $text;
+          border-radius: 100%;
+        }
+      }
+    }
+
+    &.changed {
+      height: 100%;
+      padding: none;
+      padding-bottom: 3rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      justify-items: center;
+      align-content: start;
+
+      background-color: transparent;
+      border: none;
+
+      overflow-y: scroll;
+
+      & > li {
+        width: 5rem;
+
+        & p {
+          padding: 0 0.2rem;
+
+          color: $text;
+        }
+      }
+    }
+  }
+
+  & > .friend-list-to-add {
+    height: calc(100vh - 6.2rem);
+    padding: 0.6rem 0.6rem calc(0.6rem + 3rem + 0.6rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    overflow-y: scroll;
+
+    transform: translateY(-5.2rem);
+    transition-property: transform height;
+    transition-timing-function: ease;
+    transition-duration: 0.15s;
+
+    &.active {
+      transform: translateY(0);
+      height: calc(100vh - 6.2rem - 5.2rem);
+    }
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    & > li {
+      display: flex;
+      gap: 0.8rem;
+      align-items: center;
+
+      & > .photo {
+        width: 3.4rem;
+        height: 3.4rem;
+      }
+
+      & > .data {
+        width: calc(100vw - 3.4rem - 1.6rem - 1.2rem - 2.5rem);
+
+        & > p {
+          text-wrap: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          line-height: 1.2rem;
+        }
+
+        & :last-child {
+          color: $text-dark;
+        }
+      }
+
+      & > span {
+        width: 1.6rem;
+        height: 1.6rem;
+
+        background-color: transparent;
+        border: 4px solid $light;
+        border-radius: 100%;
+        outline: none;
+
+        transition-property: background-color border;
+        transition-timing-function: ease;
+        transition-duration: 0.2s;
+
+        &.active {
+          background-color: $first;
+          border: 4px solid $first;
+        }
+      }
+    }
+  }
+
+  & ul {
+    list-style: none;
+  }
+
+  & > button {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 0.5rem;
+    right: -3rem;
+
+    background-color: $first;
+    border: none;
+    border-radius: 0.8rem;
+    color: $text;
+
+    transition: right ease 0.3s;
+
+    & > .icon {
+      width: 2rem;
+      height: 2rem;
+      transform: rotate(180deg);
+    }
+
+    &.active {
+      right: 0.5rem;
+    }
+  }
+}
+
+@keyframes openMember {
+  0% {
+    transform: translateY(-110%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes closeMember {
+  0% {
+    transform: translateY(0);
+    width: 4.4rem;
+    margin-left: 0;
+  }
+  100% {
+    width: 0;
+    margin-left: -0.8rem;
+    transform: translateY(-110%);
+  }
+}

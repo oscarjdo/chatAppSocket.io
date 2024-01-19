@@ -6,15 +6,21 @@
   left: -100%;
   z-index: 3000;
 
-  background-color: $base;
+  background-color: $dark;
 
   transition: left ease 0.5s;
+
+  overflow: scroll;
 
   &.active {
     left: 0;
   }
 
-  & > h2,
+  & > h2 {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
   & > p {
     text-align: center;
   }
@@ -28,6 +34,7 @@
 
     background-color: transparent;
     border: none;
+
     color: red;
 
     font-size: 1.2rem;
@@ -42,6 +49,10 @@
       height: 1.4rem;
     }
   }
+
+  &.open {
+    overflow: hidden;
+  }
 }
 
 #img-ctn {
@@ -51,8 +62,8 @@
   position: relative;
 
   & > div {
-    width: 14rem;
-    height: 14rem;
+    width: 7rem;
+    height: 7rem;
   }
 
   & span {
@@ -73,9 +84,8 @@
 }
 
 #files-chat-ctn {
-  margin: 1rem 0;
-
-  background-color: $dark;
+  border-top: 0.8rem solid $base;
+  border-bottom: 0.8rem solid $base;
 
   & h3 {
     padding: 0.4rem 0.8rem;
@@ -88,5 +98,118 @@
   height: 4rem;
 
   border-top: 1px solid $light;
-  border-bottom: 1px solid $light;
+}
+
+#member-list-info-chat {
+  background-color: $dark;
+  border-bottom: 0.8rem solid $base;
+
+  & > h3 {
+    padding: 0.4rem 0.8rem;
+
+    border-bottom: 1px solid $light;
+
+    letter-spacing: 0.1rem;
+  }
+
+  & > li {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 0.6rem 0 0;
+
+    & > .photo {
+      min-width: 3rem;
+      max-width: 3rem;
+      height: 3rem;
+      position: relative;
+
+      & > .icon {
+        width: 1.6rem;
+        height: 1.6rem;
+        padding: 0.2rem;
+        position: absolute;
+        top: -0.4rem;
+        right: -0.4rem;
+
+        background-color: $base;
+        border: 1px solid $light;
+        border-radius: 100%;
+      }
+    }
+
+    & > div {
+      width: 100%;
+      margin-left: 0.8rem;
+
+      & > p {
+        color: $text-dark;
+      }
+
+      & > div {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.6rem;
+
+        & > p {
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+          &:last-child {
+            min-width: max-content;
+          }
+
+          &.admin {
+            padding: 0 0.3rem;
+
+            background-color: $base;
+            color: $second;
+            border-radius: 0.4rem;
+            border-top-right-radius: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+#groupMemberModal {
+  width: 100%;
+  height: calc(100% - 3rem);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 3rem;
+  left: 0;
+
+  background-color: $black-transparent;
+
+  &.active {
+    display: flex;
+  }
+
+  & > div {
+    width: 80vw;
+    max-width: 24rem;
+    display: flex;
+    flex-direction: column;
+
+    background-color: $dark;
+
+    & > button {
+      width: 100%;
+      padding: 0.4rem 0.6rem;
+
+      background-color: transparent;
+      border: none;
+      color: $text;
+
+      text-align: start;
+
+      &:active {
+        background-color: $base;
+      }
+    }
+  }
 }

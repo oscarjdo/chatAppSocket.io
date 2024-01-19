@@ -57,6 +57,11 @@ function FriendRequests() {
         sender: senderId,
         reciever: userState.id,
       });
+      socket.emit("client:updateFriendList", {
+        userId: userState.id,
+        friendId: senderId,
+      });
+      socket.emit("client:updateChat", { id: senderId });
     }, 1100);
   };
 
@@ -74,6 +79,7 @@ function FriendRequests() {
         userId: userState.id,
         friendId: senderId,
       });
+      socket.emit("client:updateChat", { id: senderId });
     }, 1100);
   };
 
@@ -97,8 +103,15 @@ function FriendRequests() {
                       } ${accepted[index] ? "accepted" : ""}`}
                       key={index}
                     >
-                      <img src="../../../public/profile-img.jpg" alt="photo" />
-                      <div>
+                      <div
+                        className="photo"
+                        style={{
+                          "--p": item.img_url
+                            ? `url("${item.img_url}")`
+                            : "url('/profile-img.jpg')",
+                        }}
+                      ></div>
+                      <div className="ctn">
                         <p>{item.username}</p>
                         <span>
                           #{item.request_sender_id.toString().padStart(4, "0")}

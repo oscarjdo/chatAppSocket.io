@@ -2,11 +2,9 @@ import { RiSettings4Fill } from "react-icons/ri";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { openUserInfo } from "../../../app/userInfoSlice";
+import { setOptionsState } from "../../../app/optionsSlice";
 
-import { notify } from "../../../utils/notify";
-
-function Settings() {
+function OptionsMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const dispatch = useDispatch();
@@ -29,13 +27,31 @@ function Settings() {
       <div className={`settings-menu ${!menuOpen ? "inactive" : ""}`}>
         <ul id="config-list">
           <li>
-            <button onClick={() => dispatch(openUserInfo(true))}>Info</button>
+            <button
+              onClick={() =>
+                dispatch(setOptionsState({ open: true, type: "info" }))
+              }
+            >
+              Info
+            </button>
           </li>
           <li>
-            <button onClick={notify}>New Group</button>
+            <button
+              onClick={() =>
+                dispatch(setOptionsState({ open: true, type: "newGroup" }))
+              }
+            >
+              New Group
+            </button>
           </li>
           <li>
-            <button onClick={notify}>Settings</button>
+            <button
+              onClick={() =>
+                dispatch(setOptionsState({ open: true, type: "settings" }))
+              }
+            >
+              Settings
+            </button>
           </li>
         </ul>
       </div>
@@ -43,4 +59,4 @@ function Settings() {
   );
 }
 
-export default Settings;
+export default OptionsMenu;

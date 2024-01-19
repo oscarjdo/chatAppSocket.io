@@ -8,7 +8,8 @@ const chatSlice = createSlice({
   reducers: {
     changeChatState: (state, action) => {
       state.open = action.payload.active;
-      state.friendId = action.payload.friendId;
+      state.userId = action.payload.userId;
+      state.conversationId = action.payload.conversationId;
     },
   },
 });

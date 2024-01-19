@@ -5,7 +5,8 @@ export const getMessagesApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000" }),
   endpoints: (builder) => ({
     getMessages: builder.query({
-      query: ({ userId, friendId }) => `/getFriendData/${userId}&${friendId}`,
+      query: ({ userId, conversationId }) =>
+        `/getFriendData/${userId}&${conversationId}`,
       providesTags: ["getMessages"],
     }),
     sendMessage: builder.mutation({

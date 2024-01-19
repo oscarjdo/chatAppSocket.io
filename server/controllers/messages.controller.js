@@ -8,7 +8,7 @@ const currentDir = dirname(fileURLToPath(import.meta.url));
 export const sendMessage = async (req, res) => {
   const { mssgData } = req.body;
 
-  const { userId, friendId, mssg, conversationId } = JSON.parse(mssgData);
+  const { userId, members, mssg, conversationId } = JSON.parse(mssgData);
 
   const fileUrl = req.file
     ? `http://localhost:3000/${req.file.filename}`
@@ -30,20 +30,16 @@ export const sendMessage = async (req, res) => {
   if (messageCreated.insertId <= 0)
     return res.status(400).json({ message: "There was an error." });
 
-  const [showMessage] = await pool.query(
-    `
-    insert into not_show_messages (user_id, message_id, conversation_id)
-      values (?,?,?),(?,?,?);
-    `,
-    [
-      userId,
-      messageCreated.insertId,
-      conversationId,
-      friendId,
-      messageCreated.insertId,
-      conversationId,
-    ]
+  const showMessageQuery = `
+  insert into not_show_messages (user_id, message_id, conversation_id)
+    values (?,?,?)${", (?,?,?)".repeat(members.length)};`;
+
+  const arrData = [userId, messageCreated.insertId, conversationId];
+  arrData.push(
+    members.map((item) => [item, messageCreated.insertId, conversationId])
   );
+
+  const [showMessage] = await pool.query(showMessageQuery, arrData.flat(2));
 
   if (showMessage.insertId <= 0)
     return res.status(400).json({ message: "There was an error." });

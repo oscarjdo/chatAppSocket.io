@@ -1,20 +1,31 @@
 import { IoIosArrowBack } from "react-icons/io";
 import { MdPhotoLibrary } from "react-icons/md";
+import { RiLogoutCircleRLine } from "react-icons/ri";
 
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-import { openUserInfo } from "../../../../app/userInfoSlice";
+import { setOptionsState } from "../../../../app/optionsSlice";
+import { logout } from "../../../../app/actions/actions";
 
 import axios from "axios";
 import socket from "../../../../io";
 
 function UserInfo() {
   const userState = useSelector((state) => state.userState);
-  const userInfoState = useSelector((state) => state.userInfoState);
   const friendsOnlineState = useSelector((state) => state.friendsOnlineState);
 
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const handleLogOut = async () => {
+    await axios.delete("http://localhost:3000/logOut", {
+      withCredentials: true,
+    });
+    navigate("/login");
+    dispatch(logout());
+    socket.disconnect();
+  };
 
   const handleImage = async (e) => {
     const file = e.target.files[0];
@@ -50,10 +61,10 @@ function UserInfo() {
   };
 
   return (
-    <div id="user-info-ctn" className={userInfoState.open ? "active" : ""}>
+    <>
       <IoIosArrowBack
         id="back-user-info-bttn"
-        onClick={() => dispatch(openUserInfo(false))}
+        onClick={() => dispatch(setOptionsState({ open: false }))}
       />
       <div id="user-photo-ctn">
         <div
@@ -75,10 +86,17 @@ function UserInfo() {
           <MdPhotoLibrary id="change-photo-icon" />
         </label>
       </div>
-      <h1>{userState.username}</h1>
-      <p>{"#" + userState.id.toString().padStart(4, "0000")}</p>
-      <p>{userState.email}</p>
-    </div>
+      <div id="user-info-text">
+        <h1>{userState.username}</h1>
+        <p>{"#" + userState.id.toString().padStart(4, "0000")}</p>
+        <p>{userState.email}</p>
+      </div>
+
+      <button type="button" className="log-out-bttn" onClick={handleLogOut}>
+        <RiLogoutCircleRLine className="icon" />
+        Log out
+      </button>
+    </>
   );
 }
 
