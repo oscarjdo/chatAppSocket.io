@@ -62,6 +62,8 @@ create table messages (
     message_read boolean default false,
     mimetype varchar(20) default null,
     file_url varchar(255) default null,
+    answeredMessage int default null,
+    foreign key (answeredMessage) references messages (message_id),
     foreign key (conversation_id) references conversation (conversation_id),
     foreign key (user_id) references users (id)
 );
@@ -76,6 +78,8 @@ create table not_show_messages(
     foreign key (message_id) references messages (message_id),
     foreign key (user_id) references users (id)
 );
+
+select * from users;
     
     
 select c.conversation_id, cm1.user_id, u1.username, cm2.user_id, u2.username from conversation c 
@@ -84,4 +88,15 @@ select c.conversation_id, cm1.user_id, u1.username, cm2.user_id, u2.username fro
     left join users u1 on u1.id = cm1.user_id
 	left join friend_list fl on fl.user_id = u1.id
     left join users u2 on u2.id = fl.friend_id and u2.id = cm2.user_id
-    where cm1.user_id = 1 and u2.id = 8;
+    where cm1.user_id = 1 and u2.id = 10 and c.isGroup = false;
+    
+select * from friend_request where request_sender_id = 1 and request_reciever_id = 10;
+select * from friend_request where request_sender_id = 10 and request_reciever_id = 1;
+
+select c.conversation_id as conversation, u1.id as u1Id, cm1.isInside as u1IsInside, u2.id as u2Id, cm2.isInside as u2IsInside
+      from conversation c
+      left join conversation_members cm1 on cm1.conversation_id = c.conversation_id
+      left join conversation_members cm2 on cm2.conversation_id = c.conversation_id
+      left join users u1 on u1.id = cm1.user_id
+      left join users u2 on u2.id = cm2.user_id
+      where u1.id = 1 and u2.id = 10 and c.isGroup = false;
