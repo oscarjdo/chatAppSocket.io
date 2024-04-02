@@ -34,6 +34,14 @@ export const getMessagesApi = createApi({
       }),
       invalidatesTags: ["getMessages"],
     }),
+    leaveGroup: builder.mutation({
+      query: (body) => ({
+        url: "/leaveGroup",
+        method: "DELETE",
+        body,
+      }),
+      invalidatesTags: ["getMessages"],
+    }),
   }),
 });
 
@@ -42,4 +50,5 @@ export const {
   useSendMessageMutation,
   useDeleteMessagesForAllMutation,
   useDeleteMessagesForMeMutation,
+  useLeaveGroupMutation,
 } = getMessagesApi;

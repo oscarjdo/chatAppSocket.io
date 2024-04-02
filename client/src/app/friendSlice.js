@@ -13,7 +13,6 @@ const friendSlice = createSlice({
       const { friend, user, messages, conversationId, groupData } =
         action.payload;
 
-      state.conversationId = conversationId;
       state.me = user;
       state.groupData = groupData;
 
@@ -34,6 +33,7 @@ const friendSlice = createSlice({
         state.messages = [];
       }
 
+      state.conversationId = conversationId;
       state.areFriends = friend && friend.areFriends ? friend.areFriends : null;
     },
   },

@@ -612,6 +612,29 @@ nav p b {
   letter-spacing: 0.2rem;
   font-weight: 500;
 }
+#chat-mssg-ctn div.event {
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: 80vw;
+  margin: auto;
+  padding: 0.4rem 0.6rem;
+  background-color: #161618;
+  border-radius: 0.4rem;
+  color: #7b8186;
+  font-size: 0.8rem;
+  text-align: center;
+}
+#chat-mssg-ctn div.event > div {
+  margin-top: 0.2rem;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  font-size: 1.8rem;
+}
+#chat-mssg-ctn div.event > div > .photo {
+  width: 3rem;
+  height: 3rem;
+}
 #chat-mssg-ctn ul {
   padding: 0.6rem;
   display: grid;
@@ -994,6 +1017,7 @@ a.document:active p, a.document:active .download {
 #info-chat-ctn {
   width: 100vw;
   height: 100%;
+  padding: 0 0.4rem;
   position: absolute;
   top: 0;
   left: -100%;
@@ -1004,18 +1028,65 @@ a.document:active p, a.document:active .download {
 }
 #info-chat-ctn.active {
   left: 0;
+  padding: 0;
+}
+#info-chat-ctn.not-scroll {
+  height: 100vh;
+  overflow: hidden;
 }
 #info-chat-ctn > h2 {
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: 80vw;
+  margin: auto;
+  position: relative;
   font-size: 1.2rem;
   text-align: center;
+  word-break: break-all;
+}
+#info-chat-ctn > h2 > .icon {
+  position: absolute;
+  top: -1rem;
+  right: -1.8rem;
+  color: #7b8186;
+}
+#info-chat-ctn > h2 > .icon:active {
+  color: #ffffff;
 }
 #info-chat-ctn > p {
   text-align: center;
 }
+#info-chat-ctn > .description {
+  width: 100%;
+  min-height: 2.6rem;
+  max-height: 10rem;
+  margin: 0.4rem 0;
+  padding: 0.6rem 0.6rem 0.6rem;
+  position: relative;
+  background-color: #222324;
+  word-wrap: break-word;
+  overflow-y: scroll;
+}
+#info-chat-ctn > .description > .icon {
+  width: 1.2rem;
+  height: -moz-fit-content;
+  height: fit-content;
+  max-height: 10rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #7b8186;
+}
+#info-chat-ctn > .description:active > .icon {
+  color: #ffffff;
+}
+#info-chat-ctn div.space {
+  height: 1rem;
+}
 #info-chat-ctn > button {
   width: -moz-max-content;
   width: max-content;
-  margin: 0.3rem auto;
+  margin: 0.4rem auto 1.4rem;
   display: flex;
   gap: 0.4rem;
   align-items: center;
@@ -1036,17 +1107,22 @@ a.document:active p, a.document:active .download {
 }
 
 #img-ctn {
-  width: -moz-fit-content;
-  width: fit-content;
-  margin: 1rem auto;
-  padding: 0;
-  position: relative;
-}
-#img-ctn > div {
   width: 7rem;
   height: 7rem;
+  margin: 1rem auto;
+  padding: 0;
+  background-color: #161618;
+  transition-property: height width;
+  transition-timing-function: ease;
+  transition-duration: 0.3s;
 }
-#img-ctn span {
+#img-ctn div.photo {
+  width: 7rem;
+  height: 7rem;
+  margin: auto;
+  position: relative;
+}
+#img-ctn div.photo > span {
   width: 2rem;
   height: 2rem;
   display: inline-block;
@@ -1056,8 +1132,44 @@ a.document:active p, a.document:active .download {
   background-color: #7b8186;
   border-radius: 1rem;
 }
-#img-ctn span.active {
+#img-ctn div.photo > span.active {
   background-color: #00fa4b;
+}
+#img-ctn.view {
+  width: 100vw;
+  height: calc(100vh - 3rem - 0.1rem);
+  margin-top: 0;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+}
+#img-ctn.view div.nav {
+  width: 100%;
+  height: 3rem;
+  position: absolute;
+  top: -3rem;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5058823529);
+  transition: top ease 0.1s;
+}
+#img-ctn.view div.nav.active {
+  top: 0;
+}
+#img-ctn.view div.nav > input {
+  display: none;
+}
+#img-ctn.view div.nav > label {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.8rem;
+}
+#img-ctn.view div.nav > label > .icon {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+#img-ctn.view img {
+  max-width: 100%;
+  max-height: calc(100vh - 3rem - 0.1rem);
 }
 
 #files-chat-ctn {
@@ -1153,18 +1265,94 @@ a.document:active p, a.document:active .download {
   max-width: 24rem;
   display: flex;
   flex-direction: column;
+  gap: 0.1rem;
+  position: relative;
+  background-color: #7b8186;
+}
+#groupMemberModal > div::after, #groupMemberModal > div::before {
+  content: "";
+  width: 1rem;
+  height: 100%;
+  position: absolute;
+  top: 0;
   background-color: #161618;
+}
+#groupMemberModal > div::after {
+  right: 0;
 }
 #groupMemberModal > div > button {
   width: 100%;
   padding: 0.4rem 0.6rem;
-  background-color: transparent;
+  position: relative;
+  z-index: 100;
+  background-color: #161618;
   border: none;
   color: #ffffff;
   text-align: start;
 }
 #groupMemberModal > div > button:active {
   background-color: #222324;
+}
+
+#edit-group-data-form {
+  width: 100%;
+  height: calc(100% - 3.1rem);
+  position: absolute;
+  top: 0;
+  left: -100%;
+  background-color: #161618;
+  transition: left ease 0.3s;
+}
+#edit-group-data-form.active {
+  left: 0;
+}
+#edit-group-data-form > button {
+  padding: 0.6rem 0.6rem 0.3rem;
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: #00fa4b;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.8rem;
+  outline: none;
+  background-color: #00fa4b !important;
+  color: #ffffff;
+}
+#edit-group-data-form > button > .icon {
+  width: 2rem;
+  height: 2rem;
+}
+#edit-group-data-form > h4 {
+  width: -moz-fit-content;
+  width: fit-content;
+  margin: 0.8rem auto;
+  font-weight: 100;
+}
+#edit-group-data-form > div {
+  width: 80vw;
+  height: 3rem;
+  margin: 1rem auto 0;
+  position: relative;
+}
+#edit-group-data-form > div > input, #edit-group-data-form > div > textarea {
+  width: 100%;
+  margin-top: 1.4rem;
+  padding: 0.4rem;
+  background-color: #222324;
+  border: 1px solid #00fa4b;
+  color: #ffffff;
+  outline: none;
+}
+#edit-group-data-form > div > textarea {
+  height: 7rem;
+  resize: none;
+}
+#edit-group-data-form > div > span {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 0.9rem;
 }
 
 #input-chat-ctn {
@@ -2172,6 +2360,7 @@ a.document:active p, a.document:active .download {
 }
 
 #close-chat-info,
+#close-edit-group-data,
 #back-user-info-bttn {
   width: 3rem;
   height: 3rem;
@@ -2182,6 +2371,7 @@ a.document:active p, a.document:active .download {
   border-radius: 2rem;
 }
 #close-chat-info:active,
+#close-edit-group-data:active,
 #back-user-info-bttn:active {
   background-color: #7b8186;
 }

@@ -108,6 +108,19 @@ export const acceptFriendRequest = async (req, res) => {
       return res
         .status(400)
         .json({ message: "Error at 'insert into conversation_members'" });
+
+    const [lastInteraction] = await pool.query(
+      `
+          update conversation set last_interaction = ? 
+            where conversation_id = ?
+        `,
+      [new Date(), convId]
+    );
+
+    if (lastInteraction.affectedRows <= 0)
+      return res.status(400).json({
+        error: "Error in acceptFriendRequest in lastInteraction query.",
+      });
   } else {
     let userIsNotInside;
 

@@ -33,14 +33,8 @@ function Chat() {
     if (isSuccess) dispatch(setFriendData(data));
     scrollToBottom();
 
-    socket.on("server:recieveMssg", () => update());
-    socket.on("server:updateChat", () => update());
-    socket.on("server:hasBeenDeleted", () => update());
-    socket.on("server:photoChanged", (e) =>
-      (e === chatState.userId || !chatState.open) && e !== userState.id
-        ? update()
-        : null
-    );
+    socket.on("server:reloadApp", update);
+    socket.on("server:reloadChat", update);
   }, [socket, data]);
 
   useEffect(() => {

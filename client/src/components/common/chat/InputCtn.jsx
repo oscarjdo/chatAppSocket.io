@@ -90,9 +90,8 @@ function InputCtn() {
 
     if (mssg.trim().length > 0 || file) {
       sendMessage(formData);
-      socket.emit("client:newMessage", {
-        recieverId: members || [friendState.id],
-        userId: userState.id,
+      socket.emit("client:reloadApp", {
+        users: [members || [friendState.id], userState.id].flat(),
       });
       setMssg("");
     }
@@ -117,7 +116,9 @@ function InputCtn() {
     }, 500);
   };
 
-  return (friendState.groupData && friendState.groupData.isGroup) ||
+  return (friendState.groupData &&
+    friendState.groupData.isGroup &&
+    !friendState.me.leftGroupAt) ||
     friendState.areFriends ? (
     <form id="input-chat-ctn" onSubmit={handleSubmit}>
       <div className="textarea-ctn">
@@ -201,7 +202,11 @@ function InputCtn() {
   ) : (
     <div id="input-chat-ctn" className="disabled">
       <div>
-        <h2 id="is-not-friend-text">This user is not your friend anymore</h2>
+        <h2 id="is-not-friend-text">
+          {friendState.groupData && friendState.groupData.isGroup
+            ? "You are not a group member anymore"
+            : "This user is not your friend anymore"}
+        </h2>
         <p id="delete-text">
           Do you want to <span onClick={handleLeaveChat}>Leave the chat</span>?
         </p>

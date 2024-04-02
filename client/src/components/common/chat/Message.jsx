@@ -1,6 +1,7 @@
 import { BiCheck, BiCheckDouble, BiError } from "react-icons/bi";
 import { LuClock4 } from "react-icons/lu";
 import { MdDeleteForever } from "react-icons/md";
+import { FaChevronRight } from "react-icons/fa";
 
 import getTime from "../../../utils/getTime.js";
 
@@ -172,95 +173,136 @@ function Message({ data }) {
     }
   };
 
+  const generateText = () => {
+    const { username, oldPhoto, newPhoto, text } = JSON.parse(item.content);
+
+    if (newPhoto) {
+      return (
+        <>
+          <p>{username} has changed the group photo</p>
+          <div>
+            {oldPhoto ? (
+              <>
+                <div
+                  className="photo"
+                  style={{
+                    "--p": `url("${oldPhoto}")`,
+                  }}
+                ></div>
+                <FaChevronRight />
+              </>
+            ) : null}
+            <div
+              className="photo"
+              style={{ "--p": `url("${newPhoto}")` }}
+            ></div>
+          </div>
+        </>
+      );
+    } else {
+      return <p>{text}</p>;
+    }
+  };
+
   useEffect(() => {
     if (!selectMode) {
       setSelected(false);
     }
   }, [selectMode]);
 
-  if (friendState.messages[0].sender && !item.deleted) {
+  useEffect(() => {
+    // if (item.event) console.log(item);
+  }, []);
+
+  if ((item.sender && !item.deleted) || item.event) {
     return (
       <Fragment key={index}>
         {/* {day !== itemDate.getDate()
           ? ((day = itemDate.getDate()), (<h5>{date()}</h5>))
           : null} */}
-        <li
-          className={`mssg ${item.sender == userState.id ? "me" : "not-me"} ${
-            item.mimetype ? "file" : ""
-          } ${space ? "space" : ""} ${!item.is_show ? "deleted" : ""} ${
-            friendState.groupData &&
+        {item.event ? (
+          <div className="event">{generateText()}</div>
+        ) : (
+          <li
+            className={`mssg ${item.sender == userState.id ? "me" : "not-me"} ${
+              item.mimetype ? "file" : ""
+            } ${space ? "space" : ""} ${!item.is_show ? "deleted" : ""} ${
+              friendState.groupData &&
+              friendState.groupData.isGroup &&
+              item.sender != userState.id
+                ? "left"
+                : ""
+            }`}
+            onClick={selectMode ? handleClick : null}
+            onTouchStart={(e) => (!open ? handleDragStart(e) : null)}
+            onTouchMove={(e) => (!open ? handleDrag(e) : null)}
+            onTouchEnd={(e) => (!open ? handleDragEnd() : null)}
+            style={{
+              transition: !open ? "transform ease-out .3s" : "none",
+              transform: open
+                ? "none"
+                : `translate(${messagePosition.x}px, ${messagePosition.y}px)`,
+            }}
+          >
+            {friendState.groupData &&
             friendState.groupData.isGroup &&
-            item.sender != userState.id
-              ? "left"
-              : ""
-          }`}
-          onClick={selectMode ? handleClick : null}
-          onTouchStart={(e) => (!open ? handleDragStart(e) : null)}
-          onTouchMove={(e) => (!open ? handleDrag(e) : null)}
-          onTouchEnd={(e) => (!open ? handleDragEnd() : null)}
-          style={{
-            transition: !open ? "transform ease-out .3s" : "none",
-            transform: open
-              ? "none"
-              : `translate(${messagePosition.x}px, ${messagePosition.y}px)`,
-          }}
-        >
-          {friendState.groupData &&
-          friendState.groupData.isGroup &&
-          item.sender != userState.id &&
-          space ? (
-            <>
-              <div
-                className="photo"
-                style={{
-                  "--p": item.imgUrl
-                    ? `url("${item.imgUrl}")`
-                    : `url("/profile-img.jpg")`,
-                }}
-              ></div>
-              <h4 style={{ color: colorList[item.sender] }}>{item.username}</h4>
-            </>
-          ) : null}
-          {item.is_show ? (
-            <>
-              {item.mimetype ? (
-                <>
-                  {setFile(
-                    item.mimetype,
-                    item.file_url,
-                    item.sender == userState.id ? "me" : "not-me",
-                    item.content
-                  )}
-                </>
-              ) : null}
+            item.sender != userState.id &&
+            space ? (
+              <>
+                <div
+                  className="photo"
+                  style={{
+                    "--p": item.imgUrl
+                      ? `url("${item.imgUrl}")`
+                      : `url("/profile-img.jpg")`,
+                  }}
+                ></div>
+                <h4 style={{ color: colorList[item.sender] }}>
+                  {item.username}
+                </h4>
+              </>
+            ) : null}
+            {item.is_show ? (
+              <>
+                {item.mimetype ? (
+                  <>
+                    {setFile(
+                      item.mimetype,
+                      item.file_url,
+                      item.sender == userState.id ? "me" : "not-me",
+                      item.content
+                    )}
+                  </>
+                ) : null}
 
-              <p className="mssg-text">
-                {item.content}&nbsp;&nbsp;
-                <i className="date">{getTime(itemDate)}</i>
-              </p>
-            </>
-          ) : (
-            <div className="deleted">
-              <MdDeleteForever className="icon" />
-              <p className="mssg-text deleted">
-                {userState.id !== item.sender
-                  ? `${item.username} has deleted this message.`
-                  : "You have deleted this message"}
-              </p>
-            </div>
-          )}
-          {/* <div className="comp-ctn">
+                <p className="mssg-text">
+                  {item.content}&nbsp;&nbsp;
+                  <i className="date">{getTime(itemDate)}</i>
+                </p>
+              </>
+            ) : (
+              <div className="deleted">
+                <MdDeleteForever className="icon" />
+                <p className="mssg-text deleted">
+                  {userState.id !== item.sender
+                    ? `${item.username} has deleted this message.`
+                    : "You have deleted this message"}
+                </p>
+              </div>
+            )}
+            {/* <div className="comp-ctn">
             <p>{getTime(itemDate)}</p>
             {item.sender == userState.id ? setIcon() : null}
           </div> */}
-          <span
-            className={`${selected ? "active" : ""} ${
-              friendState.groupData && friendState.groupData.isGroup
-                ? "right"
-                : ""
-            }`}
-          ></span>
-        </li>
+            <span
+              className={`${selected ? "active" : ""} ${
+                friendState.groupData && friendState.groupData.isGroup
+                  ? "right"
+                  : ""
+              }`}
+            ></span>
+          </li>
+        )}
       </Fragment>
     );
   }

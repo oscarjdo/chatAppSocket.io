@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 
 import axios from "axios";
+import socket from "../../../../io";
 
 function CreateGroupChat() {
   const [img, setImg] = useState({ img: null, url: null });
@@ -18,6 +19,7 @@ function CreateGroupChat() {
   const [groupData, setGroupData] = useState({ name: "", description: "" });
 
   const userState = useSelector((state) => state.userState);
+  const friendsOnlineState = useSelector((state) => state.friendsOnlineState);
 
   const dispatch = useDispatch();
 
@@ -104,6 +106,12 @@ function CreateGroupChat() {
       );
 
       if (response.status === 201) dispatch(setOptionsState({ open: false }));
+
+      const keys = Object.keys(friendsOnlineState.list).map((item) =>
+        parseInt(item)
+      );
+
+      socket.emit("client:groupPhotoChanged", { keys, userId: userState.id });
     } catch (error) {
       console.log(error);
     }

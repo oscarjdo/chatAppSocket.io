@@ -9,19 +9,24 @@ import {
   useSendFriendRequestMutation,
 } from "../../../app/queries/getFriendList";
 import { useAcceptFrienRequestMutation } from "../../../app/queries/friendRequestApi";
+import { useLeaveGroupMutation } from "../../../app/queries/getMessages";
 
 import matchFriendRequets from "../../../utils/matchFriendRequests";
 import socket from "../../../io";
 
 function GroupMemberMenu() {
-  const { open, userData } = useSelector((state) => state.groupMemberMenuState);
+  const { open, userData, isAdmin } = useSelector(
+    (state) => state.groupMemberMenuState
+  );
   const userState = useSelector((state) => state.userState);
+  const friendState = useSelector((state) => state.friendState);
 
   const dispatch = useDispatch();
 
   const [sendFriendRequest, result] = useSendFriendRequestMutation();
   const [cancelFriendRequest] = useCancelFriendRequestMutation();
   const [acceptFriendRequest] = useAcceptFrienRequestMutation();
+  const [leaveGroup] = useLeaveGroupMutation();
 
   const handleClick = () => {
     dispatch(setMember({ open: false, userData: { username: "" } }));
@@ -36,6 +41,7 @@ function GroupMemberMenu() {
       })
     );
     dispatch(activateInfo(false));
+    socket.emit("client:reloadChat", { users: [userState.id] });
   };
 
   const handleSendFriendRequest = () => {
@@ -51,6 +57,20 @@ function GroupMemberMenu() {
     });
     socket.emit("client:newFriendRequest", { id: userData.userId });
     socket.emit("client:updateChat", { id: userState.id });
+  };
+
+  const handleRemoveFromChat = () => {
+    leaveGroup({
+      userId: userData.userId,
+      conversationId: userData.conversationId,
+      eventMssg: `${userState.username} has removed ${userData.username} from the group`,
+    });
+
+    const members = friendState.members.map((item) => item.id);
+
+    socket.emit("client:reloadApp", {
+      users: [members || [friendState.id], userState.id].flat(),
+    });
   };
 
   useEffect(() => {
@@ -81,6 +101,11 @@ function GroupMemberMenu() {
               : `Delete sent friend request`}
           </button>
         )}
+        {isAdmin ? (
+          <button
+            onClick={handleRemoveFromChat}
+          >{`Remove ${userData.username} from the group`}</button>
+        ) : null}
       </div>
     </div>
   );

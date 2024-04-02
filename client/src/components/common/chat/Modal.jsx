@@ -66,7 +66,7 @@ function Modal() {
           <button type="button" onClick={deleteMessagesForMe}>
             For me
           </button>
-          {canForAll ? (
+          {canForAll && friendState.me && !friendState.me.leftGroupAt ? (
             <button type="button" onClick={deleteMessagesForAll}>
               For all
             </button>
