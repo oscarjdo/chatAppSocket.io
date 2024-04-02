@@ -32,6 +32,7 @@ export const getFriendListApi = createApi({
       }),
       invalidatesTags: ["getFriends"],
     }),
+
     getOutOfChat: builder.mutation({
       query: (body) => ({
         url: "/getOutOfChat",

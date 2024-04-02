@@ -15,6 +15,7 @@ import fileOpenSlice from "../fileOpenSlice.js";
 import messageSelectSlice from "../messageSelectSlice.js";
 import modalSlice from "../modalSlice.js";
 import groupMemberMenuSlice from "../groupMemberMenuSlice.js";
+import editGroupDataSlice from "../editGroupDataSlice.js";
 
 import { getFriendListApi } from "../queries/getFriendList.js";
 import { getMessagesApi } from "../queries/getMessages.js";
@@ -37,6 +38,7 @@ const appReducer = combineReducers({
   messageSelectState: messageSelectSlice,
   modalState: modalSlice,
   groupMemberMenuState: groupMemberMenuSlice,
+  editGroupDataState: editGroupDataSlice,
   [getFriendListApi.reducerPath]: getFriendListApi.reducer,
   [getMessagesApi.reducerPath]: getMessagesApi.reducer,
   [friendRequestApi.reducerPath]: friendRequestApi.reducer,

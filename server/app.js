@@ -66,68 +66,32 @@ io.on("connection", (socket) => {
     io.emit("server:usersOnline", usersOnline);
   });
 
-  socket.on("client:newMessage", (e) => {
-    const { recieverId, userId } = e;
-    const socketToSend = recieverId
-      .map((item) => usersOnline[item])
-      .filter((item) => item);
-    const socketToUpdate = usersOnline[userId];
+  const socketsToSend = (users) =>
+    users.map((item) => usersOnline[item]).filter((item) => item);
 
-    io.to([socketToSend, socketToUpdate].flat()).emit(
-      "server:recieveMssg",
-      null
-    );
-  });
+  socket.on("client:reloadApp", (e) =>
+    io.to(socketsToSend(e.users)).emit("server:reloadApp", null)
+  );
 
-  socket.on("client:messageDeleted", (e) => {
-    const { members, userId } = e;
+  socket.on("client:reloadChat", (e) =>
+    io.to(socketsToSend(e.users)).emit("server:reloadChat", null)
+  );
 
-    const socketToSend = members.map((item) => usersOnline[item]);
-    const socketToUpdate = usersOnline[userId];
+  socket.on("client:reloadFriendRequests", (e) => {
+    const { user } = e;
 
-    io.to([socketToSend, socketToUpdate].flat()).emit(
-      "server:updateChat",
-      null
-    );
-  });
+    const socketToSend = usersOnline[user];
 
-  socket.on("client:updateChat", (e) => {
-    const socketToUpdate = usersOnline[e.id];
-
-    io.to([socketToUpdate]).emit("server:updateChat", null);
-  });
-
-  socket.on("client:newFriendRequest", (e) => {
-    const { id } = e;
-    const socketToSend = usersOnline[id];
-
-    io.to(socketToSend).emit("server:newFriendRequest", null);
-  });
-
-  socket.on("client:updateFriendList", (e) => {
-    const { userId, friendId } = e;
-    const socketsToUpdate = [usersOnline[userId], usersOnline[friendId]];
-
-    io.to(socketsToUpdate).emit("server:updateFriendList", usersOnline);
-    io.to(socketsToUpdate).emit("server:recieveMssg", null);
-  });
-
-  socket.on("client:hasBeenDeleted", (e) => {
-    const { friendId, userId } = e;
-
-    const socketsToUpdate = [usersOnline[friendId], usersOnline[userId]];
-
-    io.to(socketsToUpdate).emit("server:hasBeenDeleted", null);
+    io.to(socketToSend).emit("server:reloadFriendRequests", null);
   });
 
   socket.on("client:photoChanged", (e) => {
     const { keys, userId } = e;
 
-    const socketsToSend = keys.map((item) => usersOnline[item]);
-    const socketToUpdate = usersOnline[userId];
+    const userSocket = usersOnline[userId];
 
-    io.to(socketsToSend).emit("server:photoChanged", userId);
-    io.to(socketToUpdate).emit("server:restartToken", null);
+    io.to(socketsToSend(keys)).emit("server:reloadApp", null);
+    io.to(userSocket).emit("server:restartToken", null);
   });
 });
 

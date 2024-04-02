@@ -35,7 +35,7 @@ function friendList() {
 
   const handleClickPlus = (friend) => {
     sendFriendRequest({ sender: userState.id, reciever: friend.id });
-    socket.emit("client:newFriendRequest", { id: friend.id });
+    socket.emit("client:reloadFriendRequests", { user: friend.id });
     notify({
       type: "success",
       mssg: `You have sent a friend request to ${friend.friend}`,
@@ -47,7 +47,7 @@ function friendList() {
       sender: userState.id,
       reciever: friend.id,
     });
-    socket.emit("client:newFriendRequest", { id: friend.id });
+    socket.emit("client:reloadFriendRequests", { user: friend.id });
     notify({
       type: "warning",
       mssg: `You have canceled ${friend.friend}'s friend request.`,
@@ -72,16 +72,7 @@ function friendList() {
       }, 500);
     };
 
-    socket.on("server:recieveMssg", () =>
-      !addFriendModeState.open ? update() : null
-    );
-    socket.on("server:updateFriendList", () => update());
-    socket.on("server:hasBeenDeleted", () =>
-      !addFriendModeState.open ? update() : null
-    );
-    socket.on("server:photoChanged", (e) =>
-      e !== userState.id ? update() : null
-    );
+    socket.on("server:reloadApp", () => update());
   }, [socket, data]);
 
   useEffect(() => {
@@ -118,6 +109,20 @@ function friendList() {
               return `url("/profile-img.jpg")`;
             };
 
+            const generateText = () => {
+              if (item.lastMessage.isEvent) {
+                const { username, newPhoto, text } = JSON.parse(
+                  item.lastMessage.content
+                );
+
+                return newPhoto
+                  ? `${username} has changed the group photo`
+                  : text;
+              } else {
+                return item.lastMessage.content;
+              }
+            };
+
             return (
               <li
                 key={index}
@@ -152,7 +157,7 @@ function friendList() {
                     ) : null}
                     <p>
                       {addFriendModeState.open ? `User ID: ${item.id}` : ""}
-                      {itemDate ? item.lastMessage.content : null}
+                      {itemDate ? generateText() : null}
                     </p>
                   </div>
                 </div>

@@ -7,9 +7,10 @@ const groupMemberMenuSlice = createSlice({
   initialState,
   reducers: {
     setMember: (state, { payload }) => {
-      const { open, userData } = payload;
+      const { open, userData, isAdmin } = payload;
       state.open = open;
       state.userData = userData;
+      state.isAdmin = isAdmin;
     },
   },
 });

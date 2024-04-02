@@ -32,7 +32,7 @@ function FriendRequests() {
   if (isError) console.log(error);
 
   useEffect(() => {
-    socket.on("server:newFriendRequest", () => {
+    socket.on("server:reloadFriendRequests", () => {
       setTimeout(() => {
         refetch();
       }, 500);
@@ -57,11 +57,9 @@ function FriendRequests() {
         sender: senderId,
         reciever: userState.id,
       });
-      socket.emit("client:updateFriendList", {
-        userId: userState.id,
-        friendId: senderId,
+      socket.emit("client:reloadApp", {
+        users: [userState.id, senderId],
       });
-      socket.emit("client:updateChat", { id: senderId });
     }, 1100);
   };
 
@@ -75,11 +73,9 @@ function FriendRequests() {
         sender: senderId,
         reciever: userState.id,
       });
-      socket.emit("client:updateFriendList", {
-        userId: userState.id,
-        friendId: senderId,
+      socket.emit("client:reloadApp", {
+        users: [userState.id, senderId],
       });
-      socket.emit("client:updateChat", { id: senderId });
     }, 1100);
   };
 

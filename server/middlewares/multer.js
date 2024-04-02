@@ -2,7 +2,7 @@ import multer from "multer";
 import { dirname, extname, join } from "path";
 import { fileURLToPath } from "url";
 
-const currentDir = dirname(fileURLToPath(import.meta.url));
+// const currentDir = dirname(fileURLToPath(import.meta.url));
 const mimeTypes = ["image/jpeg", "image/png"];
 
 const multerUpload = multer({

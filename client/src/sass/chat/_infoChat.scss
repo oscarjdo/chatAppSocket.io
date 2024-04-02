@@ -1,6 +1,7 @@
 #info-chat-ctn {
   width: 100vw;
   height: 100%;
+  padding: 0 0.4rem;
   position: absolute;
   top: 0;
   left: -100%;
@@ -14,20 +15,77 @@
 
   &.active {
     left: 0;
+    padding: 0;
+  }
+
+  &.not-scroll {
+    height: 100vh;
+    overflow: hidden;
   }
 
   & > h2 {
+    width: fit-content;
+    max-width: 80vw;
+    margin: auto;
+    position: relative;
+
     font-size: 1.2rem;
     text-align: center;
+    word-break: break-all;
+
+    & > .icon {
+      position: absolute;
+      top: -1rem;
+      right: -1.8rem;
+
+      color: $light;
+
+      &:active {
+        color: $text;
+      }
+    }
   }
 
   & > p {
     text-align: center;
   }
 
+  & > .description {
+    width: 100%;
+    min-height: 2.6rem;
+    max-height: 10rem;
+    margin: 0.4rem 0;
+    padding: 0.6rem 0.6rem 0.6rem;
+    position: relative;
+
+    background-color: $base;
+
+    word-wrap: break-word;
+    overflow-y: scroll;
+
+    & > .icon {
+      width: 1.2rem;
+      height: fit-content;
+      max-height: 10rem;
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      color: $light;
+    }
+
+    &:active > .icon {
+      color: $text;
+    }
+  }
+
+  & div.space {
+    height: 1rem;
+  }
+
   & > button {
     width: max-content;
-    margin: 0.3rem auto;
+    margin: 0.4rem auto 1.4rem;
     display: flex;
     gap: 0.4rem;
     align-items: center;
@@ -56,29 +114,82 @@
 }
 
 #img-ctn {
-  width: fit-content;
+  width: 7rem;
+  height: 7rem;
   margin: 1rem auto;
   padding: 0;
-  position: relative;
 
-  & > div {
+  background-color: $dark;
+
+  transition-property: height width;
+  transition-timing-function: ease;
+  transition-duration: 0.3s;
+
+  & div.photo {
     width: 7rem;
     height: 7rem;
+    margin: auto;
+    position: relative;
+
+    & > span {
+      width: 2rem;
+      height: 2rem;
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      background-color: $light;
+      border-radius: 1rem;
+
+      &.active {
+        background-color: $first;
+      }
+    }
   }
 
-  & span {
-    width: 2rem;
-    height: 2rem;
-    display: inline-block;
-    position: absolute;
-    top: 0;
-    right: 0;
+  &.view {
+    width: 100vw;
+    height: calc(100vh - 3rem - 0.1rem);
+    margin-top: 0;
+    display: grid;
+    justify-content: center;
+    align-items: center;
 
-    background-color: $light;
-    border-radius: 1rem;
+    & div.nav {
+      width: 100%;
+      height: 3rem;
+      position: absolute;
+      top: -3rem;
+      left: 0;
 
-    &.active {
-      background-color: $first;
+      background-color: $black-transparent;
+
+      transition: top ease 0.1s;
+
+      &.active {
+        top: 0;
+      }
+
+      & > input {
+        display: none;
+      }
+
+      & > label {
+        position: absolute;
+        top: 0.6rem;
+        right: 0.8rem;
+
+        & > .icon {
+          width: 1.8rem;
+          height: 1.8rem;
+        }
+      }
+    }
+
+    & img {
+      max-width: 100%;
+      max-height: calc(100vh - 3rem - 0.1rem);
     }
   }
 }
@@ -194,14 +305,33 @@
     max-width: 24rem;
     display: flex;
     flex-direction: column;
+    gap: 0.1rem;
+    position: relative;
 
-    background-color: $dark;
+    background-color: $light;
+
+    &::after,
+    &::before {
+      content: "";
+      width: 1rem;
+      height: 100%;
+      position: absolute;
+      top: 0;
+
+      background-color: $dark;
+    }
+
+    &::after {
+      right: 0;
+    }
 
     & > button {
       width: 100%;
       padding: 0.4rem 0.6rem;
+      position: relative;
+      z-index: 100;
 
-      background-color: transparent;
+      background-color: $dark;
       border: none;
       color: $text;
 
@@ -210,6 +340,84 @@
       &:active {
         background-color: $base;
       }
+    }
+  }
+}
+
+#edit-group-data-form {
+  width: 100%;
+  height: calc(100% - 3.1rem);
+  position: absolute;
+  top: 0;
+  left: -100%;
+
+  background-color: $dark;
+
+  transition: left ease 0.3s;
+
+  &.active {
+    left: 0;
+  }
+
+  & > button {
+    padding: 0.6rem 0.6rem 0.3rem;
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+
+    background-color: $first;
+    color: $text;
+    border: none;
+    border-radius: 0.8rem;
+    outline: none;
+
+    background-color: $first !important;
+    color: $text;
+
+    & > .icon {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+
+  & > h4 {
+    width: fit-content;
+    margin: 0.8rem auto;
+
+    font-weight: 100;
+  }
+
+  & > div {
+    width: 80vw;
+    height: 3rem;
+    margin: 1rem auto 0;
+    position: relative;
+
+    & > input,
+    & > textarea {
+      width: 100%;
+      margin-top: 1.4rem;
+      padding: 0.4rem;
+
+      background-color: $base;
+      border: 1px solid $first;
+      color: $text;
+
+      outline: none;
+    }
+
+    & > textarea {
+      height: 7rem;
+
+      resize: none;
+    }
+
+    & > span {
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      font-size: 0.9rem;
     }
   }
 }

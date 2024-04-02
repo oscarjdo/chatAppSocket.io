@@ -23,9 +23,17 @@ export const sendMessage = async (req, res) => {
     `
     insert into messages (conversation_id, user_id, content, sent_date, mimetype, file_url, answeredMessage)
       values
-      (?,?,?,now(),?,?,?);
+      (?,?,?,?,?,?,?);
     `,
-    [conversationId, userId, mssg, mimetype, fileUrl, answeredMssgId]
+    [
+      conversationId,
+      userId,
+      mssg,
+      new Date(),
+      mimetype,
+      fileUrl,
+      answeredMssgId,
+    ]
   );
 
   if (messageCreated.insertId <= 0)
@@ -44,6 +52,19 @@ export const sendMessage = async (req, res) => {
 
   if (showMessage.insertId <= 0)
     return res.status(400).json({ message: "There was an error." });
+
+  const [lastInteraction] = await pool.query(
+    `
+      update conversation set last_interaction = ? 
+        where conversation_id = ?
+    `,
+    [new Date(), conversationId]
+  );
+
+  if (lastInteraction.affectedRows <= 0)
+    return res
+      .status(400)
+      .json({ error: "Error in updateGroupData in lastInteraction query." });
 
   res.sendStatus(201);
 };
