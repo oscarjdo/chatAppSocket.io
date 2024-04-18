@@ -1,6 +1,6 @@
 -✔Give the function of leaving the chat to the text at the bottom of the chat input.✔
 
--Show the type pf file on friend list.
+-✔Show the type of file on friend list.✔
 
 -Create a chat cleaning function.
 

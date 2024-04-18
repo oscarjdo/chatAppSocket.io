@@ -123,6 +123,22 @@ function friendList() {
               }
             };
 
+            const setFileType = () => {
+              let text = item.lastMessage.mimetype;
+              text = text[0].toUpperCase().concat(text.slice(1));
+
+              const icon = {
+                Image: "📷",
+                Audio: "🔉",
+                Video: "🎬",
+                Document: "📃",
+              };
+
+              return `${icon[text]}${text}${
+                item.lastMessage.content ? " - " : ""
+              }`;
+            };
+
             return (
               <li
                 key={index}
@@ -157,7 +173,12 @@ function friendList() {
                     ) : null}
                     <p>
                       {addFriendModeState.open ? `User ID: ${item.id}` : ""}
-                      {itemDate ? generateText() : null}
+                      {itemDate ? (
+                        <>
+                          {item.lastMessage.mimetype ? setFileType() : null}
+                          {generateText()}
+                        </>
+                      ) : null}
                     </p>
                   </div>
                 </div>

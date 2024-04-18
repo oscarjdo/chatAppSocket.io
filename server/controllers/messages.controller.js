@@ -15,7 +15,7 @@ export const sendMessage = async (req, res) => {
     ? `http://localhost:3000/${req.file.filename}`
     : null;
 
-  let mimetype = req.file ? req.file.mimetype.split("/")[0] : null;
+  let mimetype = req.file ? req.file.mimetype : null;
   mimetype =
     mimetype == "application" || mimetype == "text" ? "document" : mimetype;
 
@@ -55,7 +55,7 @@ export const sendMessage = async (req, res) => {
 
   const [lastInteraction] = await pool.query(
     `
-      update conversation set last_interaction = ? 
+      update conversation set last_interaction = ?
         where conversation_id = ?
     `,
     [new Date(), conversationId]
