@@ -101,16 +101,39 @@ export const deleteMessagesForAll = async (req, res) => {
 };
 
 export const deleteMessagesForMe = async (req, res) => {
-  const { messages, userId } = req.body;
-  const keys = Object.keys(messages);
+  const { messages, userId, clearChat, conversationId } = req.body;
+  let keys = messages ? Object.keys(messages) : [];
+
+  const allKeys = clearChat
+    ? await pool.query(
+        `
+    select message_id from not_show_messages
+      where conversation_id = ?
+      and user_id = ?
+      and deleted != true
+    `,
+        [conversationId, userId]
+      )
+    : false;
+
+  if (allKeys && allKeys[0].length > 0)
+    keys = allKeys[0].map((item) => item.message_id);
+
+  if (keys.length <= 0) return res.sendStatus(200);
 
   const UpdateQuery = `update not_show_messages set deleted = true
-    where user_id = ${userId}
-    and message_id = ?${` or user_id = ${userId} and message_id = ?`.repeat(
-      keys.length - 1
-    )}`;
+    ${
+      clearChat
+        ? `where user_id = ${userId}
+        and conversation_id = ${conversationId}`
+        : `where user_id = ${userId}
+      and message_id = ?${` or user_id = ${userId} and message_id = ?`.repeat(
+        keys.length - 1
+      )}`
+    }
+    `;
 
-  const [response] = await pool.query(UpdateQuery, keys);
+  const [response] = await pool.query(UpdateQuery, clearChat ? [] : keys);
 
   if (response.affectedRows <= 0)
     return res.json({

@@ -15,7 +15,7 @@ function Modal() {
 
   const friendState = useSelector((state) => state.friendState);
   const userState = useSelector((state) => state.userState);
-  const { modalOpen } = useSelector((state) => state.modalState);
+  const { modalOpen, type } = useSelector((state) => state.modalState);
   const { messages } = useSelector((state) => state.messageSelectState);
 
   const dispatch = useDispatch();
@@ -33,17 +33,27 @@ function Modal() {
           : [friendState.id],
       userId: userState.id,
     });
-    dispatch(setModalState({ open: false }));
+    dispatch(setModalState({ open: false, type: null }));
   };
 
   const deleteMessagesForMe = () => {
-    deleteMessagesMe({ messages, userId: userState.id });
+    deleteMessagesMe({ messages, userId: userState.id, clearChat: false });
     dispatch(selectMessage({ data: false, selected: false }));
-    dispatch(setModalState({ open: false }));
+    dispatch(setModalState({ open: false, type: null }));
+  };
+
+  const clearChat = () => {
+    deleteMessagesMe({
+      userId: userState.id,
+      conversationId: friendState.conversationId,
+      clearChat: true,
+    });
+
+    dispatch(setModalState({ open: false, type: null }));
   };
 
   const closeModal = () => {
-    dispatch(setModalState({ open: false }));
+    dispatch(setModalState({ open: false, type: null }));
   };
 
   useEffect(() => {
@@ -56,17 +66,35 @@ function Modal() {
     }
   }, [messages]);
 
+  const modalType = {
+    clearChat: "Sure to clean chat?",
+    trash: "Sure of deleting these messages?",
+    funcs: {
+      clearChat: ["Clear Chat", clearChat],
+      trash: ["For me", deleteMessagesForMe],
+    },
+  };
+
   return (
     <div id="modal-background" className={modalOpen ? "active" : ""}>
       <div id="modal">
-        <p>
-          {1 ? "Sure of deleting these messages?" : "Sure of clean the chat?"}
-        </p>
-        <div className={1 ? "" : "separate"}>
-          <button type="button" onClick={deleteMessagesForMe}>
-            For me
+        <p>{modalType[type]}</p>
+        <div>
+          {/* ---------------- */}
+
+          <button
+            type="button"
+            onClick={type ? modalType.funcs[type][1] : null}
+          >
+            {type ? modalType.funcs[type][0] : null}
           </button>
-          {canForAll && friendState.me && !friendState.me.leftGroupAt ? (
+
+          {/* ---------------- */}
+
+          {canForAll &&
+          friendState.me &&
+          !friendState.me.leftGroupAt &&
+          type !== "clearChat" ? (
             <button type="button" onClick={deleteMessagesForAll}>
               For all
             </button>
