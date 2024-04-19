@@ -49,7 +49,7 @@ function FriendNavBar() {
   };
 
   const handleClickOnTrash = () => {
-    dispatch(setModalState({ open: true, messages }));
+    dispatch(setModalState({ open: true, type: "trash" }));
   };
 
   return (

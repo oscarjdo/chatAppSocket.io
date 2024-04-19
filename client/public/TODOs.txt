@@ -2,7 +2,7 @@
 
 -✔Show the type of file on friend list.✔
 
--Create a chat cleaning function.
+-✔Create a chat cleaning function.✔
 
 -Create a message reply function.
 
