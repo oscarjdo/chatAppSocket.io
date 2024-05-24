@@ -3,6 +3,7 @@ import { AiOutlinePaperClip, AiFillAudio } from "react-icons/ai";
 import { BsFillImageFill, BsHeadphones } from "react-icons/bs";
 import { IoDocument } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
+import { IoIosCloseCircle } from "react-icons/io";
 
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,18 +13,23 @@ import FilePreview from "./FilePreview";
 import { setVideoAudio } from "../../../app/videoAudioSlice";
 import { changeChatState } from "../../../app/chatSlice";
 import { useSendMessageMutation } from "../../../app/queries/getMessages";
-import socket from "../../../io";
 import { useGetOutOfChatMutation } from "../../../app/queries/getFriendList";
+import { setReplyMessageState } from "../../../app/replyMessageSlice";
+
+import socket from "../../../io";
+import exactTime from "../../../utils/exactTime";
 
 function InputCtn() {
   const inputRef = useRef(null);
 
   const userState = useSelector((state) => state.userState);
   const friendState = useSelector((state) => state.friendState);
+  const replyMessageState = useSelector((state) => state.replyMessageState);
 
   const [mssg, setMssg] = useState("");
   const [multimedia, setMultimedia] = useState(false);
   const [file, setFile] = useState(null);
+  const [duration, setDuration] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -67,7 +73,7 @@ function InputCtn() {
     setFile(data);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const members =
@@ -82,6 +88,24 @@ function InputCtn() {
       members: members || [friendState.id],
       mssg,
       conversationId: friendState.conversationId,
+      reply: replyMessageState.open
+        ? {
+            id: replyMessageState.messageId,
+            sender: replyMessageState.messageSenderUsername,
+            senderId: replyMessageState.messageSenderId,
+            content: replyMessageState.messageContent,
+            mimetype: replyMessageState.mimetype,
+
+            fileData: {
+              url:
+                replyMessageState.mimetype == "video" ||
+                replyMessageState.mimetype == "image"
+                  ? replyMessageState.fileUrl
+                  : null,
+              duration: duration ? duration : null,
+            },
+          }
+        : null,
     };
 
     formData.append("mssgData", JSON.stringify(message));
@@ -97,6 +121,7 @@ function InputCtn() {
     }
 
     dispatch(setVideoAudio({}));
+    dispatch(setReplyMessageState({}));
     setFile(false);
     const inputs = document.getElementsByClassName("file-chat");
 
@@ -116,89 +141,163 @@ function InputCtn() {
     }, 500);
   };
 
+  const setFileType = (mimetype) => {
+    if (!mimetype) return replyMessageState.messageContent;
+
+    let text = mimetype;
+    text = text[0].toUpperCase().concat(text.slice(1));
+
+    const icon = {
+      Image: ["📷", false],
+      Audio: ["🔉", true],
+      Video: ["🎬", true],
+      Document: ["📃", false],
+    };
+
+    return `${icon[text][0]}${text} ${icon[text][1] ? duration : ""}${
+      replyMessageState.messageContent
+        ? ` - ${replyMessageState.messageContent}`
+        : ""
+    }`;
+  };
+
+  useEffect(() => {
+    if (
+      !replyMessageState.open ||
+      (replyMessageState.mimetype != "video" &&
+        replyMessageState.mimetype != "audio")
+    )
+      setDuration("");
+  }, [replyMessageState]);
+
   return (friendState.groupData &&
     friendState.groupData.isGroup &&
     !friendState.me.leftGroupAt) ||
     friendState.areFriends ? (
-    <form id="input-chat-ctn" onSubmit={handleSubmit}>
-      <div className="textarea-ctn">
-        <textarea type="text" value={mssg} onChange={handleChange} />
-      </div>
-      {file ? (
-        <button
-          type="button"
-          onClick={() => {
-            dispatch(setVideoAudio({}));
-            setFile(false);
-            const inputs = document.getElementsByClassName("file-chat");
+    <div id="inputCtn">
+      <div id="replyMssgCtn" className={replyMessageState.open ? "open" : ""}>
+        <div className="dataCtn">
+          <div>
+            <p style={{ color: replyMessageState.color }}>
+              {replyMessageState.messageSenderUsername}
+            </p>
+            <p>{setFileType(replyMessageState.mimetype)} </p>
+          </div>
+          {replyMessageState.mimetype == "video" ? (
+            <video
+              src={replyMessageState.fileUrl}
+              onLoadedData={(e) =>
+                setDuration(
+                  exactTime(Math.round(e.target.duration), null, true)
+                )
+              }
+            ></video>
+          ) : null}
 
-            for (let i = 0; i < inputs.length; i++) {
-              inputs[i].value = null;
-            }
-          }}
-        >
-          <MdClose id="clip-files-close-icon" />
-        </button>
-      ) : (
-        <button type="button" onClick={handleOpenMultimedia}>
-          <AiOutlinePaperClip id="clip-files-icon" />
-        </button>
-      )}
-      <button type="submit">
-        {mssg.trim().length <= 0 && !file ? (
-          <AiFillAudio className="send-mssg-icon voice-note" />
+          {replyMessageState.mimetype == "audio" ? (
+            <audio
+              style={{ display: "none" }}
+              src={replyMessageState.fileUrl}
+              onLoadedData={(e) =>
+                setDuration(
+                  exactTime(Math.round(e.target.duration), null, true)
+                )
+              }
+            ></audio>
+          ) : null}
+
+          {replyMessageState.mimetype == "image" ? (
+            <img src={replyMessageState.fileUrl} alt="" />
+          ) : null}
+          <button type="button">
+            <IoIosCloseCircle
+              className="icon"
+              onClick={() => dispatch(setReplyMessageState({}))}
+            />
+          </button>
+        </div>
+      </div>
+
+      <form id="input-chat-ctn" onSubmit={handleSubmit}>
+        <div className="textarea-ctn">
+          <textarea type="text" value={mssg} onChange={handleChange} />
+        </div>
+        {file ? (
+          <button
+            type="button"
+            onClick={() => {
+              dispatch(setVideoAudio({}));
+              setFile(false);
+              const inputs = document.getElementsByClassName("file-chat");
+
+              for (let i = 0; i < inputs.length; i++) {
+                inputs[i].value = null;
+              }
+            }}
+          >
+            <MdClose id="clip-files-close-icon" />
+          </button>
         ) : (
-          <BiSolidSend className="send-mssg-icon" />
+          <button type="button" onClick={handleOpenMultimedia}>
+            <AiOutlinePaperClip id="clip-files-icon" />
+          </button>
         )}
-      </button>
-      <div id="multimedia-ctn" className={multimedia ? "active" : ""}>
-        <input
-          type="file"
-          ref={inputRef}
-          className="file-chat"
-          name="document"
-          id="document"
-          accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf"
-          onChange={handleMultimediaChange}
-        />
-        <button type="button" className="doc">
-          <label htmlFor="document">
-            <IoDocument className="icon" />
-          </label>
+        <button type="submit">
+          {mssg.trim().length <= 0 && !file ? (
+            <AiFillAudio className="send-mssg-icon voice-note" />
+          ) : (
+            <BiSolidSend className="send-mssg-icon" />
+          )}
         </button>
+        <div id="multimedia-ctn" className={multimedia ? "active" : ""}>
+          <input
+            type="file"
+            ref={inputRef}
+            className="file-chat"
+            name="document"
+            id="document"
+            accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf"
+            onChange={handleMultimediaChange}
+          />
+          <button type="button" className="doc">
+            <label htmlFor="document">
+              <IoDocument className="icon" />
+            </label>
+          </button>
 
-        <input
-          type="file"
-          className="file-chat"
-          name="gallery"
-          id="gallery"
-          accept="image/*, video/mp4, video/webm, video/wmv"
-          onChange={handleMultimediaChange}
-        />
-        <button type="button" className="gall">
-          <label htmlFor="gallery">
-            <BsFillImageFill className="icon" />
-          </label>
-        </button>
+          <input
+            type="file"
+            className="file-chat"
+            name="gallery"
+            id="gallery"
+            accept="image/*, video/mp4, video/webm, video/wmv"
+            onChange={handleMultimediaChange}
+          />
+          <button type="button" className="gall">
+            <label htmlFor="gallery">
+              <BsFillImageFill className="icon" />
+            </label>
+          </button>
 
-        <input
-          type="file"
-          className="file-chat"
-          name="audios"
-          id="audios"
-          accept="audio/*"
-          onChange={handleMultimediaChange}
-        />
-        <button type="button" className="aud">
-          <label htmlFor="audios">
-            <BsHeadphones className="icon" />
-          </label>
-        </button>
-      </div>
-      <div id="file-preview">
-        <FilePreview />
-      </div>
-    </form>
+          <input
+            type="file"
+            className="file-chat"
+            name="audios"
+            id="audios"
+            accept="audio/*"
+            onChange={handleMultimediaChange}
+          />
+          <button type="button" className="aud">
+            <label htmlFor="audios">
+              <BsHeadphones className="icon" />
+            </label>
+          </button>
+        </div>
+        <div id="file-preview">
+          <FilePreview />
+        </div>
+      </form>
+    </div>
   ) : (
     <div id="input-chat-ctn" className="disabled">
       <div>

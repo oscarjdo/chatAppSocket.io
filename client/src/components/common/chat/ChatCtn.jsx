@@ -28,6 +28,7 @@ function ChatCtn() {
 
   const chatState = useSelector((state) => state.chatState);
   const friendState = useSelector((state) => state.friendState);
+  const replyMessageState = useSelector((state) => state.replyMessageState);
 
   const dispatch = useDispatch();
 
@@ -64,6 +65,7 @@ function ChatCtn() {
       onScroll={handleScroll}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      className={replyMessageState.open ? "replyMessage" : ""}
     >
       <ul>
         {friendState.messages.map((item, index) => {

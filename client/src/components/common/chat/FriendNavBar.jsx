@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { FaPhone } from "react-icons/fa";
 import {
   BsFillCameraVideoFill,
@@ -13,7 +15,7 @@ import { changeChatState } from "../../../app/chatSlice.js";
 import { selectMessage } from "../../../app/messageSelectSlice.js";
 import { setModalState } from "../../../app/modalSlice.js";
 import { notify } from "../../../utils/notify.js";
-import { useState } from "react";
+import { setReplyMessageState } from "../../../app/replyMessageSlice.js";
 
 import ChatOptions from "./chatOptions.jsx";
 import { activateInfo } from "../../../app/infoSlice.js";
@@ -30,6 +32,7 @@ function FriendNavBar() {
 
   const handleCloseChat = () => {
     dispatch(changeChatState(false));
+    dispatch(setReplyMessageState({}));
   };
 
   const handleClick = () => {
@@ -127,13 +130,6 @@ function FriendNavBar() {
           <p>{Object.keys(messages).length}</p>
         </div>
         <div className="big">
-          <button
-            type="button"
-            className={`${Object.keys(messages).length > 1 ? "disappear" : ""}`}
-          >
-            <BiSolidShare className="icon" />
-          </button>
-
           <button type="button">
             <BsStarFill className="icon" />
           </button>

@@ -598,8 +598,12 @@ nav p b {
 }
 #chat-mssg-ctn {
   height: calc(100% - 3.6rem - 3.6rem);
+  scroll-behavior: smooth;
   overflow-y: scroll;
   overflow-x: hidden;
+}
+#chat-mssg-ctn.replyMessage {
+  height: calc(100% - 3.6rem - 3.6rem - 4rem);
 }
 #chat-mssg-ctn h5 {
   width: -moz-fit-content;
@@ -745,6 +749,31 @@ nav p b {
 }
 .mssg > span.right {
   width: calc(100vw - 1.2rem - 2rem);
+}
+.mssg > #replyCtn {
+  margin: -0.2rem -0.2rem 0;
+  padding: 0.1rem 0.2rem;
+  display: flex;
+  justify-content: space-between;
+  background-color: rgba(0, 0, 0, 0.5058823529);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.mssg > #replyCtn .username {
+  font-weight: 500;
+  margin: 0 0.2rem;
+}
+.mssg > #replyCtn .content {
+  margin: -0.2rem 0.4rem 0;
+  color: rgba(226, 226, 226, 0.4941176471);
+}
+.mssg > #replyCtn .content > span {
+  color: #ffffff;
+}
+.mssg > #replyCtn > .media {
+  width: auto;
+  height: 3.6rem;
+  margin: -0.1rem -0.25rem -0.1rem 0;
 }
 
 .comp-ctn {
@@ -1355,13 +1384,19 @@ a.document:active p, a.document:active .download {
   font-size: 0.9rem;
 }
 
+#inputCtn {
+  position: relative;
+}
+
 #input-chat-ctn {
+  width: 100%;
   height: 3.6rem;
   padding: 0 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
+  z-index: 100;
   background-color: #161618;
 }
 #input-chat-ctn.disabled {
@@ -1446,6 +1481,59 @@ a.document:active p, a.document:active .download {
 }
 #delete-text > span:active {
   text-decoration: underline;
+}
+
+#replyMssgCtn {
+  width: 100%;
+  height: 0;
+  background-color: #161618;
+  border-top-left-radius: 0.8rem;
+  border-top-right-radius: 0.8rem;
+}
+#replyMssgCtn.open {
+  height: 4rem;
+  padding: 0.6rem 0.5rem;
+}
+#replyMssgCtn > div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  background-color: #222324;
+  border-radius: 0.6rem;
+  overflow: hidden;
+}
+#replyMssgCtn > div > div {
+  padding: 0.4rem;
+  display: grid;
+}
+#replyMssgCtn > div > div > p {
+  color: rgba(226, 226, 226, 0.4941176471);
+  font-size: 0.8rem;
+}
+#replyMssgCtn > div > img {
+  width: auto;
+  height: 100%;
+}
+#replyMssgCtn > div > video {
+  width: auto;
+  height: 100%;
+}
+#replyMssgCtn > div > button {
+  width: 1.5rem;
+  height: 1.5rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+#replyMssgCtn > div > button > .icon {
+  width: 100%;
+  height: 100%;
+  color: #7b8186;
 }
 
 #multimedia-ctn {
