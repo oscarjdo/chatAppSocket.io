@@ -1,8 +1,13 @@
 #chat-mssg-ctn {
   height: calc(100% - 3.6rem - 3.6rem);
+  scroll-behavior: smooth;
 
   overflow-y: scroll;
   overflow-x: hidden;
+
+  &.replyMessage {
+    height: calc(100% - 3.6rem - 3.6rem - 4rem);
+  }
 
   & h5 {
     width: fit-content;
@@ -184,6 +189,39 @@
 
     &.right {
       width: calc(100vw - 1.2rem - 2rem);
+    }
+  }
+
+  & > #replyCtn {
+    margin: -0.2rem -0.2rem 0;
+    padding: 0.1rem 0.2rem;
+    display: flex;
+    justify-content: space-between;
+
+    background-color: $black-transparent;
+    border-radius: 0.5rem;
+
+    overflow: hidden;
+
+    & .username {
+      font-weight: 500;
+      margin: 0 0.2rem;
+    }
+
+    & .content {
+      margin: -0.2rem 0.4rem 0;
+
+      color: $text-dark;
+
+      & > span {
+        color: $text;
+      }
+    }
+
+    & > .media {
+      width: auto;
+      height: 3.6rem;
+      margin: -0.1rem -0.25rem -0.1rem 0;
     }
   }
 }

@@ -8,6 +8,7 @@ import getTime from "../../../utils/getTime.js";
 import React, { Fragment, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectMessage } from "../../../app/messageSelectSlice.js";
+import { setReplyMessageState } from "../../../app/replyMessageSlice.js";
 
 import Document from "./files/Document.jsx";
 import Audio from "./files/Audio.jsx";
@@ -112,6 +113,7 @@ function Message({ data }) {
   const [deltaX, setDeltaX] = useState(0);
   const [messagePosition, setMessagePosition] = useState({ x: 0, y: 0 });
   const { open } = useSelector((state) => state.fileOpenState);
+  const [answeredMessageData, setAnsweredMessageData] = useState(null);
 
   const handleDragStart = (e) => {
     if (!selectMode) {
@@ -165,11 +167,22 @@ function Message({ data }) {
     setMessagePosition({ x: 0, y: 0 });
     setDeltaX(0);
 
+    const messageData = {
+      open: true,
+      id: item.message_id,
+      content: item.content,
+      senderUsername: item.username,
+      senderId: item.sender,
+      fileUrl: item.file_url,
+      color: colorList[item.sender],
+      mimetype: item.mimetype,
+    };
+
     if (!isScrolling && item.sender !== userState.id && deltaX > 40) {
-      console.log(deltaX);
+      dispatch(setReplyMessageState(messageData));
     }
     if (!isScrolling && item.sender == userState.id && deltaX < -40) {
-      console.log(deltaX);
+      dispatch(setReplyMessageState(messageData));
     }
   };
 
@@ -212,7 +225,39 @@ function Message({ data }) {
 
   useEffect(() => {
     // if (item.event) console.log(item);
+    // console.log(item.sender);
+    // console.log(colorList[item.sender])
+    if (item.answeredMessage) {
+      // console.log(JSON.parse(item.answeredMessage));
+      setAnsweredMessageData(JSON.parse(item.answeredMessage));
+    }
   }, []);
+
+  const setFileType = () => {
+    let mimetype = answeredMessageData.mimetype;
+
+    if (!mimetype) {
+      return <p className="content">{answeredMessageData.content}</p>;
+    }
+
+    mimetype = mimetype[0].toUpperCase().concat(mimetype.slice(1));
+
+    const icon = {
+      Image: "📷",
+      Audio: "🔉",
+      Video: "🎬",
+      Document: "📃",
+    };
+
+    return (
+      <p className="content">
+        <span>{icon[mimetype]}</span>
+        {mimetype}
+        {answeredMessageData.content ? " - " : ""}
+        {answeredMessageData.content}
+      </p>
+    );
+  };
 
   if ((item.sender && !item.deleted) || item.event) {
     return (
@@ -224,6 +269,7 @@ function Message({ data }) {
           <div className="event">{generateText()}</div>
         ) : (
           <li
+            id={`messageId${item.message_id}`}
             className={`mssg ${item.sender == userState.id ? "me" : "not-me"} ${
               item.mimetype ? "file" : ""
             } ${space ? "space" : ""} ${!item.is_show ? "deleted" : ""} ${
@@ -244,6 +290,43 @@ function Message({ data }) {
                 : `translate(${messagePosition.x}px, ${messagePosition.y}px)`,
             }}
           >
+            {answeredMessageData ? (
+              <div
+                id="replyCtn"
+                onClick={() => {
+                  let element = document.getElementById(
+                    `messageId${answeredMessageData.id}`
+                  );
+
+                  element.scrollIntoView();
+                }}
+              >
+                <div>
+                  <p
+                    className="username"
+                    style={{ color: colorList[answeredMessageData.senderId] }}
+                  >
+                    {answeredMessageData.sender == userState.username
+                      ? "You"
+                      : answeredMessageData.sender}
+                  </p>
+                  {setFileType()}
+                </div>
+                {answeredMessageData.mimetype == "video" ? (
+                  <video
+                    className="media"
+                    src={answeredMessageData.fileData.url}
+                  ></video>
+                ) : null}
+                {answeredMessageData.mimetype == "image" ? (
+                  <img
+                    className="media"
+                    src={answeredMessageData.fileData.url}
+                    alt=""
+                  />
+                ) : null}
+              </div>
+            ) : null}
             {friendState.groupData &&
             friendState.groupData.isGroup &&
             item.sender != userState.id &&

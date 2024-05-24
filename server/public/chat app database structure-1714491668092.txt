@@ -1,0 +1,98 @@
+Tabla de Usuarios:
+
+user_id (clave primaria)
+username
+password (se recomienda almacenar las contraseñas con hash y sal para mayor seguridad)
+
+
+Tabla de Amigos:
+
+friendship_id (clave primaria)
+user_id (clave foránea que hace referencia a la tabla de Usuarios)
+friend_id (clave foránea que hace referencia a la tabla de Usuarios)
+
+
+Tabla de Conversaciones:
+
+conversation_id (clave primaria)
+conversation_name (opcional, para darle un nombre a la conversación)
+
+
+Tabla de Participantes de Conversaciones:
+
+participant_id (clave primaria)
+conversation_id (clave foránea que hace referencia a la tabla de Conversaciones)
+user_id (clave foránea que hace referencia a la tabla de Usuarios)
+
+
+Tabla de Mensajes:
+
+message_id (clave primaria)
+conversation_id (clave foránea que hace referencia a la tabla de Conversaciones)
+user_id (clave foránea que hace referencia a la tabla de Usuarios)
+message_content
+timestamp
+
+
+-----------------------------------------------------------------------
+
+Tabla de Usuarios:
+
+user_id (clave primaria)
+username
+password (hash y sal para mayor seguridad)
+nombre
+apellido
+email
+fecha_de_registro
+
+
+Tabla de Amigos:
+
+friendship_id (clave primaria)
+user_id (clave foránea que hace referencia a la tabla de Usuarios)
+friend_id (clave foránea que hace referencia a la tabla de Usuarios)
+
+
+Tabla de Conversaciones:
+
+conversation_id (clave primaria)
+conversation_name (opcional, para darle un nombre a la conversación)
+
+
+Tabla de Participantes de Conversaciones:
+
+participant_id (clave primaria)
+conversation_id (clave foránea que hace referencia a la tabla de Conversaciones)
+user_id (clave foránea que hace referencia a la tabla de Usuarios)
+
+
+Tabla de Mensajes:
+
+message_id (clave primaria)
+conversation_id (clave foránea que hace referencia a la tabla de Conversaciones)
+user_id (clave foránea que hace referencia a la tabla de Usuarios)
+message_content
+timestamp
+
+-----------------------------------------------------------------------
+
+-- Insertar datos en la tabla Usuarios
+INSERT INTO Usuarios (user_id, username, password, nombre, apellido, email, fecha_de_registro)
+VALUES (1, 'usuario1', 'contraseña1', 'Nombre1', 'Apellido1', 'correo1@example.com', '2023-06-21');
+
+-- Insertar datos en la tabla Amigos
+INSERT INTO Amigos (friendship_id, user_id, friend_id)
+VALUES (1, 1, 2); -- El usuario 1 es amigo del usuario 2
+
+-- Insertar datos en la tabla Conversaciones
+INSERT INTO Conversaciones (conversation_id, conversation_name)
+VALUES (1, 'Conversación 1');
+
+-- Insertar datos en la tabla Participantes de Conversaciones
+INSERT INTO Participantes_de_Conversaciones (participant_id, conversation_id, user_id)
+VALUES (1, 1, 1); -- El usuario 1 participa en la conversación 1
+
+-- Insertar datos en la tabla Mensajes
+INSERT INTO Mensajes (message_id, conversation_id, user_id, message_content, timestamp)
+VALUES (1, 1, 1, 'Hola amigo', '2023-06-21 10:30:00');

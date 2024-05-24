@@ -8,14 +8,15 @@ const currentDir = dirname(fileURLToPath(import.meta.url));
 export const sendMessage = async (req, res) => {
   const { mssgData } = req.body;
 
-  const { userId, members, mssg, conversationId, answeredMssgId } =
-    JSON.parse(mssgData);
+  const { userId, members, mssg, conversationId, reply } = JSON.parse(mssgData);
+
+  const stringedReply = reply ? JSON.stringify(reply) : null;
 
   const fileUrl = req.file
     ? `http://localhost:3000/${req.file.filename}`
     : null;
 
-  let mimetype = req.file ? req.file.mimetype : null;
+  let mimetype = req.file ? req.file.mimetype.split("/")[0] : null;
   mimetype =
     mimetype == "application" || mimetype == "text" ? "document" : mimetype;
 
@@ -25,15 +26,7 @@ export const sendMessage = async (req, res) => {
       values
       (?,?,?,?,?,?,?);
     `,
-    [
-      conversationId,
-      userId,
-      mssg,
-      new Date(),
-      mimetype,
-      fileUrl,
-      answeredMssgId,
-    ]
+    [conversationId, userId, mssg, new Date(), mimetype, fileUrl, stringedReply]
   );
 
   if (messageCreated.insertId <= 0)
