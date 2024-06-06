@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ChatCtn, FriendNavBar, InfoChat, InputCtn } from "./common/chat/";
+import ChatOptions from "./common/chat/chatOptions.jsx";
 import Loader from "./common/loader/Loader";
 
 import { useGetMessagesQuery } from "../app/queries/getMessages";
@@ -30,9 +31,18 @@ function Chat() {
 
   useEffect(() => {
     if (isError) console.log(error);
-    if (isSuccess) dispatch(setFriendData(data));
-    scrollToBottom();
+    if (isSuccess) {
+      dispatch(setFriendData(data));
+      scrollToBottom();
 
+      if (chatState.scrollTo) {
+        setTimeout(() => {
+          let element = document.getElementById(chatState.scrollTo);
+
+          element.scrollIntoView();
+        }, 800);
+      }
+    }
     socket.on("server:reloadApp", update);
     socket.on("server:reloadChat", update);
   }, [socket, data]);
@@ -48,6 +58,7 @@ function Chat() {
       {isLoading ? <Loader /> : null}
       <InputCtn />
       <InfoChat />
+      <ChatOptions />
       <Modal />
     </div>
   );

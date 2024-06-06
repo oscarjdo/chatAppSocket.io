@@ -5,8 +5,7 @@ import { PiUserCirclePlusBold } from "react-icons/pi";
 import { setAddFriendMode } from "../app/addFriendModeSlice.js";
 
 import Notis from "./common/actionBarBttns/Notis.jsx";
-import OptionsMenu from "./common/actionBarBttns/OptionsMenu.jsx";
-import LogOut from "./common/actionBarBttns/LogOut.jsx";
+import OptionsBttn from "./common/actionBarBttns/OptionsBttn.jsx";
 
 function ActionsBar() {
   const addFriendModeState = useSelector((state) => state.addFriendModeState);
@@ -29,7 +28,7 @@ function ActionsBar() {
             onClick={() => handleChangeMode(true)}
           />
           <Notis />
-          <OptionsMenu />
+          <OptionsBttn />
         </>
       ) : (
         <RiCloseCircleFill

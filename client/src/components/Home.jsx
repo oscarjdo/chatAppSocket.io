@@ -4,6 +4,7 @@ import ActionsBar from "./ActionsBar";
 import AddFriendModeTransition from "./common/loader/addFriendModeTransition.jsx";
 import FriendRequests from "./common/FriendRequests";
 import Options from "./common/actionBarBttns/options/Options.jsx";
+import OptionsMenu from "./common/actionBarBttns/OptionsMenu.jsx";
 
 import { setFriendsOnline } from "../app/friendsOnlineSlice";
 import socket from "../io.js";
@@ -51,6 +52,7 @@ function Home() {
     <div id="chat-app-ctn">
       <ActionsBar />
       <FriendList />
+      <OptionsMenu />
       <Chat />
       <FriendRequests />
       <AddFriendModeTransition />

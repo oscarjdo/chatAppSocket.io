@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 
 import { getUserToken } from "./app/userSlice";
+import { setSideMenusState } from "./app/sideMenusSlice";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,6 +17,7 @@ import socket from "./io";
 function App() {
   const chatState = useSelector((state) => state.chatState);
   const location = useLocation();
+  const { type } = useSelector((state) => state.sideMenusState);
 
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
@@ -46,7 +48,13 @@ function App() {
   }, [chatState]);
 
   return (
-    <div id="page-ctn" className={open ? "in-chat" : null}>
+    <div
+      id="page-ctn"
+      className={open ? "in-chat" : null}
+      onClick={() => {
+        type != null ? dispatch(setSideMenusState({})) : null;
+      }}
+    >
       <Navbar />
       <AnimatePresence>
         <Routes location={location} key={location.pathname}>

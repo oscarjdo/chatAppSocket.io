@@ -9,7 +9,7 @@ const scrollToBottom = (down) => {
       element.scrollTop = element.scrollHeight;
       element.style.scrollBehavior = "smooth";
     }
-  }, 100);
+  }, 10);
 };
 
 export default scrollToBottom;
