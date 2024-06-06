@@ -1,4 +1,7 @@
 import pool from "../db.js";
+import { fileURLToPath } from "url";
+
+const currentPath = fileURLToPath(import.meta.url);
 
 export const getFriendList = async (req, res) => {
   const { id } = req.params;
@@ -191,7 +194,7 @@ export const getFriendData = async (req, res) => {
 
   const [messages] = await pool.query(
     `
-    SELECT c.conversation_id, m.message_id, m.user_id sender, u.username, u.img_url imgUrl, m.content, m.sent_date date, m.message_read, m.mimetype, nsm.is_show, nsm.deleted, m.file_url, m.answeredMessage, m.event
+    SELECT c.conversation_id, m.message_id, m.user_id sender, u.username, u.img_url imgUrl, m.content, m.sent_date date, m.message_read, m.mimetype, nsm.is_show, nsm.deleted, m.file_url, m.answeredMessage
 	    FROM conversation c
 	    LEFT JOIN conversation_members cm ON cm.conversation_id = c.conversation_id
       LEFT JOIN users u ON u.id = cm.user_id
@@ -202,6 +205,14 @@ export const getFriendData = async (req, res) => {
     [userId, conversationId, user[0].leftGroupAt || new Date()]
   );
 
+  const [featuredMessages] = await pool.query(
+    `
+    select * from featured_messages
+      where conversation_id = ? and user_id = ?;
+  `,
+    [conversationId, userId]
+  );
+
   const [events] = await pool.query(
     `
     select content, sent_date date, event from messages 
@@ -210,7 +221,14 @@ export const getFriendData = async (req, res) => {
     [conversationId, user[0].leftGroupAt || new Date(), true]
   );
 
-  const allMessages = [messages, events].flat().sort((a, b) => a.date - b.date);
+  let allMessages = [messages, events].flat().sort((a, b) => a.date - b.date);
+  allMessages = allMessages.map((message) => {
+    const index = featuredMessages.find(
+      (item) => item.message_id == message.message_id
+    );
+
+    return { ...message, featured: Boolean(index) };
+  });
 
   res.json({
     user: user[0],
@@ -219,4 +237,27 @@ export const getFriendData = async (req, res) => {
     groupData: groupData[0],
     conversationId,
   });
+};
+
+export const getFeaturedMessages = async (req, res) => {
+  const { id: userId } = req.params;
+
+  if (!userId)
+    return res.status(400).json({
+      Error: `Error at ${currentPath} at Function getFeaturedMessages: Necessary data is missing.`,
+    });
+
+  const [response] = await pool.query(
+    `
+    select fm.message_id, fm.conversation_id, m.content, m.user_id as senderId, us.username as senderUsername, c.isGroup, c.group_name, c.img_url as img_url_group, ui.username, ui.img_url from featured_messages fm
+	    left join messages m on m.message_id = fm.message_id
+      left join conversation c on c.conversation_id = fm.conversation_id
+      left join conversation_members cm on cm.conversation_id = fm.conversation_id and c.isGroup = false
+      left join users ui on ui.id = cm.user_id
+      left join users us on  us.id = m.user_id
+	    where fm.user_id = ? and cm.user_id != ? or cm.user_id is null;`,
+    [userId, userId]
+  );
+
+  res.json(response);
 };

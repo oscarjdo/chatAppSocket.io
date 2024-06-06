@@ -4,6 +4,7 @@ import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
 const currentDir = dirname(fileURLToPath(import.meta.url));
+const currentPath = fileURLToPath(import.meta.url);
 
 export const sendMessage = async (req, res) => {
   const { mssgData } = req.body;
@@ -259,6 +260,51 @@ export const getOutOfChat = async (req, res) => {
         .sendStatus(400)
         .json({ messgae: "Error in 'delete from conversation'" });
   }
+
+  res.sendStatus(200);
+};
+
+export const addFeaturedMessage = async (req, res) => {
+  const { messageId, conversationId, userId } = req.body;
+
+  const [response] = await pool.query(
+    `
+      insert into featured_messages (user_id, conversation_id, message_id)
+        values
+          ${`(${userId}, ${conversationId}, ?), `.repeat(
+            messageId.length - 1
+          )}(${userId}, ${conversationId}, ?)
+    `,
+    messageId
+  );
+
+  if (response.affectedRows <= 0)
+    return res
+      .status(400)
+      .json(`Error in ${currentPath} at Function addFeatureMessage.`);
+
+  res.sendStatus(200);
+};
+
+export const removeFeaturedMessage = async (req, res) => {
+  const { messageId, conversationId, userId } = req.body;
+
+  const [response] = await pool.query(
+    `
+      delete from  featured_messages
+        where
+        user_id = ? and
+        conversation_id = ? and
+        ${`message_id = ? or `.repeat(messageId.length - 1)}
+        message_id = ?
+    `,
+    [userId, conversationId, messageId].flat()
+  );
+
+  if (response.affectedRows <= 0)
+    return res
+      .status(400)
+      .json(`Error in ${currentPath} at Function removeFeaturedMessage.`);
 
   res.sendStatus(200);
 };

@@ -18,6 +18,22 @@ export const getMessagesApi = createApi({
       }),
       invalidatesTags: ["getMessages"],
     }),
+    addFeaturedMessage: builder.mutation({
+      query: (body) => ({
+        url: "/addFeaturedMessage",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["getMessages"],
+    }),
+    removeFeaturedMessage: builder.mutation({
+      query: (body) => ({
+        url: "/removeFeaturedMessage",
+        method: "DELETE",
+        body,
+      }),
+      invalidatesTags: ["getMessages"],
+    }),
     deleteMessagesForAll: builder.mutation({
       query: (body) => ({
         url: "/deleteMessagesForAll",
@@ -48,6 +64,8 @@ export const getMessagesApi = createApi({
 export const {
   useGetMessagesQuery,
   useSendMessageMutation,
+  useAddFeaturedMessageMutation,
+  useRemoveFeaturedMessageMutation,
   useDeleteMessagesForAllMutation,
   useDeleteMessagesForMeMutation,
   useLeaveGroupMutation,

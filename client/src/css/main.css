@@ -18,6 +18,7 @@ body {
 }
 
 #chat-app-ctn {
+  position: relative;
   overflow: hidden;
 }
 
@@ -386,7 +387,7 @@ nav p b {
   justify-content: center;
   align-items: center;
   position: absolute;
-  top: 3rem;
+  top: 0;
   left: -100%;
   z-index: 900;
   background-color: #161618;
@@ -1768,31 +1769,22 @@ a.document:active p, a.document:active .download {
   height: 100%;
 }
 
-#config-ctn {
-  width: 2rem;
-  height: 2rem;
-}
-
 .chat-options,
 .settings-menu {
   width: -moz-max-content;
   width: max-content;
   position: absolute;
-  top: 0rem;
-  right: 0;
+  top: 0;
+  right: 0%;
   z-index: 1000;
   background-color: #161618;
   border: 1px solid rgba(226, 226, 226, 0.4941176471);
   font-size: 0.9rem;
-  -webkit-clip-path: circle(150% at 100% 0);
-          clip-path: circle(150% at 100% 0);
-  transition: -webkit-clip-path ease 0.6s;
-  transition: clip-path ease 0.6s;
-  transition: clip-path ease 0.6s, -webkit-clip-path ease 0.6s;
+  transition: right ease 0.3s;
 }
-.chat-options.settings-menu,
-.settings-menu.settings-menu {
-  top: 3rem;
+.chat-options.inactive,
+.settings-menu.inactive {
+  right: -55%;
 }
 .chat-options ul,
 .settings-menu ul {
@@ -1828,11 +1820,6 @@ a.document:active p, a.document:active .download {
 .settings-menu ul li:last-child button::after {
   content: none;
 }
-.chat-options.inactive,
-.settings-menu.inactive {
-  -webkit-clip-path: circle(0% at 100px 0);
-          clip-path: circle(0% at 100px 0);
-}
 
 #notifications-background {
   width: 100%;
@@ -1846,7 +1833,7 @@ a.document:active p, a.document:active .download {
           backdrop-filter: blur(2px);
 }
 #notifications-background.active {
-  top: 3rem;
+  top: 0;
 }
 
 #notifications-ctn {
@@ -1985,7 +1972,7 @@ a.document:active p, a.document:active .download {
   width: 100%;
   height: calc(100vh - 3rem);
   position: absolute;
-  top: 3rem;
+  top: 0rem;
   left: -100%;
   background-color: #161618;
   transition: left ease 0.3s;
@@ -2374,6 +2361,71 @@ a.document:active p, a.document:active .download {
     transform: translateY(-110%);
   }
 }
+#FeMeNav {
+  width: 100%;
+  height: 3rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background-color: #222324;
+  overflow: hidden;
+}
+#FeMeNav > .icon {
+  width: 1.6rem;
+  height: 1.6rem;
+  position: absolute;
+  top: calc(50% - 0.8rem);
+  left: 0.4rem;
+}
+
+#FeMeLi {
+  margin: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+#FeMeLi :last-child {
+  border-bottom: none;
+}
+#FeMeLi > li {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid #7b8186;
+}
+#FeMeLi > li > .photo {
+  width: 2.6rem;
+  height: 2.6rem;
+  min-width: 2.6rem;
+  min-height: 2.6rem;
+}
+#FeMeLi > li > div {
+  width: calc(100% - 2rem);
+  overflow: hidden;
+}
+#FeMeLi > li > div > h3 {
+  margin-top: -0.2rem;
+  font-weight: 100;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#FeMeLi > li > div > p {
+  max-width: 100%;
+  color: #7b8186;
+  font-size: 0.9rem;
+}
+#FeMeLi > li > .icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-left: auto;
+  transform: rotate(180deg);
+}
+
 .loader-ctn {
   width: 100%;
   height: 0.5rem;

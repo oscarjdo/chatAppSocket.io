@@ -6,9 +6,9 @@
 
 -✔Create a message reply function.✔
 
--Create a feature that allows users to save some messages in a section called "Featured Messages"
+-✔Create a feature that allows users to save some messages in a section called "Featured Messages"
   and when the user clicks on one of the messages in that section,
-  they will be able to send them to the message in the chat.
+  they will be able to send them to the message in the chat.✔
 
 -Create a message forwarding function.
 

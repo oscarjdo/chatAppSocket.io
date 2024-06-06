@@ -2,6 +2,7 @@ import { BiCheck, BiCheckDouble, BiError } from "react-icons/bi";
 import { LuClock4 } from "react-icons/lu";
 import { MdDeleteForever } from "react-icons/md";
 import { FaChevronRight } from "react-icons/fa";
+import { TbStarFilled } from "react-icons/tb";
 
 import getTime from "../../../utils/getTime.js";
 
@@ -294,11 +295,13 @@ function Message({ data }) {
               <div
                 id="replyCtn"
                 onClick={() => {
+                  if (selectMode) return;
+
                   let element = document.getElementById(
                     `messageId${answeredMessageData.id}`
                   );
 
-                  element.scrollIntoView();
+                  return element.scrollIntoView();
                 }}
               >
                 <div>
@@ -360,7 +363,10 @@ function Message({ data }) {
 
                 <p className="mssg-text">
                   {item.content}&nbsp;&nbsp;
-                  <i className="date">{getTime(itemDate)}</i>
+                  <i className="date">
+                    {item.featured ? <TbStarFilled /> : ""}
+                    {getTime(itemDate)}
+                  </i>
                 </p>
               </>
             ) : (

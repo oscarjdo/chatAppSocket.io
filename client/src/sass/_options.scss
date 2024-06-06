@@ -2,7 +2,7 @@
   width: 100%;
   height: calc(100vh - 3rem);
   position: absolute;
-  top: 3rem;
+  top: 0rem;
   left: -100%;
 
   background-color: $dark;
@@ -16,3 +16,4 @@
 
 @import "./options/userInfo";
 @import "./options/createNewGroup";
+@import "./options/featuredMessages";

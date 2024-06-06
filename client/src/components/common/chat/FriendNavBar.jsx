@@ -1,11 +1,6 @@
-import { useState } from "react";
-
 import { FaPhone } from "react-icons/fa";
-import {
-  BsFillCameraVideoFill,
-  BsFillTrashFill,
-  BsStarFill,
-} from "react-icons/bs";
+import { BsFillCameraVideoFill, BsFillTrashFill } from "react-icons/bs";
+import { TbStarFilled, TbStarOff } from "react-icons/tb";
 import { IoIosArrowBack } from "react-icons/io";
 import { BiSolidShare } from "react-icons/bi";
 import { SlOptionsVertical } from "react-icons/sl";
@@ -16,44 +11,67 @@ import { selectMessage } from "../../../app/messageSelectSlice.js";
 import { setModalState } from "../../../app/modalSlice.js";
 import { notify } from "../../../utils/notify.js";
 import { setReplyMessageState } from "../../../app/replyMessageSlice.js";
+import { setSideMenusState } from "../../../app/sideMenusSlice.js";
 
-import ChatOptions from "./chatOptions.jsx";
 import { activateInfo } from "../../../app/infoSlice.js";
+import {
+  useAddFeaturedMessageMutation,
+  useRemoveFeaturedMessageMutation,
+} from "../../../app/queries/getMessages.js";
+import { useEffect, useState } from "react";
 
 function FriendNavBar() {
-  const [optionsOpen, setOptionsOpen] = useState(false);
+  const userState = useSelector((state) => state.userState);
   const friendState = useSelector((state) => state.friendState);
   const friendsOnlineState = useSelector((state) => state.friendsOnlineState);
   const { selected, messages } = useSelector(
     (state) => state.messageSelectState
   );
+  const [justFeatured, setJustFeatured] = useState(false);
 
   const dispatch = useDispatch();
+
+  const [addFeaturedMessage] = useAddFeaturedMessageMutation();
+  const [removeFeaturedMessage] = useRemoveFeaturedMessageMutation();
 
   const handleCloseChat = () => {
     dispatch(changeChatState(false));
     dispatch(setReplyMessageState({}));
   };
 
-  const handleClick = () => {
-    setOptionsOpen(true);
-    document.body.addEventListener("pointerdown", function handleEvent(e) {
-      if (!e.target.contains(document.getElementById("icon-action-options"))) {
-        setOptionsOpen(false);
-        document.body.removeEventListener("pointerdown", handleEvent);
+  const handleClickOnStar = () => {
+    try {
+      if (Boolean(Object.values(messages).find((item) => !item[2].featured))) {
+        const keys = Object.keys(messages);
+        const values = Object.values(messages);
+
+        const filteredMessages = keys.filter(
+          (item, index) => !values[index][2].featured
+        );
+
+        addFeaturedMessage({
+          messageId: filteredMessages,
+          conversationId: friendState.conversationId,
+          userId: userState.id,
+        });
+      } else {
+        removeFeaturedMessage({
+          messageId: Object.keys(messages),
+          conversationId: friendState.conversationId,
+          userId: userState.id,
+        });
       }
-    });
-    document.body.addEventListener("touchstart", function handleEvent(e) {
-      if (!e.target.contains(document.getElementById("icon-action-options"))) {
-        setOptionsOpen(false);
-        document.body.removeEventListener("click", handleEvent);
-      }
-    });
+      dispatch(selectMessage({ data: false, selected: false }));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleClickOnTrash = () => {
-    dispatch(setModalState({ open: true, type: "trash" }));
-  };
+  useEffect(() => {
+    setJustFeatured(
+      !Boolean(Object.values(messages).find((item) => !item[2].featured))
+    );
+  }, [messages]);
 
   return (
     <div id="chat-nav">
@@ -107,14 +125,8 @@ function FriendNavBar() {
           <SlOptionsVertical
             id="icon-action-options"
             className="icon-action"
-            onClick={handleClick}
+            onClick={() => dispatch(setSideMenusState({ type: "chatMenu" }))}
           />
-          <div
-            id="chat-options-ctn"
-            className={`chat-options ${!optionsOpen ? "inactive" : ""}`}
-          >
-            <ChatOptions />
-          </div>
         </div>
       </div>
       <div className={`message-menu ${selected ? "active" : ""}`}>
@@ -130,11 +142,20 @@ function FriendNavBar() {
           <p>{Object.keys(messages).length}</p>
         </div>
         <div className="big">
-          <button type="button">
-            <BsStarFill className="icon" />
+          <button type="button" onClick={handleClickOnStar}>
+            {justFeatured ? (
+              <TbStarOff className="icon" />
+            ) : (
+              <TbStarFilled className="icon" />
+            )}
           </button>
 
-          <button type="button" onClick={handleClickOnTrash}>
+          <button
+            type="button"
+            onClick={() =>
+              dispatch(setModalState({ open: true, type: "trash" }))
+            }
+          >
             <BsFillTrashFill className="icon" />
           </button>
 
