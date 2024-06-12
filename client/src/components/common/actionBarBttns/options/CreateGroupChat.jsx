@@ -1,7 +1,6 @@
 import { IoIosArrowBack } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
 
-import { useGetFriendListQuery } from "../../../../app/queries/getFriendList";
 import { setOptionsState } from "../../../../app/optionsSlice";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -20,12 +19,9 @@ function CreateGroupChat() {
 
   const userState = useSelector((state) => state.userState);
   const friendsOnlineState = useSelector((state) => state.friendsOnlineState);
+  const { list } = useSelector((state) => state.friendListState);
 
   const dispatch = useDispatch();
-
-  const { data, error, isError, isLoading, isSuccess } = useGetFriendListQuery(
-    `/getFriendList/${userState.id}`
-  );
 
   const handleImage = (e) => {
     const file = e.target.files[0];
@@ -55,7 +51,7 @@ function CreateGroupChat() {
 
   const handleClick = (item) => {
     const exists = memberList
-      .map((it) => (it.id == item.members.userId ? item.members.userId : false))
+      .map((it) => (it.id == item.userId ? item.userId : false))
       .filter((it) => it)[0];
 
     if (exists) handleCloseMember(exists);
@@ -63,9 +59,9 @@ function CreateGroupChat() {
       setMemberList([
         ...memberList,
         {
-          id: item.members.userId,
-          username: item.members.username,
-          photo: item.members.imgUrl,
+          id: item.userId,
+          username: item.username,
+          photo: item.imgUrl,
           in: true,
         },
       ]);
@@ -118,10 +114,6 @@ function CreateGroupChat() {
   };
 
   useEffect(() => {
-    if (isError) console.log(error);
-  }, [data]);
-
-  useEffect(() => {
     if (memberSelected)
       setMemberList(
         memberList.sort((a, b) =>
@@ -132,7 +124,7 @@ function CreateGroupChat() {
 
   return (
     <>
-      <div id="new-group-nav">
+      <div className="friendListMenuNav borderTop">
         <IoIosArrowBack
           className="icon"
           onClick={() => dispatch(setOptionsState({ open: false }))}
@@ -237,51 +229,37 @@ function CreateGroupChat() {
 
           {!menuChanged ? (
             <ul
-              className={`friend-list-to-add ${
+              className={`friendListMenu moveTransition ${
                 memberList.length > 0 ? "active" : ""
               }`}
             >
-              {isLoading ? <p>Is loading...</p> : null}
-              {data && isSuccess
-                ? data
-                    .slice()
-                    .sort((a, b) =>
-                      !a.isGroup && !b.isGroup
-                        ? a.members.username
-                            .toUpperCase()
-                            .localeCompare(b.members.username.toUpperCase())
-                        : null
-                    )
-                    .map((item, index) => {
-                      const selected = memberList.map((it) =>
-                        it.id == item.members.userId ? true : false
-                      );
+              {list.map((item, index) => {
+                const selected = memberList.map((it) =>
+                  it.id == item.userId ? true : false
+                );
 
-                      if (item.isGroup) return null;
+                return (
+                  <li key={index} onClick={() => handleClick(item)}>
+                    <div
+                      className="photo"
+                      style={{
+                        "--p": item.imgUrl
+                          ? `url("${item.imgUrl}")`
+                          : "url('/profile-img.jpg')",
+                      }}
+                    ></div>
 
-                      return (
-                        <li key={index} onClick={() => handleClick(item)}>
-                          <div
-                            className="photo"
-                            style={{
-                              "--p": item.members.imgUrl
-                                ? `url("${item.members.imgUrl}")`
-                                : "url('/profile-img.jpg')",
-                            }}
-                          ></div>
+                    <div className="data">
+                      <p>{item.username}</p>
+                      <p>User ID: {item.userId}</p>
+                    </div>
 
-                          <div className="data">
-                            <p>{item.members.username}</p>
-                            <p>User ID: {item.members.userId}</p>
-                          </div>
-
-                          <span
-                            className={selected.includes(true) ? "active" : ""}
-                          ></span>
-                        </li>
-                      );
-                    })
-                : null}
+                    <span
+                      className={selected.includes(true) ? "active" : ""}
+                    ></span>
+                  </li>
+                );
+              })}
             </ul>
           ) : null}
 

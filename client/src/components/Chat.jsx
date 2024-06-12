@@ -10,6 +10,7 @@ import { setFriendData } from "../app/friendSlice";
 import scrollToBottom from "../utils/scroolToBottom";
 import socket from "../io";
 import Modal from "./common/chat/Modal";
+import FriendListMenu from "./common/chat/FriendListMenu.jsx";
 
 function Chat() {
   const chatState = useSelector((state) => state.chatState);
@@ -60,6 +61,7 @@ function Chat() {
       <InfoChat />
       <ChatOptions />
       <Modal />
+      <FriendListMenu />
     </div>
   );
 }

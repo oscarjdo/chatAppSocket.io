@@ -194,7 +194,7 @@ export const getFriendData = async (req, res) => {
 
   const [messages] = await pool.query(
     `
-    SELECT c.conversation_id, m.message_id, m.user_id sender, u.username, u.img_url imgUrl, m.content, m.sent_date date, m.message_read, m.mimetype, nsm.is_show, nsm.deleted, m.file_url, m.answeredMessage
+    SELECT c.conversation_id, m.message_id, m.user_id sender, u.username, u.img_url imgUrl, m.content, m.sent_date date, m.message_read, m.mimetype, nsm.is_show, nsm.deleted, m.file_url, m.answeredMessage, m.forwarded
 	    FROM conversation c
 	    LEFT JOIN conversation_members cm ON cm.conversation_id = c.conversation_id
       LEFT JOIN users u ON u.id = cm.user_id

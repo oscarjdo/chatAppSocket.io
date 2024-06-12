@@ -10,7 +10,7 @@
   and when the user clicks on one of the messages in that section,
   they will be able to send them to the message in the chat.✔
 
--Create a message forwarding function.
+-✔Create a message forwarding function.✔
 
 -Give functions (info & copy) to the "plus button" in the selected message.
 
