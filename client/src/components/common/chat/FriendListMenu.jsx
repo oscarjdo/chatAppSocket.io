@@ -14,7 +14,7 @@ function FriendListMenu() {
   const { list } = useSelector((state) => state.friendListState);
   const { open, messages } = useSelector((state) => state.forwardMssgMenuState);
 
-  const [sent, setSent] = useState(Array(list.length).fill(false));
+  const [sent, setSent] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -50,6 +50,10 @@ function FriendListMenu() {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    if (sent.length <= 0) setSent(Array(list.length).fill(false));
+  }, [list]);
 
   return (
     <div className={open ? "active" : ""} id="friendListMenu">
