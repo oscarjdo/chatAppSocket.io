@@ -106,6 +106,7 @@ function InputCtn() {
             },
           }
         : null,
+      forwarded: { res: false },
     };
 
     formData.append("mssgData", JSON.stringify(message));
@@ -114,9 +115,11 @@ function InputCtn() {
 
     if (mssg.trim().length > 0 || file) {
       sendMessage(formData);
-      socket.emit("client:reloadApp", {
-        users: [members || [friendState.id], userState.id].flat(),
-      });
+      setTimeout(() => {
+        socket.emit("client:reloadApp", {
+          users: [members || [friendState.id], userState.id].flat(),
+        });
+      }, 500);
       setMssg("");
     }
 
@@ -220,7 +223,12 @@ function InputCtn() {
 
       <form id="input-chat-ctn" onSubmit={handleSubmit}>
         <div className="textarea-ctn">
-          <textarea type="text" value={mssg} onChange={handleChange} />
+          <textarea
+            type="text"
+            value={mssg}
+            placeholder="Say something"
+            onChange={handleChange}
+          />
         </div>
         {file ? (
           <button

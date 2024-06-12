@@ -67,6 +67,7 @@ create table messages (
     mimetype varchar(20) default null,
     file_url varchar(255) default null,
     answeredMessage text default null,
+    forwarded boolean default false,
     event boolean default false,
     foreign key (answeredMessage) references messages (message_id),
     foreign key (conversation_id) references conversation (conversation_id),
@@ -101,30 +102,12 @@ alter table featured_messages drop column conversation_id;
 
 alter table featured_messages add column message_sender int not null,
 	add foreign key (message_sender) references users (id);
+    
+alter table featured_messages drop column message_sender,
+	drop foreign key featured_messages_ibfk_4;
 
 -- delete from featured_messages where id >= 0;
 select * from messages;
 select * from users;
 select * from conversation;
-select * from conversation_members;
 select * from featured_messages;
-
-select fm.message_id, fm.user_id, fm.conversation_id, u.img_url img_url_user,
-	c.img_url img_url_group, c.group_name, c.isGroup, u.username, m.content,
-	m.user_id sender, us.username senderUsername from featured_messages fm
-      left join users u on u.id = fm.user_id
-      left join messages m on m.message_id = fm.message_id
-      left join users us on us.id = m.user_id
-      left join conversation c on c.conversation_id = fm.conversation_id
-      where fm.user_id = 1;
-      
-select fm.message_id, fm.conversation_id, m.content, m.user_id as senderId,
-	us.username, c.isGroup, c.group_name, c.img_url as img_url_group,
-	cm.user_id as member, ui.img_url
-	from featured_messages fm
-	left join messages m on m.message_id = fm.message_id
-    left join conversation c on c.conversation_id = fm.conversation_id
-    left join conversation_members cm on cm.conversation_id = fm.conversation_id and c.isGroup = false
-    left join users ui on ui.id = cm.user_id
-    left join users us on  us.id = m.user_id
-	where fm.user_id = 1 and cm.user_id != 1 or cm.user_id is null;

@@ -4,6 +4,7 @@ import { PiUserCirclePlusBold } from "react-icons/pi";
 import { TbUserCancel } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
 import { changeChatState } from "../app/chatSlice.js";
+import { setFriendListState } from "../app/friendListSlice.js";
 
 import {
   useGetFriendListQuery,
@@ -79,10 +80,29 @@ function friendList() {
     matchFriendRequets(acceptFriendRequest, result);
   }, [result]);
 
-  // useEffect(() => {
-  //   if (isError) console.log(error);
-  //   if (data) console.log(data);
-  // }, [data]);
+  useEffect(() => {
+    if (isError) console.log(error);
+    if (data && isSuccess) {
+      const list = data
+        .slice()
+        .sort((a, b) =>
+          !a.isGroup && !b.isGroup
+            ? a.members.username
+                .toUpperCase()
+                .localeCompare(b.members.username.toUpperCase())
+            : null
+        )
+        .filter((item) => !item.isGroup)
+        .map((item) => ({
+          userId: item.members.userId,
+          username: item.members.username,
+          imgUrl: item.members.imgUrl,
+          conversationId: item.members.conversationId,
+        }));
+
+      dispatch(setFriendListState({ list }));
+    }
+  }, [data]);
 
   return (
     <div id="friends-ctn">

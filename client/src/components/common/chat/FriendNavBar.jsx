@@ -12,6 +12,7 @@ import { setModalState } from "../../../app/modalSlice.js";
 import { notify } from "../../../utils/notify.js";
 import { setReplyMessageState } from "../../../app/replyMessageSlice.js";
 import { setSideMenusState } from "../../../app/sideMenusSlice.js";
+import { setForwardMssgMenuState } from "../../../app/forwardMssgMenuSlice.js";
 
 import { activateInfo } from "../../../app/infoSlice.js";
 import {
@@ -159,7 +160,29 @@ function FriendNavBar() {
             <BsFillTrashFill className="icon" />
           </button>
 
-          <button type="button">
+          <button
+            type="button"
+            onClick={() => {
+              const messagesToForward = friendState.messages
+                .filter(
+                  (item) =>
+                    !item.event &&
+                    Object.keys(messages).includes(item.message_id.toString())
+                )
+                .map((item) => ({
+                  content: item.content,
+                  fileUrl: item.file_url,
+                  mimetype: item.mimetype,
+                }));
+
+              dispatch(
+                setForwardMssgMenuState({
+                  open: true,
+                  messages: messagesToForward,
+                })
+              );
+            }}
+          >
             <BiSolidShare className="icon turn" />
           </button>
 

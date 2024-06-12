@@ -225,11 +225,7 @@ function Message({ data }) {
   }, [selectMode]);
 
   useEffect(() => {
-    // if (item.event) console.log(item);
-    // console.log(item.sender);
-    // console.log(colorList[item.sender])
     if (item.answeredMessage) {
-      // console.log(JSON.parse(item.answeredMessage));
       setAnsweredMessageData(JSON.parse(item.answeredMessage));
     }
   }, []);
@@ -279,7 +275,7 @@ function Message({ data }) {
               item.sender != userState.id
                 ? "left"
                 : ""
-            }`}
+            } ${item.forwarded ? "forwarded" : ""}`}
             onClick={selectMode ? handleClick : null}
             onTouchStart={(e) => (!open ? handleDragStart(e) : null)}
             onTouchMove={(e) => (!open ? handleDrag(e) : null)}
@@ -291,6 +287,8 @@ function Message({ data }) {
                 : `translate(${messagePosition.x}px, ${messagePosition.y}px)`,
             }}
           >
+            {item.forwarded ? <p className="forwardedText">Forwarded</p> : null}
+
             {answeredMessageData ? (
               <div
                 id="replyCtn"
