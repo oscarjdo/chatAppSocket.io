@@ -2,7 +2,7 @@ import { FaPhone } from "react-icons/fa";
 import { BsFillCameraVideoFill, BsFillTrashFill } from "react-icons/bs";
 import { TbStarFilled, TbStarOff } from "react-icons/tb";
 import { IoIosArrowBack } from "react-icons/io";
-import { BiSolidShare } from "react-icons/bi";
+import { BiSolidCopy, BiSolidShare } from "react-icons/bi";
 import { SlOptionsVertical } from "react-icons/sl";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -188,9 +188,18 @@ function FriendNavBar() {
 
           <button
             type="button"
-            className={`${Object.keys(messages).length > 1 ? "disappear" : ""}`}
+            className={`${
+              Object.keys(messages).length > 1 ? "disappear" : ""
+            } copyBttn`}
+            onClick={() => {
+              navigator.clipboard.writeText(
+                Object.values(messages)[0][2].content
+              );
+
+              dispatch(selectMessage({ data: false, selected: false }));
+            }}
           >
-            <SlOptionsVertical className="icon" />
+            <BiSolidCopy className="icon" />
           </button>
         </div>
       </div>

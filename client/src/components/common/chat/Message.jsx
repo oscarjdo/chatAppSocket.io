@@ -1,5 +1,3 @@
-import { BiCheck, BiCheckDouble, BiError } from "react-icons/bi";
-import { LuClock4 } from "react-icons/lu";
 import { MdDeleteForever } from "react-icons/md";
 import { FaChevronRight } from "react-icons/fa";
 import { TbStarFilled } from "react-icons/tb";
@@ -16,6 +14,7 @@ import Audio from "./files/Audio.jsx";
 import Video from "./files/Video.jsx";
 import Image from "./files/Image.jsx";
 import { useEffect } from "react";
+import SetIcon from "../../SetIcon.jsx";
 
 function Message({ data }) {
   const { item, index, day, space, colorList } = data;
@@ -73,21 +72,6 @@ function Message({ data }) {
     return `${
       month[itemDate.getMonth()]
     } ${itemDate.getDate()}, ${itemDate.getFullYear()}`;
-  };
-
-  const setIcon = () => {
-    switch (item.message_read) {
-      case "sending":
-        return <LuClock4 className="chat-icon clock" />;
-      case "sent":
-        return <BiCheck className="chat-icon" />;
-      case 0:
-        return <BiCheckDouble className="chat-icon" />;
-      case 1:
-        return <BiCheckDouble className="chat-icon read" />;
-      default:
-        return <BiError className="chat-icon error">error</BiError>;
-    }
   };
 
   const setFile = (mimetype, url, who, mssg) => {
@@ -364,6 +348,10 @@ function Message({ data }) {
                   <i className="date">
                     {item.featured ? <TbStarFilled /> : ""}
                     {getTime(itemDate)}
+                    {item.sender == userState.id &&
+                    !friendState.groupData.isGroup ? (
+                      <SetIcon item={item} />
+                    ) : null}
                   </i>
                 </p>
               </>
@@ -377,10 +365,7 @@ function Message({ data }) {
                 </p>
               </div>
             )}
-            {/* <div className="comp-ctn">
-            <p>{getTime(itemDate)}</p>
-            {item.sender == userState.id ? setIcon() : null}
-          </div> */}
+
             <span
               className={`${selected ? "active" : ""} ${
                 friendState.groupData && friendState.groupData.isGroup

@@ -12,22 +12,20 @@
 
 -✔Create a message forwarding function.✔
 
--Give functions (info & copy) to the "plus button" in the selected message.
+-✔Fix all buttons and menus that close and open again.✔
+
+-✔Give functions to messages such as copy, recieved, read.✔
 
 -Create a search and filtering bar in the chat.
 
 -Fix the file box in each friend's information 
   so that it can show all the files that are in the chat.
 
--Make the message reading function work.
-
 -Update the timer of day in the chats.
 
 -Delete time at friend list if chat does not have any message.
 
--Fix all buttons and menus that close and open again.
-
--Create a button to send voice notes.
+-Create a button to send voice notes, calls and videocalls.
 
 -Create the menu of settings.
 

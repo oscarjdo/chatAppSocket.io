@@ -17,8 +17,11 @@ import getTime from "../utils/getTime.js";
 import { notify } from "../utils/notify.js";
 import matchFriendRequets from "../utils/matchFriendRequests.js";
 import socket from "../io.js";
+import axios from "axios";
 
 import Loader from "./common/loader/Loader.jsx";
+import SetIcon from "./SetIcon.jsx";
+import { MdDeleteForever } from "react-icons/md";
 
 function friendList() {
   const userState = useSelector((state) => state.userState);
@@ -66,10 +69,65 @@ function friendList() {
     console.log(error);
   }
 
+  const setFriendList = () => {
+    if (addFriendModeState.open) return;
+
+    const list = data
+      .slice()
+      .sort((a, b) =>
+        !a.isGroup && !b.isGroup
+          ? a.members.username
+              .toUpperCase()
+              .localeCompare(b.members.username.toUpperCase())
+          : null
+      )
+      .filter((item) => !item.isGroup)
+      .map((item) => ({
+        userId: item.members.userId,
+        username: item.members.username,
+        imgUrl: item.members.imgUrl,
+        conversationId: item.members.conversationId,
+      }));
+
+    dispatch(setFriendListState({ list }));
+  };
+
+  const setRecievedMessages = async () => {
+    if (addFriendModeState.open) return;
+
+    try {
+      const hasNotRecievedMessages = data
+        .filter(
+          (item) =>
+            item.lastMessage.sender !== userState.id &&
+            !item.lastMessage.isEvent &&
+            !item.lastMessage.message_recieved
+        )
+        .map((item) => ({
+          conversationId: item.conversationId,
+          membersId: item.members.userId,
+        }));
+
+      if (hasNotRecievedMessages.length >= 1) {
+        await axios.put("http://localhost:3000/setRecievedMessages", {
+          conversationsId: hasNotRecievedMessages.map(
+            (item) => item.conversationId
+          ),
+        });
+
+        socket.emit("client:reloadApp", {
+          users: hasNotRecievedMessages.map((item) => item.membersId),
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const update = () => {
       setTimeout(() => {
-        refetch();
+        if (isSuccess && !isLoading) refetch();
       }, 500);
     };
 
@@ -83,24 +141,9 @@ function friendList() {
   useEffect(() => {
     if (isError) console.log(error);
     if (data && isSuccess) {
-      const list = data
-        .slice()
-        .sort((a, b) =>
-          !a.isGroup && !b.isGroup
-            ? a.members.username
-                .toUpperCase()
-                .localeCompare(b.members.username.toUpperCase())
-            : null
-        )
-        .filter((item) => !item.isGroup)
-        .map((item) => ({
-          userId: item.members.userId,
-          username: item.members.username,
-          imgUrl: item.members.imgUrl,
-          conversationId: item.members.conversationId,
-        }));
+      setFriendList();
 
-      dispatch(setFriendListState({ list }));
+      setRecievedMessages();
     }
   }, [data]);
 
@@ -138,6 +181,17 @@ function friendList() {
                 return newPhoto
                   ? `${username} has changed the group photo`
                   : text;
+              } else if (!item.lastMessage.is_show) {
+                const setName = () =>
+                  item.members.length
+                    ? item.members.filter(
+                        (it) => it.userId == item.lastMessage.sender
+                      )[0].username
+                    : item.members.username;
+
+                return userState.id !== item.lastMessage.sender
+                  ? `${setName()} has deleted this message.`
+                  : "You have deleted this message";
               } else {
                 return item.lastMessage.content;
               }
@@ -182,20 +236,33 @@ function friendList() {
                     {item.friend || item.members.username || item.groupName}
                   </h4>
                   <div className="p-ctn">
-                    {itemDate && item.lastMessage.sender == userState.id ? (
+                    {itemDate &&
+                    item.lastMessage.sender == userState.id &&
+                    !item.lastMessage.isEvent &&
+                    !item.isGroup ? (
                       <>
-                        <BiCheckDouble
-                          className={`chat-icon preview ${
-                            item.lastMessage.messageRead ? "read" : ""
-                          }`}
-                        />
+                        <SetIcon item={item.lastMessage} />
                       </>
                     ) : null}
                     <p>
+                      {!item.lastMessage.isEvent && item.isGroup ? (
+                        <span className="groupSenderText">
+                          {item.lastMessage.sender != userState.id
+                            ? item.members
+                                .filter(
+                                  (it) => it.userId == item.lastMessage.sender
+                                )
+                                .map((it) => it.username)
+                            : "You"}
+                          :&nbsp;
+                        </span>
+                      ) : null}
                       {addFriendModeState.open ? `User ID: ${item.id}` : ""}
                       {itemDate ? (
                         <>
-                          {item.lastMessage.mimetype ? setFileType() : null}
+                          {item.lastMessage.mimetype && item.lastMessage.is_show
+                            ? setFileType()
+                            : null}
                           {generateText()}
                         </>
                       ) : null}
@@ -231,6 +298,11 @@ function friendList() {
                 )}
                 {itemDate && item.lastMessage.content ? (
                   <p className="mssg-hour">{getTime(itemDate)}</p>
+                ) : null}
+                {item.notReadMessagesLength ? (
+                  <span className="spanNotReadMessagesLength">
+                    {item.notReadMessagesLength}
+                  </span>
                 ) : null}
               </li>
             );

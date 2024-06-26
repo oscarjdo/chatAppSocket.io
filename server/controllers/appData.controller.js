@@ -56,17 +56,44 @@ export const getFriendList = async (req, res) => {
     );
 
     const [lastMessage] = await pool.query(
-      `select m.user_id sender, m.content, m.sent_date sentDate, m.event as isEvent, m.mimetype, m.message_read messageRead from conversation c 
-	      left join messages m on m.conversation_id = c.conversation_id
-	      where c.conversation_id = ? and m.sent_date < ?
-        order by m.sent_date desc
-        limit 1;`,
-      [conversations[i].conversationId, user[0].leftGroupAt || new Date()]
+      `select m.user_id sender, m.content, m.sent_date sentDate, m.event as isEvent, m.mimetype, m.message_read, m.message_recieved, nsm.deleted, nsm.is_show from conversation c 
+		    left join messages m on m.conversation_id = c.conversation_id
+		    left join not_show_messages nsm on nsm.message_id = m.message_id
+			    where c.conversation_id = ?
+				    and m.sent_date < ?
+            and m.event = true
+				    or nsm.deleted = false 
+            and c.conversation_id = ?
+				    and nsm.user_id = ?
+			        order by m.sent_date desc
+			        limit 1;`,
+      [
+        conversations[i].conversationId,
+        user[0].leftGroupAt || new Date(),
+        conversations[i].conversationId,
+        id,
+      ]
+    );
+
+    const [notReadMessages] = await pool.query(
+      `
+      select m.message_id from conversation c 
+		    left join messages m on m.conversation_id = c.conversation_id
+			    where c.conversation_id = ?
+				    and m.sent_date < ?
+            and m.event = false
+            and m.message_read = false
+			        order by m.sent_date desc;
+      `,
+      [conversations[i].conversationId, user[0].leftGroupAt || new Date(), id]
     );
 
     response[i] = {
       ...response[i],
-      lastMessage: lastMessage[0] || { sentDate: new Date(0) },
+      lastMessage: lastMessage[0] || {
+        sentDate: new Date(0),
+      },
+      notReadMessagesLength: notReadMessages.length,
     };
   }
 
@@ -194,7 +221,7 @@ export const getFriendData = async (req, res) => {
 
   const [messages] = await pool.query(
     `
-    SELECT c.conversation_id, m.message_id, m.user_id sender, u.username, u.img_url imgUrl, m.content, m.sent_date date, m.message_read, m.mimetype, nsm.is_show, nsm.deleted, m.file_url, m.answeredMessage, m.forwarded
+    SELECT c.conversation_id, m.message_id, m.user_id sender, u.username, u.img_url imgUrl, m.content, m.sent_date date, m.message_read, m.mimetype, nsm.is_show, nsm.deleted, m.file_url, m.answeredMessage, m.forwarded, m.message_recieved, m.message_read, m.edited
 	    FROM conversation c
 	    LEFT JOIN conversation_members cm ON cm.conversation_id = c.conversation_id
       LEFT JOIN users u ON u.id = cm.user_id
@@ -230,11 +257,15 @@ export const getFriendData = async (req, res) => {
     return { ...message, featured: Boolean(index) };
   });
 
+  const notReadMessage =
+    allMessages.filter((item) => !item.message_read && item.sender != userId)
+      .length >= 1;
+
   res.json({
     user: user[0],
     friend: groupData[0].isGroup ? friend : friend[0],
     messages: allMessages,
-    groupData: groupData[0],
+    groupData: { ...groupData[0], notReadMessage },
     conversationId,
   });
 };

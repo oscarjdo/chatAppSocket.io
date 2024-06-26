@@ -14,7 +14,7 @@ function chatOptions() {
   return (
     <div
       id="chat-options-ctn"
-      className={`chat-options ${type != "chatMenu" ? "inactive" : ""}`}
+      className={`options-menu ${type != "chatMenu" ? "inactive" : ""}`}
     >
       <ul>
         <li>

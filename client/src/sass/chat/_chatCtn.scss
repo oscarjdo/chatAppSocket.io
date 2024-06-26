@@ -241,45 +241,4 @@
   }
 }
 
-.comp-ctn {
-  display: flex;
-  align-items: end;
-  justify-content: end;
-
-  color: $text-dark;
-}
-
-.chat-icon {
-  width: 1.4rem;
-  height: 1.4rem;
-  margin: -0.2rem -0.3rem -0.2rem 0.1rem;
-  padding: -1rem;
-
-  &.clock {
-    width: 1rem;
-    height: 1rem;
-    margin: -0.2rem 0.3rem 0;
-  }
-
-  &.error {
-    width: 1.2rem;
-    height: 1.2rem;
-    margin: -0.1rem 0.3rem;
-
-    color: $error;
-  }
-
-  &.read {
-    color: $read;
-    color: #a867d3;
-    color: #53e4bf;
-    color: #f36d4c;
-    color: #ee3800;
-    color: #eea300;
-    color: #5179ff;
-    color: #db5c78;
-    color: #7adb5c;
-  }
-}
-
 @import "./files/files";

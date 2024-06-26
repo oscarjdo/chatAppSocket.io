@@ -63,6 +63,31 @@
   }
 }
 
+.chat-icon {
+  width: 1rem;
+  height: 1rem;
+  margin: -0.2rem -0.3rem -0.2rem 0.1rem;
+  padding: -1rem;
+
+  &.error {
+    margin-right: 0.1rem;
+
+    color: $error;
+  }
+
+  &.read {
+    color: $read;
+    // color: #a867d3;
+    // color: #53e4bf;
+    // color: #f36d4c;
+    // color: #ee3800;
+    // color: #eea300;
+    // color: #5179ff;
+    // color: #db5c78;
+    // color: #7adb5c;
+  }
+}
+
 @keyframes newNoti {
   0% {
     transform: rotate(0);

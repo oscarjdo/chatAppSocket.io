@@ -68,11 +68,20 @@ create table messages (
     file_url varchar(255) default null,
     answeredMessage text default null,
     forwarded boolean default false,
+    edited boolean default false,
+    message_read boolean default false,
     event boolean default false,
     foreign key (answeredMessage) references messages (message_id),
     foreign key (conversation_id) references conversation (conversation_id),
     foreign key (user_id) references users (id)
 );
+
+select * from messages;
+select * from messages where conversation_id = 36;
+alter table messages add column edited boolean default false;
+alter table messages add column message_read boolean default false;
+update messages set message_recieved = true where message_id > 0;
+update messages set message_read = true where message_id > 0;
 
 create table not_show_messages(
 	id int not null auto_increment primary key,

@@ -12,6 +12,8 @@ import socket from "../io";
 import Modal from "./common/chat/Modal";
 import FriendListMenu from "./common/chat/FriendListMenu.jsx";
 
+import axios from "axios";
+
 function Chat() {
   const chatState = useSelector((state) => state.chatState);
   const userState = useSelector((state) => state.userState);
@@ -26,8 +28,25 @@ function Chat() {
 
   const update = () => {
     setTimeout(() => {
-      refetch();
+      if (!isLoading && data) refetch();
     }, 100);
+  };
+
+  const setReadMessages = async () => {
+    if (data.groupData.isGroup) return;
+
+    try {
+      await axios.put("http://localhost:3000/setReadMessages", {
+        conversationId: chatState.conversationId,
+        userId: data.friend.id,
+      });
+
+      socket.emit("client:reloadApp", {
+        users: [data.friend.id],
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -43,6 +62,8 @@ function Chat() {
           element.scrollIntoView();
         }, 800);
       }
+
+      if (data.groupData && data.groupData.notReadMessage) setReadMessages();
     }
     socket.on("server:reloadApp", update);
     socket.on("server:reloadChat", update);
