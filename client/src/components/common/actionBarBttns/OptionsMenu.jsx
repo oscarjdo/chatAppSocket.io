@@ -8,9 +8,7 @@ function OptionsMenu() {
   const dispatch = useDispatch();
 
   return (
-    <div
-      className={`settings-menu ${type != "externalMenu" ? "inactive" : ""}`}
-    >
+    <div className={`options-menu ${type != "externalMenu" ? "inactive" : ""}`}>
       <ul id="config-list">
         <li>
           <button

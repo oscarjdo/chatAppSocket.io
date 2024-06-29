@@ -76,10 +76,9 @@ function InputCtn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const members =
-      friendState.groupData && friendState.groupData.isGroup
-        ? friendState.members.map((item) => item.id)
-        : null;
+    const isGroup = friendState.groupData && friendState.groupData.isGroup;
+
+    const members = isGroup ? friendState.members.map((item) => item.id) : null;
 
     const formData = new FormData();
 
@@ -88,6 +87,7 @@ function InputCtn() {
       members: members || [friendState.id],
       mssg,
       conversationId: friendState.conversationId,
+      isGroup,
       reply: replyMessageState.open
         ? {
             id: replyMessageState.messageId,

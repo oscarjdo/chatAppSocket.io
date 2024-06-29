@@ -19,7 +19,11 @@ const messageSelectSlice = createSlice({
           [data.message_id]: [
             data.file_url,
             data.sender,
-            { isShown: data.is_show, featured: data.featured },
+            {
+              isShown: data.is_show,
+              featured: data.featured,
+              content: data.content,
+            },
           ],
         };
       }

@@ -9,7 +9,7 @@ const currentPath = fileURLToPath(import.meta.url);
 export const sendMessage = async (req, res) => {
   const { mssgData } = req.body;
 
-  const { userId, members, mssg, conversationId, reply, forwarded } =
+  const { userId, members, mssg, isGroup, conversationId, reply, forwarded } =
     JSON.parse(mssgData);
 
   const stringedReply = reply ? JSON.stringify(reply) : null;
@@ -24,9 +24,9 @@ export const sendMessage = async (req, res) => {
 
   const [messageCreated] = await pool.query(
     `
-    insert into messages (conversation_id, user_id, content, sent_date, mimetype, file_url, answeredMessage, forwarded)
+    insert into messages (conversation_id, user_id, content, sent_date, mimetype, file_url, answeredMessage, forwarded, message_read)
       values
-      (?,?,?,?,?,?,?,?);
+      (?,?,?,?,?,?,?,?,?);
     `,
     [
       conversationId,
@@ -37,6 +37,7 @@ export const sendMessage = async (req, res) => {
       fileUrl || forwarded.fileUrl,
       stringedReply,
       forwarded.res,
+      isGroup,
     ]
   );
 
@@ -315,6 +316,49 @@ export const removeFeaturedMessage = async (req, res) => {
     return res
       .status(400)
       .json(`Error in ${currentPath} at Function removeFeaturedMessage.`);
+
+  res.sendStatus(200);
+};
+
+export const setRecievedMessages = async (req, res) => {
+  const { conversationsId } = req.body;
+
+  const [response] = await pool.query(
+    `
+        update messages
+          set message_recieved = true
+          where conversation_id = ?${" or conversation_id = ?".repeat(
+            conversationsId.length - 1
+          )};
+      `,
+    conversationsId
+  );
+
+  if (response.affectedRows <= 0)
+    return res.status(400).json({
+      error: `Error in ${currentPath} at Function setRecievedMessages.`,
+    });
+
+  return res.sendStatus(200);
+};
+
+export const setReadMessages = async (req, res) => {
+  const { conversationId, userId } = req.body;
+
+  const [response] = await pool.query(
+    `
+      update messages
+        set message_read = true
+        where conversation_id = ? and
+        user_id = ?
+    `,
+    [conversationId, userId]
+  );
+
+  if (response.affectedRows <= 0)
+    return res.status(400).json({
+      error: `Error in ${currentPath} at Function setRecievedMessages.`,
+    });
 
   res.sendStatus(200);
 };

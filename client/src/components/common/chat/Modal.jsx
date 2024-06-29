@@ -34,12 +34,24 @@ function Modal() {
       userId: userState.id,
     });
     dispatch(setModalState({ open: false, type: null }));
+
+    const members =
+      friendState.groupData && friendState.groupData.isGroup
+        ? friendState.members.map((item) => item.id)
+        : null;
+
+    socket.emit("client:reloadApp", {
+      users: [userState.id, members || [friendState.id]].flat(),
+    });
   };
 
   const deleteMessagesForMe = () => {
     deleteMessagesMe({ messages, userId: userState.id, clearChat: false });
     dispatch(selectMessage({ data: false, selected: false }));
     dispatch(setModalState({ open: false, type: null }));
+    socket.emit("client:reloadApp", {
+      users: [userState.id],
+    });
   };
 
   const clearChat = () => {

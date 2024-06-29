@@ -359,6 +359,10 @@ nav p b {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.p-ctn p > .groupSenderText {
+  color: #78bd8d;
+  font-weight: 600;
+}
 
 .mssg-hour {
   position: absolute;
@@ -367,6 +371,21 @@ nav p b {
   color: rgba(226, 226, 226, 0.4941176471);
   white-space: nowrap;
   font-size: 0.7rem;
+}
+
+.spanNotReadMessagesLength {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: 0;
+  padding: 0.1rem;
+  display: grid;
+  justify-content: center;
+  position: absolute;
+  bottom: 0.5rem;
+  right: -0.3rem;
+  background-color: #009225;
+  border-radius: 1rem;
+  font-size: 0.8rem;
 }
 
 #add-friend-mode-text,
@@ -494,6 +513,9 @@ nav p b {
 }
 #chat-nav > div.message-menu button.disappear {
   display: none;
+}
+#chat-nav > div.message-menu button.copyBttn {
+  margin-right: 0.4rem;
 }
 #chat-nav > div.message-menu button > .icon {
   width: 100%;
@@ -786,42 +808,6 @@ nav p b {
   color: rgba(226, 226, 226, 0.4941176471);
   font-size: 0.9rem;
   font-style: italic;
-}
-
-.comp-ctn {
-  display: flex;
-  align-items: end;
-  justify-content: end;
-  color: rgba(226, 226, 226, 0.4941176471);
-}
-
-.chat-icon {
-  width: 1.4rem;
-  height: 1.4rem;
-  margin: -0.2rem -0.3rem -0.2rem 0.1rem;
-  padding: -1rem;
-}
-.chat-icon.clock {
-  width: 1rem;
-  height: 1rem;
-  margin: -0.2rem 0.3rem 0;
-}
-.chat-icon.error {
-  width: 1.2rem;
-  height: 1.2rem;
-  margin: -0.1rem 0.3rem;
-  color: #c8ff00;
-}
-.chat-icon.read {
-  color: #00f7ff;
-  color: #a867d3;
-  color: #53e4bf;
-  color: #f36d4c;
-  color: #ee3800;
-  color: #eea300;
-  color: #5179ff;
-  color: #db5c78;
-  color: #7adb5c;
 }
 
 .document,
@@ -1780,8 +1766,7 @@ a.document:active p, a.document:active .download {
   height: 100%;
 }
 
-.chat-options,
-.settings-menu {
+.options-menu {
   width: -moz-max-content;
   width: max-content;
   position: absolute;
@@ -1793,16 +1778,13 @@ a.document:active p, a.document:active .download {
   font-size: 0.9rem;
   transition: right ease 0.3s;
 }
-.chat-options.inactive,
-.settings-menu.inactive {
+.options-menu.inactive {
   right: -55%;
 }
-.chat-options ul,
-.settings-menu ul {
+.options-menu ul {
   list-style: none;
 }
-.chat-options button,
-.settings-menu button {
+.options-menu button {
   width: 100%;
   padding: 0.8rem 1.2rem;
   position: relative;
@@ -1811,8 +1793,7 @@ a.document:active p, a.document:active .download {
   color: #ffffff;
   text-align: start;
 }
-.chat-options button::after,
-.settings-menu button::after {
+.options-menu button::after {
   content: "";
   width: 80%;
   height: 1px;
@@ -1822,13 +1803,10 @@ a.document:active p, a.document:active .download {
   left: 10%;
   background-color: rgba(226, 226, 226, 0.4941176471);
 }
-.chat-options button:active, .chat-options button:hover,
-.settings-menu button:active,
-.settings-menu button:hover {
+.options-menu button:active, .options-menu button:hover {
   background-color: #222324;
 }
-.chat-options ul li:last-child button::after,
-.settings-menu ul li:last-child button::after {
+.options-menu ul li:last-child button::after {
   content: none;
 }
 
@@ -2561,6 +2539,20 @@ a.document:active p, a.document:active .download {
 #close-edit-group-data:active,
 #back-user-info-bttn:active {
   background-color: #7b8186;
+}
+
+.chat-icon {
+  width: 1rem;
+  height: 1rem;
+  margin: -0.2rem -0.3rem -0.2rem 0.1rem;
+  padding: -1rem;
+}
+.chat-icon.error {
+  margin-right: 0.1rem;
+  color: #c8ff00;
+}
+.chat-icon.read {
+  color: #00f7ff;
 }
 
 @keyframes newNoti {
