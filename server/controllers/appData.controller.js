@@ -83,6 +83,7 @@ export const getFriendList = async (req, res) => {
 				    and m.sent_date < ?
             and m.event = false
             and m.message_read = false
+            and m.user_id != ?
 			        order by m.sent_date desc;
       `,
       [conversations[i].conversationId, user[0].leftGroupAt || new Date(), id]

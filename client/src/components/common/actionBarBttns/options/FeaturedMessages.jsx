@@ -7,6 +7,7 @@ import { IoIosArrowBack } from "react-icons/io";
 
 import axios from "axios";
 import { changeChatState } from "../../../../app/chatSlice";
+import { setScrollToState } from "../../../../app/scrollToSlice";
 
 function FeaturedMessages() {
   const userState = useSelector((state) => state.userState);
@@ -28,8 +29,10 @@ function FeaturedMessages() {
       changeChatState({
         active: true,
         conversationId: item.conversation_id,
-        scrollTo: `messageId${item.message_id}`,
       })
+    );
+    dispatch(
+      setScrollToState({ to: `messageId${item.message_id}`, time: 800 })
     );
 
     setTimeout(() => {
