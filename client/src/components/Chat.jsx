@@ -6,6 +6,7 @@ import Loader from "./common/loader/Loader";
 
 import { useGetMessagesQuery } from "../app/queries/getMessages";
 import { setFriendData } from "../app/friendSlice";
+import { setScrollToState } from "../app/scrollToSlice.js";
 
 import scrollToBottom from "../utils/scroolToBottom";
 import socket from "../io";
@@ -16,6 +17,7 @@ import axios from "axios";
 
 function Chat() {
   const chatState = useSelector((state) => state.chatState);
+  const scrollToState = useSelector((state) => state.scrollToState);
   const userState = useSelector((state) => state.userState);
 
   const { data, error, isError, isLoading, isSuccess, refetch } =
@@ -55,19 +57,22 @@ function Chat() {
       dispatch(setFriendData(data));
       scrollToBottom();
 
-      if (chatState.scrollTo) {
-        setTimeout(() => {
-          let element = document.getElementById(chatState.scrollTo);
-
-          element.scrollIntoView();
-        }, 800);
-      }
-
       if (data.groupData && data.groupData.notReadMessage) setReadMessages();
     }
     socket.on("server:reloadApp", update);
     socket.on("server:reloadChat", update);
   }, [socket, data]);
+
+  useEffect(() => {
+    if (scrollToState.to) {
+      setTimeout(() => {
+        let element = document.getElementById(scrollToState.to);
+
+        element.scrollIntoView();
+        dispatch(setScrollToState(``));
+      }, scrollToState.time);
+    }
+  }, [scrollToState.to]);
 
   useEffect(() => {
     if (data) refetch();

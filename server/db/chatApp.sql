@@ -116,7 +116,8 @@ alter table featured_messages drop column message_sender,
 	drop foreign key featured_messages_ibfk_4;
 
 -- delete from featured_messages where id >= 0;
-select * from messages;
+select * from messages where message_id = 503;
+select * from not_show_messages where message_id = 503;
 select * from users;
 select * from conversation;
 select * from featured_messages;

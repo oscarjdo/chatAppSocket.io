@@ -8,6 +8,7 @@ import React, { Fragment, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectMessage } from "../../../app/messageSelectSlice.js";
 import { setReplyMessageState } from "../../../app/replyMessageSlice.js";
+import { setChatSearchBarState } from "../../../app/chatSearchBarSlice.js";
 
 import Document from "./files/Document.jsx";
 import Audio from "./files/Audio.jsx";
@@ -104,6 +105,7 @@ function Message({ data }) {
     if (!selectMode) {
       messageRef.current = setTimeout(() => {
         dispatch(selectMessage({ data: item, selected: true }));
+        dispatch(setChatSearchBarState({ open: false }));
         setSelected(true);
       }, 1000);
 
@@ -118,6 +120,7 @@ function Message({ data }) {
   const handleClick = () => {
     if (!selected) {
       dispatch(selectMessage({ data: item, selected: true }));
+      dispatch(setChatSearchBarState({ open: false }));
       setSelected(true);
     } else {
       setSelected(false);

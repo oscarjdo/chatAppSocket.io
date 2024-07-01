@@ -10,7 +10,6 @@ const chatSlice = createSlice({
       state.open = action.payload.active;
       state.userId = action.payload.userId;
       state.conversationId = action.payload.conversationId;
-      state.scrollTo = action.payload.scrollTo;
     },
   },
 });

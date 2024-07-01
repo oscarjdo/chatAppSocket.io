@@ -3,8 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { activateInfo } from "../../../app/infoSlice.js";
 import { setModalState } from "../../../app/modalSlice.js";
-
-import { notify } from "../../../utils/notify.js";
+import { setChatSearchBarState } from "../../../app/chatSearchBarSlice.js";
 
 function chatOptions() {
   const dispatch = useDispatch();
@@ -27,7 +26,11 @@ function chatOptions() {
           </button>
         </li>
         <li>
-          <button onClick={notify}>Search</button>
+          <button
+            onClick={() => dispatch(setChatSearchBarState({ open: true }))}
+          >
+            Search
+          </button>
         </li>
         <li>
           <button
