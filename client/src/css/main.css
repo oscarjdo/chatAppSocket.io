@@ -794,12 +794,18 @@ nav p b {
   top: -0.2rem;
   z-index: 200;
   background-color: rgba(0, 255, 128, 0.349);
+  opacity: 0;
 }
 .mssg > span.active {
+  opacity: 1;
   display: block;
 }
 .mssg > span.right {
   width: calc(100vw - 1.2rem - 2rem);
+}
+.mssg.glowing > span {
+  display: block;
+  animation: glowingEffect 1.2s ease 1;
 }
 .mssg > #replyCtn {
   margin: -0.2rem -0.2rem 0;
@@ -838,6 +844,20 @@ nav p b {
   font-style: italic;
 }
 
+@keyframes glowingEffect {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 .document,
 .audio {
   width: 100%;

@@ -9,7 +9,9 @@ import { setFriendData } from "../app/friendSlice";
 import { setScrollToState } from "../app/scrollToSlice.js";
 
 import scrollToBottom from "../utils/scroolToBottom";
+
 import socket from "../io";
+
 import Modal from "./common/chat/Modal";
 import FriendListMenu from "./common/chat/FriendListMenu.jsx";
 
@@ -69,6 +71,13 @@ function Chat() {
         let element = document.getElementById(scrollToState.to);
 
         element.scrollIntoView();
+
+        element.classList.add("glowing");
+
+        setTimeout(() => {
+          element.classList.remove("glowing");
+        }, 1200);
+
         dispatch(setScrollToState(``));
       }, scrollToState.time);
     }

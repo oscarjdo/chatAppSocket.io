@@ -16,6 +16,7 @@ import Video from "./files/Video.jsx";
 import Image from "./files/Image.jsx";
 import { useEffect } from "react";
 import SetIcon from "../../SetIcon.jsx";
+import { setScrollToState } from "../../../app/scrollToSlice.js";
 
 function Message({ data }) {
   const { item, index, day, space, colorList } = data;
@@ -282,11 +283,12 @@ function Message({ data }) {
                 onClick={() => {
                   if (selectMode) return;
 
-                  let element = document.getElementById(
-                    `messageId${answeredMessageData.id}`
+                  dispatch(
+                    setScrollToState({
+                      to: `messageId${answeredMessageData.id}`,
+                      time: 0,
+                    })
                   );
-
-                  return element.scrollIntoView();
                 }}
               >
                 <div>

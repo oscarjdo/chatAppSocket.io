@@ -18,7 +18,7 @@
 
 -✔Create a search and filtering bar in the chat.✔
 
--Create a glowing effect for messages that are in focus and scrolled toward.
+-✔Create a glowing effect for messages that are in focus and scrolled toward.✔
 
 -Fix the file box in each friend's information 
   so that it can show all the files that are in the chat.
