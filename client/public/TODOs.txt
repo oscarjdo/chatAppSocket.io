@@ -23,7 +23,7 @@
 -✔Fix the file box in each friend's information 
   so that it can show all the files that are in the chat.✔
 
--Update the timer of day in the chats.
+-✔Update the timer of day in the chats.✔
 
 -Delete time at friend list if chat does not have any message.
 
