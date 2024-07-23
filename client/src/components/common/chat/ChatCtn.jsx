@@ -8,7 +8,6 @@ import { setIsScrolling } from "../../../app/isScrollingSlice.js";
 import scrollToBottom from "../../../utils/scroolToBottom.js";
 
 function ChatCtn() {
-  let { current: day } = useRef(null);
   let { current: scrollingTimeout } = useRef(null);
   let { current: sender } = useRef(null);
 
@@ -88,10 +87,7 @@ function ChatCtn() {
           if (sender == null) sender = item.sender;
 
           return (
-            <Message
-              key={index}
-              data={{ item, index, day, space, colorList }}
-            />
+            <Message key={index} data={{ item, index, space, colorList }} />
           );
         })}
       </ul>

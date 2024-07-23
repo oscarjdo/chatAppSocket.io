@@ -26,8 +26,24 @@ const friendSlice = createSlice({
 
       if (messages && messages.length > 0) {
         state.messages = [];
+        let day = null;
+
         messages.map((item, index) => {
-          state.messages[index] = item;
+          const itemDate = new Date(item.date);
+
+          if (day !== itemDate.getDate()) {
+            day = itemDate.getDate();
+
+            return (state.messages[index] = Object.assign(
+              { newDay: true },
+              item
+            ));
+          }
+
+          return (state.messages[index] = Object.assign(
+            { newDay: false },
+            item
+          ));
         });
       } else {
         state.messages = [];

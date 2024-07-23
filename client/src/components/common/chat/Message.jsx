@@ -19,12 +19,13 @@ import SetIcon from "../../SetIcon.jsx";
 import { setScrollToState } from "../../../app/scrollToSlice.js";
 
 function Message({ data }) {
-  const { item, index, day, space, colorList } = data;
+  const { item, index, space, colorList } = data;
 
   const messageRef = useRef(null);
 
   const friendState = useSelector((state) => state.friendState);
   const userState = useSelector((state) => state.userState);
+
   const { isScrolling } = useSelector((state) => state.isScrollingState);
   const { selected: selectMode, messages } = useSelector(
     (state) => state.messageSelectState
@@ -316,9 +317,7 @@ function Message({ data }) {
   if ((item.sender && !item.deleted) || item.event) {
     return (
       <Fragment key={index}>
-        {/* {day !== itemDate.getDate()
-          ? ((day = itemDate.getDate()), (<h5>{date()}</h5>))
-          : null} */}
+        {item.newDay ? <h5>{date()}</h5> : null}
         {item.event ? (
           <div className="event">{generateText()}</div>
         ) : (
