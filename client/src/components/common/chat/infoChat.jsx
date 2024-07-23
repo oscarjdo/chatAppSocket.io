@@ -1,6 +1,6 @@
 import { IoIosArrowBack } from "react-icons/io";
 import { PiUserCircleMinusBold } from "react-icons/pi";
-import { FaUserFriends, FaArrowRight } from "react-icons/fa";
+import { FaUserFriends, FaArrowRight, FaPlay } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -9,8 +9,8 @@ import { activateInfo } from "../../../app/infoSlice";
 import { changeChatState } from "../../../app/chatSlice";
 import { setMember } from "../../../app/groupMemberMenuSlice";
 import { setEditGroupDataState } from "../../../app/editGroupDataSlice.js";
+import { setFilesMenuState } from "../../../app/filesMenuSlice.js";
 
-import { notify } from "../../../utils/notify.js";
 import socket from "../../../io";
 import axios from "axios";
 
@@ -22,6 +22,9 @@ import { useLeaveGroupMutation } from "../../../app/queries/getMessages.js";
 
 import GroupMemberMenu from "./GroupMemberMenu.jsx";
 import EditGroupData from "./EditGroupData.jsx";
+import Video from "./files/Video.jsx";
+import Image from "./files/Image.jsx";
+import FilesMenu from "./infoChat/filesMenu.jsx";
 
 function infoChat() {
   const ctn = useRef(null);
@@ -43,6 +46,8 @@ function infoChat() {
   const [deleteOfFriendList] = useDeleteOfFriendListMutation();
   const [getOutOfChat, getOutOfChatRes] = useGetOutOfChatMutation();
   const [leaveGroup] = useLeaveGroupMutation();
+  const [files, setFiles] = useState([]);
+  const [thereAraLinks, setThereAraLinks] = useState(false);
 
   const handleDeleteFriend = () => {
     deleteOfFriendList({
@@ -136,6 +141,11 @@ function infoChat() {
     socket.emit("client:reloadApp", { users: [keys, userState.id].flat() });
   };
 
+  const handleOpenFileMenu = () => {
+    if (files.length >= 1 || setThereAraLinks)
+      dispatch(setFilesMenuState({ open: true }));
+  };
+
   const setButton = () => {
     if (friendState.areFriends) {
       return (
@@ -177,6 +187,50 @@ function infoChat() {
     }
   };
 
+  const date = (item) => {
+    const itemDate = new Date(item.date);
+
+    const res = (new Date().getTime() - itemDate.getTime()) / 1000 / 60 / 60;
+
+    const weekDay = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+
+    const month = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    if (res < 24 && new Date().getDate() === itemDate.getDate()) {
+      return "Today";
+    }
+    if (res < 48) {
+      return "Yesterday";
+    }
+    if (res >= 48 && res / 24 < 7) {
+      return weekDay[itemDate.getDay()];
+    }
+    return `${
+      month[itemDate.getMonth()]
+    } ${itemDate.getDate()}, ${itemDate.getFullYear()}`;
+  };
+
   useEffect(() => {
     if (getOutOfChatRes.isError && getOutOfChatRes.originalStatus !== 200) {
       console.log(getOutOfChatRes.error);
@@ -184,9 +238,26 @@ function infoChat() {
     }
   }, [getOutOfChatRes]);
 
-  // useEffect(() => {
-  //   console.log(friendState);
-  // }, [friendState]);
+  useEffect(() => {
+    const fileList = friendState.messages.filter(
+      (item) =>
+        (item.mimetype == "image" ||
+          item.mimetype == "video" ||
+          item.mimetype == "document") &&
+        !item.deleted &&
+        item.is_show
+    );
+
+    setFiles(fileList);
+
+    setThereAraLinks(
+      friendState.messages.filter((item) =>
+        item.content.match(/https?:\/\/[^\s]+/)
+      ).length <= 0
+        ? false
+        : true
+    );
+  }, [friendState]);
 
   return (
     <div
@@ -331,11 +402,53 @@ function infoChat() {
         <div className="space"></div>
       )}
 
-      <div id="files-chat-ctn" onClick={notify}>
-        <h3>Files</h3>
-        <div id="files-ctn">
-          <p>This feature is not yet available.</p>
-        </div>
+      <div id="files-chat-ctn">
+        <h3 onClick={handleOpenFileMenu}>Files</h3>
+        <ul id="files-ctn">
+          {files.length <= 0 && !setThereAraLinks ? (
+            <p className="empty">Empty</p>
+          ) : (
+            <>
+              {files.slice(0, 10).map((item, index) =>
+                item.mimetype == "document" ? null : (
+                  <li key={index}>
+                    {item.mimetype == "image" ? (
+                      <Image
+                        data={{
+                          url: item.file_url,
+                          who: item.sender == userState.id ? "me" : "not-me",
+                          mssg: item.content,
+                          date: date(item),
+                          infoChatFile: true,
+                        }}
+                      />
+                    ) : null}
+
+                    {item.mimetype == "video" ? (
+                      <Video
+                        data={{
+                          url: item.file_url,
+                          who: item.sender == userState.id ? "me" : "not-me",
+                          time: true,
+                          mssg: item.content,
+                          date: date(item),
+                          infoChatFile: true,
+                        }}
+                      />
+                    ) : null}
+                  </li>
+                )
+              )}
+              {files.slice(9, -1).length >= 1 ||
+              files.filter((item) => item.mimetype == "document").length ||
+              setThereAraLinks ? (
+                <button onClick={handleOpenFileMenu}>
+                  <IoIosArrowBack className="icon" />
+                </button>
+              ) : null}
+            </>
+          )}
+        </ul>
       </div>
 
       {friendState.groupData && friendState.groupData.isGroup ? (
@@ -392,6 +505,7 @@ function infoChat() {
       {setButton()}
 
       <EditGroupData />
+      <FilesMenu />
     </div>
   );
 }

@@ -9,7 +9,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { BiSolidDownload } from "react-icons/bi";
 
 function Image({ data }) {
-  const { url, who, mssg, date } = data;
+  const { url, who, mssg, date, infoChatFile } = data;
 
   const anchorRef = useRef(null);
 
@@ -32,7 +32,11 @@ function Image({ data }) {
   }, []);
 
   return (
-    <div className={`image-message-ctn ${open ? "active" : ""}`}>
+    <div
+      className={`image-message-ctn ${open ? "active" : ""} ${
+        infoChatFile ? "square" : ""
+      }`}
+    >
       {!open ? (
         <div
           className="ctn-clickable"

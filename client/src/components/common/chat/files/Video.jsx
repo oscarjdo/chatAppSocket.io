@@ -10,7 +10,7 @@ import exactSize from "../../../../utils/exactSize";
 import MultimediaTimerBar from "../../MultimediaTimerBar";
 
 function Video({ data }) {
-  const { url, who, time, mssg, date } = data;
+  const { url, who, time, mssg, date, infoChatFile } = data;
 
   const fileRef = useRef(null);
   const anchorRef = useRef(null);
@@ -47,7 +47,11 @@ function Video({ data }) {
   }, []);
 
   return (
-    <div className={`video-message-ctn ${open ? "active" : ""}`}>
+    <div
+      className={`video-message-ctn ${open ? "active" : ""} ${
+        infoChatFile ? "square" : ""
+      }`}
+    >
       {!open ? (
         <div
           className="ctn-clickable"
@@ -64,7 +68,7 @@ function Video({ data }) {
             <source src={url} type="video/wmv" />
             This file is not supported.
           </video>
-          <span>
+          <span className="spanIconPlay">
             <FaPlay className="icon-play" />
           </span>
         </div>

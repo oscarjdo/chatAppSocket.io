@@ -206,6 +206,75 @@ function Message({ data }) {
     }
   };
 
+  const setContent = () => {
+    const res = [...item.content.matchAll(/https?:\/\/[^\s]+/g)];
+
+    if (res.length >= 1) {
+      let itemPositions = {};
+
+      const matchesSpace = [
+        ...JSON.stringify(item.content).slice(1, -1).matchAll(/\\n/g),
+      ];
+
+      const textSplitedBySpaces = JSON.stringify(item.content)
+        .slice(1, -1)
+        .split(/\\n/g)
+        .join(" ¨");
+
+      const matchesUrl = [
+        ...textSplitedBySpaces.matchAll(/https?:\/\/[^\s]+/g),
+      ];
+
+      const textSplited = textSplitedBySpaces
+        .split(/https?:\/\/[^\s]+/)
+        .join(" ¨")
+        .split(" ¨");
+
+      [matchesSpace, matchesUrl].flat().map(
+        (item) =>
+          (itemPositions = {
+            ...itemPositions,
+            [item.index]: { type: item[0] == "\\n" ? "SPACE" : item[0] },
+          })
+      );
+
+      const itemPositionsValue = Object.values(itemPositions).map(
+        (item) => item.type
+      );
+
+      return textSplited.map((item, index, arr) => {
+        return (
+          <Fragment key={index}>
+            {item}
+
+            {itemPositionsValue[index] &&
+            itemPositionsValue[index] == "SPACE" ? (
+              <br />
+            ) : null}
+
+            {itemPositionsValue[index] &&
+            itemPositionsValue[index].match(/https?:\/\/[^\s]+/) ? (
+              <a href={itemPositionsValue[index]} target="_blank">
+                {itemPositionsValue[index]}
+              </a>
+            ) : null}
+          </Fragment>
+        );
+      });
+    }
+
+    const textSplited = JSON.stringify(item.content).slice(1, -1).split("\\n");
+
+    return textSplited.map((item, index) => {
+      return (
+        <Fragment key={index}>
+          {item}
+          {textSplited.length > index + 1 ? <br /> : null}
+        </Fragment>
+      );
+    });
+  };
+
   useEffect(() => {
     if (!selectMode) {
       setSelected(false);
@@ -349,7 +418,7 @@ function Message({ data }) {
                 ) : null}
 
                 <p className="mssg-text">
-                  {item.content}&nbsp;&nbsp;
+                  {setContent()}&nbsp;&nbsp;
                   <i className="date">
                     {item.featured ? <TbStarFilled /> : ""}
                     {getTime(itemDate)}
