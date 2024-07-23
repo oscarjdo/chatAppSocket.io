@@ -133,15 +133,17 @@
   }
 
   & .mssg-text {
-    display: flex;
     font-size: 0.9rem;
 
-    flex-wrap: wrap;
+    & > a {
+      color: $second;
+
+      font-size: 0.9rem;
+    }
 
     & > .date {
       height: min-content;
-      margin-left: auto;
-      align-self: flex-end;
+      float: right;
 
       color: $text-dark;
 

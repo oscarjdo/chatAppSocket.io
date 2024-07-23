@@ -756,15 +756,16 @@ nav p b {
   background-color: red;
 }
 .mssg .mssg-text {
-  display: flex;
   font-size: 0.9rem;
-  flex-wrap: wrap;
+}
+.mssg .mssg-text > a {
+  color: #00ff9d;
+  font-size: 0.9rem;
 }
 .mssg .mssg-text > .date {
   height: -moz-min-content;
   height: min-content;
-  margin-left: auto;
-  align-self: flex-end;
+  float: right;
   color: rgba(226, 226, 226, 0.4941176471);
   font-size: 0.7rem;
   text-wrap: nowrap;
@@ -976,26 +977,25 @@ a.document:active p, a.document:active .download {
   padding: 0;
   margin: 0;
 }
-.video-message-ctn > .ctn-clickable > span,
-.image-message-ctn > .ctn-clickable > span {
-  width: 4rem;
-  height: 4rem;
-  padding: 1rem;
+.video-message-ctn.square,
+.image-message-ctn.square {
+  padding: 0;
+  overflow: hidden;
+}
+.video-message-ctn.square > .ctn-clickable,
+.image-message-ctn.square > .ctn-clickable {
+  min-width: 100%;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: calc(50% - 2rem);
-  left: calc(50% - 2rem);
-  background-color: rgba(255, 255, 255, 0.231372549);
-  border-radius: 2rem;
-  opacity: 0.7;
 }
-.video-message-ctn > .ctn-clickable > span > .icon-play,
-.image-message-ctn > .ctn-clickable > span > .icon-play {
-  width: 2rem;
-  height: 2rem;
-  margin-left: 0.3rem;
+.video-message-ctn.square > .ctn-clickable > img, .video-message-ctn.square > .ctn-clickable > video,
+.image-message-ctn.square > .ctn-clickable > img,
+.image-message-ctn.square > .ctn-clickable > video {
+  height: 100%;
+  max-width: none;
+  max-height: none;
 }
 .video-message-ctn.active,
 .image-message-ctn.active {
@@ -1100,6 +1100,7 @@ a.document:active p, a.document:active .download {
   background-color: #161618;
   transition: left ease 0.5s;
   overflow: scroll;
+  overflow-x: hidden;
 }
 #info-chat-ctn.active {
   left: 0;
@@ -1257,8 +1258,179 @@ a.document:active p, a.document:active .download {
 }
 
 #files-ctn {
-  height: 4rem;
+  height: 5.8rem;
+  padding: 0.4rem;
+  display: flex;
+  gap: 0.4rem;
+  justify-content: space-evenly;
   border-top: 1px solid #7b8186;
+  overflow-x: scroll;
+}
+#files-ctn > li {
+  min-width: 5rem;
+  width: 5rem;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  border: 1px solid #7b8186;
+  overflow: hidden;
+}
+#files-ctn > button {
+  min-width: 2rem;
+  background-color: transparent;
+  border: none;
+}
+#files-ctn > button > .icon {
+  width: 2rem;
+  height: 2rem;
+  color: #ffffff;
+  transform: rotate(180deg);
+}
+#files-ctn > .empty {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgba(226, 226, 226, 0.4941176471);
+}
+
+#filesMenu {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  background-color: #161618;
+  transition: left ease 0.3s;
+}
+#filesMenu.active {
+  left: 0;
+}
+#filesMenu > .nav {
+  height: 3rem;
+  padding-left: 2.6rem;
+  display: flex;
+  border-bottom: 1px solid #7b8186;
+}
+#filesMenu > .nav > button.icon {
+  width: 2rem;
+  height: 2rem;
+  position: absolute;
+  top: 0.55rem;
+  left: 0.3rem;
+  background-color: transparent;
+  border: none;
+}
+#filesMenu > .nav > button.icon > .icon {
+  width: 70%;
+  height: 70%;
+  color: #ffffff;
+}
+#filesMenu > .nav > button.nav {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 0.6rem;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  position: relative;
+  background-color: transparent;
+  border: none;
+  color: #ffffff;
+  overflow: hidden;
+}
+#filesMenu > .nav > button.nav::after {
+  content: "";
+  width: calc(100% - 0.4rem);
+  height: calc(100% - 0.4rem);
+  position: absolute;
+  bottom: 0.2rem;
+  left: 0.2rem;
+  background-color: #161618;
+}
+#filesMenu > .nav > button.nav::before {
+  content: "";
+  width: 100%;
+  height: 60%;
+  position: absolute;
+  bottom: -50%;
+  left: 0;
+  background: linear-gradient(180deg, transparent 20%, #00fa4b 100%);
+  transition: bottom ease 0.3s;
+}
+#filesMenu > .nav > button.nav.active::before {
+  bottom: 0;
+}
+#filesMenu > .nav > button.nav > span {
+  position: relative;
+  z-index: 500;
+}
+#filesMenu > .ctn {
+  width: 100%;
+  height: calc(100% - 3rem);
+  display: flex;
+  justify-content: start;
+  overflow: hidden;
+}
+#filesMenu > .ctn.center {
+  justify-content: center;
+}
+#filesMenu > .ctn.end {
+  justify-content: end;
+}
+#filesMenu > .ctn > .section {
+  min-width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+}
+#filesMenu > .ctn > .section:first-child {
+  height: -moz-min-content;
+  height: min-content;
+  max-height: 100%;
+  padding: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+#filesMenu > .ctn > .section:first-child > li {
+  min-width: 6rem;
+  width: 6rem;
+  height: 6rem;
+  display: flex;
+  justify-content: center;
+  border: 1px solid #7b8186;
+  overflow: hidden;
+}
+#filesMenu > .ctn > .section > .documentItemCtn {
+  margin-bottom: 0.6rem;
+  background-color: rgba(0, 0, 0, 0.5058823529);
+}
+#filesMenu > .ctn > .section > .linkItemCtn {
+  margin: 0.6rem;
+  background-color: rgba(0, 0, 0, 0.5058823529);
+}
+#filesMenu > .ctn > .section > .linkItemCtn > p {
+  padding: 1rem 0.6rem;
+  background-color: rgba(0, 0, 0, 0.3215686275);
+}
+#filesMenu > .ctn > .section > .linkItemCtn > p > a {
+  color: #00ff9d;
+}
+#filesMenu > .ctn > .section button.goToMssgBttn {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
+  background-color: transparent;
+  color: rgba(226, 226, 226, 0.4941176471);
+  border: none;
+  outline: none;
+  font-size: 0.9rem;
+}
+#filesMenu > .ctn > .section button.goToMssgBttn > .icon {
+  transform: rotate(180deg);
 }
 
 #member-list-info-chat {
@@ -2601,6 +2773,25 @@ a.document:active p, a.document:active .download {
 }
 .chat-icon.read {
   color: #00f7ff;
+}
+
+.spanIconPlay {
+  width: 40%;
+  height: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 30%;
+  left: 30%;
+  background-color: rgba(255, 255, 255, 0.231372549);
+  border-radius: 2rem;
+  opacity: 0.7;
+}
+.spanIconPlay > .icon-play {
+  width: 50%;
+  height: 50%;
+  margin-left: 0.2rem;
 }
 
 @keyframes newNoti {

@@ -52,7 +52,9 @@ function ChatSearchBar() {
     }
 
     const allMatch = messages
-      .filter((item) => item.content.includes(mssg) && !item.deleted)
+      .filter(
+        (item) => item.content.includes(mssg) && !item.deleted && item.is_show
+      )
       .map((item) => item.message_id);
 
     setMatch(allMatch);

@@ -245,7 +245,10 @@ function friendList() {
                       </>
                     ) : null}
                     <p>
-                      {!item.lastMessage.isEvent && item.isGroup ? (
+                      {!addFriendModeState.open &&
+                      item.lastMessage &&
+                      !item.lastMessage.isEvent &&
+                      item.isGroup ? (
                         <span className="groupSenderText">
                           {item.lastMessage.sender != userState.id
                             ? item.members

@@ -22,6 +22,7 @@ import friendListSlice from "../friendListSlice.js";
 import forwardMssgMenuSlice from "../forwardMssgMenuSlice.js";
 import chatSearchBarSlice from "../chatSearchBarSlice.js";
 import scrollToSlice from "../scrollToSlice.js";
+import filesMenuSlice from "../filesMenuSlice.js";
 
 import { getFriendListApi } from "../queries/getFriendList.js";
 import { getMessagesApi } from "../queries/getMessages.js";
@@ -51,6 +52,7 @@ const appReducer = combineReducers({
   forwardMssgMenuState: forwardMssgMenuSlice,
   chatSearchBarState: chatSearchBarSlice,
   scrollToState: scrollToSlice,
+  filesMenuState: filesMenuSlice,
   [getFriendListApi.reducerPath]: getFriendListApi.reducer,
   [getMessagesApi.reducerPath]: getMessagesApi.reducer,
   [friendRequestApi.reducerPath]: friendRequestApi.reducer,
