@@ -181,6 +181,11 @@ function friendList() {
                 return newPhoto
                   ? `${username} has changed the group photo`
                   : text;
+              } else if (
+                !item.lastMessage.content &&
+                !item.lastMessage.sender
+              ) {
+                return;
               } else if (!item.lastMessage.is_show) {
                 const setName = () =>
                   item.members.length
