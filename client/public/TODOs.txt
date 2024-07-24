@@ -25,7 +25,7 @@
 
 -✔Update the timer of day in the chats.✔
 
--Delete time at friend list if chat does not have any message.
+-✔Delete time at friend list if chat does not have any message.✔
 
 -Create a button to send voice notes, calls and videocalls.
 
