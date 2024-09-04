@@ -1,0 +1,11 @@
+#chat-app-ctn {
+  position: relative;
+  overflow: hidden;
+}
+
+@import "./home/chat";
+@import "./home/friendList";
+@import "./home/friendRequests";
+@import "./home/navbar";
+@import "./home/options";
+@import "./home/optionsMenu";

@@ -1,0 +1,50 @@
+nav {
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 10000;
+  top: 0;
+
+  background-color: $dark;
+
+  transition: top ease 0.3s;
+
+  &.in-chat {
+    position: sticky;
+    top: 0;
+  }
+
+  & p {
+    width: fit-content;
+    height: fit-content;
+    display: inline;
+
+    &.no-very-with {
+      max-width: 50%;
+
+      color: $first;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    & b {
+      margin: 0 0.4rem;
+
+      color: $first;
+
+      letter-spacing: 0.2rem;
+      text-wrap: nowrap;
+    }
+  }
+}
+
+.offline {
+  color: $text-dark;
+
+  font-weight: 500;
+  letter-spacing: 0.1rem;
+}

@@ -7,11 +7,15 @@ import { fileURLToPath } from "url";
 const currentDir = dirname(fileURLToPath(import.meta.url));
 
 export const signUp = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password } = JSON.parse(req.body.userData);
+
+  const fileUrl = req.file
+    ? `http://localhost:3000/${req.file.filename}`
+    : null;
 
   const [response] = await pool.query(
-    "insert into users (username, email, password) values (?,?,?)",
-    [username, email, password]
+    "insert into users (username, email, password, img_url) values (?,?,?,?)",
+    [username, email, password, fileUrl]
   );
 
   if (response.affectedRows <= 0) return res.sendStatus(400);

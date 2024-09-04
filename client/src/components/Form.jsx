@@ -1,72 +1,82 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import { FaUserAlt } from "react-icons/fa";
 import { MdAlternateEmail } from "react-icons/md";
-import { BiSolidLock } from "react-icons/bi";
+import { BiPlus, BiSolidLock } from "react-icons/bi";
 import { GrSend } from "react-icons/gr";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { useState } from "react";
+
 import axios from "axios";
-import { notify } from "../utils/notify";
-
-import { useSelector } from "react-redux";
-
 import socket from "../io";
 
+import { setUserLoged } from "../app/userSlice";
+import { setNotiState } from "../app/notiSlice";
+import { setImageSelectorState } from "../app/imageSelectorSlice";
+
 function Form() {
-  const userState = useSelector((state) => state.userState);
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
-
-  const [iconActive, setIconActive] = useState(false);
-
+  const [valid, setValid] = useState({
+    username: false,
+    email: false,
+    password: false,
+  });
   const [user, setUser] = useState({ username: "", email: "", password: "" });
+  const [formType, setFormType] = useState({ type: "login", title: "Log In" });
+  const [file, setFile] = useState(null);
 
-  const handleIcon = () => {
-    setIconActive(true);
+  const { file: newFile, place } = useSelector(
+    (state) => state.imageSelectorState
+  );
 
-    setTimeout(() => {
-      setIconActive(false);
-    }, 1000 * 2);
+  const dispatch = useDispatch();
+
+  const handleChangeFormType = () => {
+    const type = {
+      login: { type: "login", title: "Log In" },
+      signup: { type: "signup", title: "Sign Up" },
+    };
+    dispatch(setImageSelectorState({ file: false }));
+    setUser({ username: "", email: "", password: "" });
+    setValid({
+      username: false,
+      email: false,
+      password: false,
+    });
+
+    if (formType.type == type.login.type) setFormType(type.signup);
+    else setFormType(type.login);
   };
 
-  const handleNavigate = () => {
-    setIconActive(true);
-    setTimeout(() => {
-      navigate(pathname == "/login" ? "/signup" : "/login");
-    }, 1000 * 2);
+  const setNotValidField = (field) => {
+    const errorMssgs = {
+      username: "The username must to have between 4 and 20 characters.",
+      email: "Email invalid",
+      password:
+        "The password must contain at least a number and one capital letter.\nThere must to be at least 8 characters.",
+    };
+
+    dispatch(
+      setNotiState({ active: true, text: errorMssgs[field], type: "ERROR" })
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const selectError = (data) => {
-      data.map((item) => {
-        let mssg;
-        switch (item.path) {
-          case "username":
-            mssg = "Username must be longer than 3 characters.";
+    const notValidField = Object.entries(valid)
+      .map(([key, value]) => {
+        if (formType.type == "login" && key == "username") return null;
+        if (!value) return key;
+        return null;
+      })
+      .filter((item) => item);
 
-            break;
+    if (notValidField.length >= 1) {
+      return setNotValidField(notValidField[0]);
+    }
 
-          case "email":
-            mssg = "The email is not a valid email.";
-            break;
-
-          case "password":
-            mssg = "Password must contain more than 4 characters.";
-            break;
-
-          default:
-            mssg = "Error unknown.";
-            break;
-        }
-        notify({ type: "error", mssg });
-      });
-    };
-
-    if (pathname == "/login") {
+    if (formType.type == "login") {
       try {
-        const { data } = await axios.post(
+        await axios.post(
           "http://localhost:3000/logIn",
           {
             ...user,
@@ -75,88 +85,134 @@ function Form() {
           { withCredentials: true }
         );
 
-        if (typeof data == "object") {
-          selectError(data);
-        } else {
-          socket.connect();
-          return navigate("/");
-        }
+        socket.connect();
+        dispatch(setUserLoged());
       } catch (error) {
-        const errorToNotify = error.response.data.message;
-        if (errorToNotify) notify({ type: "error", mssg: errorToNotify });
+        console.log(error);
       }
     } else {
-      const { data } = await axios.post("http://localhost:3000/signUp", user);
+      try {
+        const formData = new FormData();
 
-      if (data !== "Created") {
-        selectError(data);
-      } else {
-        navigate("/login");
+        formData.append("userData", JSON.stringify(user));
+
+        if (file) {
+          const res = await fetch(file.url);
+          const data = await res.blob();
+          const fileCreated = new File([data], file.name, {
+            type: file.mimetype,
+          });
+
+          formData.append("image", fileCreated);
+        }
+
+        await axios.post("http://localhost:3000/signUp", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        dispatch(
+          setNotiState({
+            active: true,
+            text: "Successfully registered now login",
+            type: "SUCCESS",
+          })
+        );
+
+        handleChangeFormType();
+      } catch (error) {
+        console.log("ERROR", error);
       }
     }
+
+    dispatch(setImageSelectorState({ file: false, place: false }));
+    setUser({ username: "", email: "", password: "" });
+    setValid({
+      username: false,
+      email: false,
+      password: false,
+    });
   };
 
   const handleChange = (e) => {
+    const regExpValidators = {
+      email:
+        /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g,
+      password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm,
+      username: /^[^\d]{4,20}$/g,
+    };
+
     setUser({ ...user, [e.target.name]: e.target.value });
+
+    setValid({
+      ...valid,
+      [e.target.name]: e.target.value.match(regExpValidators[e.target.name])
+        ? true
+        : false,
+    });
   };
 
-  if (userState.id) {
-    return <Navigate to={"/"} replace />;
-  }
+  useEffect(() => {
+    if (place == "signUpForm" || !newFile) setFile(newFile);
+  }, [newFile]);
 
   return (
-    <motion.div
-      transition={{ duration: 0.4 }}
-      initial={{
-        // translateX: "-100%",
-        opacity: 0,
-        position: "absolute",
-      }}
-      animate={{
-        // translateX: 0,
-        opacity: 1,
-        position: "relative",
-      }}
-      exit={{
-        // translateX: "100%",
-        opacity: 0,
-        position: "absolute",
-      }}
-    >
+    <>
       <form id="form" onSubmit={handleSubmit}>
-        <div id="title-form-ctn" onClick={iconActive ? null : handleIcon}>
-          <GrSend className={iconActive ? "form-icon active" : "form-icon"} />
-          <h1>{pathname == "/signup" ? "Sing Up" : "Log In"}</h1>
+        <div id="title-form-ctn">
+          <GrSend className="form-icon" />
+          <h1>{formType.title}</h1>
         </div>
         <div id="inputs-ctn">
-          {pathname == "/signup" ? (
-            <div className="input-ctn">
-              <input
-                id="username"
-                className="input-form"
-                name="username"
-                type="text"
-                placeholder="Username"
-                autoComplete="off"
-                required
-                spellCheck="false"
-                onChange={handleChange}
-              />
-              <label htmlFor="username">
-                <FaUserAlt className="input-icon" />
-              </label>
+          {formType.type == "signup" ? (
+            <div className="flexCtn">
+              <div
+                className="photo"
+                style={{
+                  "--p": file
+                    ? `url("${file.url}")`
+                    : `url("/profile-img.jpg")`,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() =>
+                    dispatch(
+                      setImageSelectorState({ open: true, place: "signUpForm" })
+                    )
+                  }
+                >
+                  <BiPlus className="icon" />
+                </button>
+              </div>
+
+              <div className="input-ctn">
+                <input
+                  id="username"
+                  className={`${valid.username ? "valid" : ""} input-form`}
+                  name="username"
+                  type="text"
+                  placeholder="Username"
+                  autoComplete="off"
+                  spellCheck="false"
+                  value={user.username}
+                  onChange={handleChange}
+                />
+                <label htmlFor="username">
+                  <FaUserAlt className="input-icon" />
+                </label>
+              </div>
             </div>
           ) : null}
           <div className="input-ctn">
             <input
               id="email"
-              className="input-form"
+              className={`${valid.email ? "valid" : ""} input-form`}
               name="email"
-              type="email"
+              type="text"
               placeholder="Email"
               autoComplete="off"
-              required
               spellCheck="false"
+              value={user.email}
               onChange={handleChange}
             />
             <label htmlFor="email">
@@ -166,13 +222,13 @@ function Form() {
           <div className="input-ctn">
             <input
               id="password"
-              className="input-form"
+              className={`${valid.password ? "valid" : ""} input-form`}
               name="password"
               type="password"
               placeholder="Password"
               autoComplete="off"
-              required
               spellCheck="false"
+              value={user.password}
               onChange={handleChange}
             />
             <label htmlFor="password">
@@ -180,17 +236,32 @@ function Form() {
             </label>
           </div>
         </div>
-        <button type="submit">{pathname.replace("/", "")}</button>
+        <button type="submit" className="submitDataBttn">
+          {formType.type}
+        </button>
       </form>
       <div id="change-form-mode">
-        <p className="link" onClick={() => handleNavigate()}>
-          {pathname == "/signup"
+        <p className="link" onClick={handleChangeFormType}>
+          {formType.type == "signup"
             ? "Do you have an account already?"
             : "Do you not have an account yet?"}
         </p>
-        <p className="link">recover password</p>
+        <p
+          className="link"
+          onClick={() =>
+            dispatch(
+              setNotiState({
+                active: true,
+                text: "This feature is not working yet",
+                type: "WARNING",
+              })
+            )
+          }
+        >
+          recover password
+        </p>
       </div>
-    </motion.div>
+    </>
   );
 }
 

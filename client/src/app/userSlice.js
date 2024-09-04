@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {};
+const initialState = { loged: false };
 
 const userSlice = createSlice({
   name: "userState",
@@ -19,9 +19,12 @@ const userSlice = createSlice({
         }
       }
     },
+    setUserLoged: (state, action) => {
+      state.loged = true;
+    },
   },
 });
 
-export const { getUserToken } = userSlice.actions;
+export const { getUserToken, setUserLoged } = userSlice.actions;
 
 export default userSlice.reducer;
