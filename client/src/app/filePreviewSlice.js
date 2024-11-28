@@ -1,6 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = { data: [], type: "", mssgs: {}, idToDelete: false };
+const initialState = {
+  data: [],
+  type: "",
+  mssgs: {},
+  idToDelete: false,
+  cameraFiles: false,
+};
 
 const filePreviewSlice = createSlice({
   name: "videoAudioState",
@@ -36,10 +42,21 @@ const filePreviewSlice = createSlice({
       if (clear) state.mssgs = {};
       else state.mssgs = { ...state.mssgs, [id]: value };
     },
+    setCameraFiles: (state, action) => {
+      const { data, type } = action.payload;
+
+      if (type) state.type = type;
+
+      state.cameraFiles = data;
+    },
   },
 });
 
-export const { setFileToPreview, deleteFileToPreview, setTexts } =
-  filePreviewSlice.actions;
+export const {
+  setFileToPreview,
+  deleteFileToPreview,
+  setTexts,
+  setCameraFiles,
+} = filePreviewSlice.actions;
 
 export default filePreviewSlice.reducer;

@@ -2,22 +2,28 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { BiSolidSend } from "react-icons/bi";
-import { AiOutlinePaperClip, AiFillAudio } from "react-icons/ai";
+import { AiOutlinePaperClip } from "react-icons/ai";
 import { BsFillImageFill, BsHeadphones } from "react-icons/bs";
 import { IoCamera, IoDocument } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
 
-import { setFileToPreview, setTexts } from "../../../app/filePreviewSlice";
+import {
+  setCameraFiles,
+  setFileToPreview,
+  setTexts,
+} from "../../../app/filePreviewSlice";
 import { setReplyMessageState } from "../../../app/replyMessageSlice";
 import { setCameraState } from "../../../app/cameraSlice";
 import { setNotiState } from "../../../app/notiSlice";
 import { setSideMenusState } from "../../../app/sideMenusSlice";
+import { setImageSelectorState } from "../../../app/imageSelectorSlice";
 
 import { useSendMessageMutation } from "../../../app/queries/getMessages";
 
 import FilePreview from "./inputCtn/FilePreview";
 import ReplyMssgCtn from "./inputCtn/ReplyMssgCtn";
 import NotFriendTextCtn from "./inputCtn/NotFriendTextCtn";
+import VoiceNoteBttn from "./inputCtn/VoiceNoteBttn";
 
 import socket from "../../../io";
 import { useEffect } from "react";
@@ -32,6 +38,7 @@ function InputCtn() {
     type: filePreviewType,
     data,
     idToDelete,
+    cameraFiles,
   } = useSelector((state) => state.filePreviewState);
 
   const [mssg, setMssg] = useState("");
@@ -162,6 +169,10 @@ function InputCtn() {
     input.value = null;
   };
 
+  const handleCamera = () => {
+    dispatch(setCameraState({ open: true, to: "inputChat" }));
+  };
+
   const createMessage = (item, index) => {
     const formData = new FormData();
 
@@ -222,6 +233,7 @@ function InputCtn() {
     setTimeout(() => {
       socket.emit("client:reloadApp", {
         users: [members || [friendState.id], userState.id].flat(),
+        place: "inputCtn.jsx",
       });
     }, 500);
 
@@ -243,6 +255,45 @@ function InputCtn() {
   useEffect(() => {
     if (data.length <= 0) setFiles([]);
   }, [data]);
+
+  const createFiles = () => {
+    const filesToSend = [];
+    const filesToView = [];
+
+    cameraFiles.map(async (item, index, arr) => {
+      const res = await fetch(item.url);
+      const createdFile = new File([await res.arrayBuffer()], item.file.name, {
+        type: item.file.type,
+      });
+
+      filesToSend.push({ id: item.file.id, file: createdFile });
+
+      const fileUrl = URL.createObjectURL(createdFile);
+
+      filesToView.push({
+        ...item,
+        url: fileUrl,
+        file: { ...item.file, size: createdFile.size },
+      });
+
+      if (index + 1 == arr.length) {
+        setFiles(files.concat(filesToSend));
+
+        dispatch(
+          setFileToPreview({
+            data: filesToView,
+            type: "imageAndVideo",
+          })
+        );
+
+        dispatch(setCameraFiles({ data: [] }));
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (cameraFiles.length) createFiles();
+  }, [cameraFiles]);
 
   useEffect(() => {
     setIsGroup(friendState.groupData && friendState.groupData.isGroup);
@@ -298,13 +349,13 @@ function InputCtn() {
             <AiOutlinePaperClip id="clip-files-icon" />
           </button>
         )}
-        <button type="submit">
-          {mssg.trim().length <= 0 && files.length <= 0 ? (
-            <AiFillAudio className="send-mssg-icon voice-note" />
-          ) : (
+        {mssg.trim().length <= 0 && files.length <= 0 ? (
+          <VoiceNoteBttn />
+        ) : (
+          <button type="submit">
             <BiSolidSend className="send-mssg-icon" />
-          )}
-        </button>
+          </button>
+        )}
         <div
           id="multimedia-ctn"
           className={type == "multimediaChatMenu" ? "active" : ""}
@@ -356,7 +407,7 @@ function InputCtn() {
           <button
             type="button"
             className="midColorBttn bigger"
-            onClick={() => dispatch(setCameraState({ open: true }))}
+            onClick={handleCamera}
           >
             <IoCamera className="icon" />
           </button>

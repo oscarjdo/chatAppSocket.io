@@ -13,15 +13,14 @@ import {
 
 import VideoPrev from "./imageAndVideo/VideoPrev";
 import exactSize from "../../../../../utils/exactSize";
-import exactTime from "../../../../../utils/exactTime";
 
 function ImageAndVideo() {
   const videoTarget = useRef(null);
 
   const { data, mssgs } = useSelector((state) => state.filePreviewState);
+  const filePreviewState = useSelector((state) => state.filePreviewState);
   const friendState = useSelector((state) => state.friendState);
 
-  const [loaded, setLoaded] = useState(false);
   const [itemSelected, setitemSelected] = useState({});
   const [paused, setPaused] = useState(true);
 
@@ -29,7 +28,6 @@ function ImageAndVideo() {
 
   const handleSelectItem = (item, index) => {
     setPaused(true);
-    setLoaded(false);
 
     const { url, mimetype } = item;
     const { id, size } = item.file;
@@ -72,10 +70,12 @@ function ImageAndVideo() {
   };
 
   useEffect(() => {
-    const { url, mimetype } = data[0];
-    const { id } = data[0].file;
+    if (!data.length) return;
 
-    setitemSelected({ url, mimetype, id });
+    const { url, mimetype } = data[0];
+    const { id, size } = data[0].file;
+
+    setitemSelected({ url, mimetype, id, size });
   }, []);
 
   return (
@@ -95,12 +95,14 @@ function ImageAndVideo() {
           <div className="item" onClick={setPlay}>
             <div>
               <span>{exactSize(itemSelected.size)}</span>
-              <span>{loaded ? exactTime(null, videoTarget) : null}</span>
             </div>
             <video
               ref={videoTarget}
               src={itemSelected.url}
-              onLoadedData={() => setLoaded(true)}
+              onEnded={(e) => {
+                setPaused(true);
+                e.target.currentTime = 0;
+              }}
             ></video>
             <BiPlay className={`icon ${!paused ? "inactive" : ""}`} />
           </div>

@@ -125,6 +125,7 @@ function friendList() {
 
         socket.emit("client:reloadApp", {
           users: hasNotRecievedMessages.map((item) => item.membersId),
+          place: "friendList.jsx - setRecievedMessages func",
         });
       }
     } catch (error) {
@@ -135,10 +136,9 @@ function friendList() {
   useEffect(() => {
     const update = () => {
       refetch();
-      // if (!isLoading && isSuccess && data) setTimeout(() => refetch(), 500);
     };
 
-    socket.on("server:reloadApp", () => update());
+    socket.on("server:reloadApp", update);
 
     return () => {
       socket.off("server:reloadApp");

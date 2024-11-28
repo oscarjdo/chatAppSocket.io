@@ -48,7 +48,8 @@ function Chat() {
       });
 
       socket.emit("client:reloadApp", {
-        users: [data.friend.id],
+        users: [data.friend.id, data.user.id],
+        place: "Chat.jsx",
       });
     } catch (error) {
       console.error(error);
@@ -63,11 +64,11 @@ function Chat() {
 
       if (data.groupData && data.groupData.notReadMessage) setReadMessages();
     }
+
     socket.on("server:reloadApp", update);
     socket.on("server:reloadChat", update);
 
     return () => {
-      socket.off("server:reloadApp");
       socket.off("server:reloadChat");
     };
   }, [socket, data]);

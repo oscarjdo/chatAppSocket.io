@@ -61,7 +61,9 @@
 }
 
 #cameraBttnsCtn {
+  width: 100%;
   display: flex;
+  justify-content: center;
   gap: 6rem;
   position: absolute;
   top: 85%;
@@ -82,6 +84,37 @@
       height: 100%;
 
       color: $text;
+    }
+
+    &.picsEnough {
+      position: absolute;
+      top: 0;
+      right: 1rem;
+
+      background-color: $base;
+      color: $first;
+      border: none;
+
+      & > .icon {
+        width: 50%;
+        height: 50%;
+
+        color: $first;
+      }
+
+      & > span {
+        width: 1.2rem;
+        height: 1.2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 0.3rem;
+        right: 0.3rem;
+
+        background-color: $base;
+        border-radius: 1rem;
+      }
     }
   }
 }

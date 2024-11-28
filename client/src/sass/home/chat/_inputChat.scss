@@ -70,11 +70,6 @@
     border: none;
     outline: none;
 
-    &[type="submit"] {
-      background-color: $third;
-      border-radius: 100%;
-    }
-
     &[type="button"] {
       margin-right: 0.5rem;
 
@@ -88,6 +83,12 @@
         transition: border-radius ease 0.2s;
         border-radius: 2rem;
       }
+    }
+
+    &[type="submit"],
+    &.voiceNote {
+      background-color: $third;
+      border-radius: 100%;
     }
   }
 }

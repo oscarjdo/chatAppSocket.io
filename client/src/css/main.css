@@ -1231,10 +1231,6 @@ a.document:active p, a.document:active .download {
   border: none;
   outline: none;
 }
-#input-chat-ctn > button[type=submit] {
-  background-color: #009225;
-  border-radius: 100%;
-}
 #input-chat-ctn > button[type=button] {
   margin-right: 0.5rem;
   background-color: #222324;
@@ -1245,6 +1241,10 @@ a.document:active p, a.document:active .download {
 #input-chat-ctn > button[type=button].rounded {
   transition: border-radius ease 0.2s;
   border-radius: 2rem;
+}
+#input-chat-ctn > button[type=submit], #input-chat-ctn > button.voiceNote {
+  background-color: #009225;
+  border-radius: 100%;
 }
 
 #clip-files-icon,
@@ -2876,7 +2876,9 @@ nav p b {
 }
 
 #cameraBttnsCtn {
+  width: 100%;
   display: flex;
+  justify-content: center;
   gap: 6rem;
   position: absolute;
   top: 85%;
@@ -2895,6 +2897,31 @@ nav p b {
   width: 100%;
   height: 100%;
   color: #ffffff;
+}
+#cameraBttnsCtn > .bttn.picsEnough {
+  position: absolute;
+  top: 0;
+  right: 1rem;
+  background-color: #222324;
+  color: #00fa4b;
+  border: none;
+}
+#cameraBttnsCtn > .bttn.picsEnough > .icon {
+  width: 50%;
+  height: 50%;
+  color: #00fa4b;
+}
+#cameraBttnsCtn > .bttn.picsEnough > span {
+  width: 1.2rem;
+  height: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  background-color: #222324;
+  border-radius: 1rem;
 }
 
 #capture {

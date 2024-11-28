@@ -7,9 +7,10 @@ const cameraSlice = createSlice({
   initialState,
   reducers: {
     setCameraState: (state, action) => {
-      const { open } = action.payload;
+      const { open, to } = action.payload;
 
       state.open = open;
+      state.to = to;
     },
   },
 });

@@ -31,7 +31,7 @@ function GalleryOrCamera() {
   };
 
   const handleOpenCamera = () => {
-    dispatch(setCameraState({ open: true }));
+    dispatch(setCameraState({ open: true, to: "galleryOrCamera" }));
 
     handleClose();
   };
