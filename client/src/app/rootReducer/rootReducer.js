@@ -9,7 +9,7 @@ import addFriendModeSlice from "../addFriendModeSlice.js";
 import notiTabSlice from "../notiTabSlice.js";
 import friendsOnlineSlice from "../friendsOnlineSlice.js";
 import notificationsSlice from "../notificationsSlice.js";
-import videoAudioSlice from "../videoAudioSlice.js";
+import filePreviewSlice from "../filePreviewSlice.js";
 import isScrollingSlice from "../isScrollingSlice.js";
 import fileOpenSlice from "../fileOpenSlice.js";
 import messageSelectSlice from "../messageSelectSlice.js";
@@ -23,6 +23,11 @@ import forwardMssgMenuSlice from "../forwardMssgMenuSlice.js";
 import chatSearchBarSlice from "../chatSearchBarSlice.js";
 import scrollToSlice from "../scrollToSlice.js";
 import filesMenuSlice from "../filesMenuSlice.js";
+import cameraSlice from "../cameraSlice.js";
+import notiSlice from "../notiSlice.js";
+import imageSelectorSlice from "../imageSelectorSlice.js";
+import avatarMenuSlice from "../avatarMenuSlice.js";
+import allLoadsSlice from "../allLoadsSlice.js";
 
 import { getFriendListApi } from "../queries/getFriendList.js";
 import { getMessagesApi } from "../queries/getMessages.js";
@@ -39,7 +44,7 @@ const appReducer = combineReducers({
   friendsOnlineState: friendsOnlineSlice,
   notificationsState: notificationsSlice,
   optionsState: optionsReducer,
-  videoAudioState: videoAudioSlice,
+  filePreviewState: filePreviewSlice,
   isScrollingState: isScrollingSlice,
   fileOpenState: fileOpenSlice,
   messageSelectState: messageSelectSlice,
@@ -53,6 +58,11 @@ const appReducer = combineReducers({
   chatSearchBarState: chatSearchBarSlice,
   scrollToState: scrollToSlice,
   filesMenuState: filesMenuSlice,
+  cameraState: cameraSlice,
+  notiState: notiSlice,
+  imageSelectorState: imageSelectorSlice,
+  avatarMenuState: avatarMenuSlice,
+  allLoadsState: allLoadsSlice,
   [getFriendListApi.reducerPath]: getFriendListApi.reducer,
   [getMessagesApi.reducerPath]: getMessagesApi.reducer,
   [friendRequestApi.reducerPath]: friendRequestApi.reducer,

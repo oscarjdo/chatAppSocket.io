@@ -1,16 +1,18 @@
-import FriendList from "./friendList";
-import Chat from "./Chat";
-import ActionsBar from "./ActionsBar";
-import AddFriendModeTransition from "./common/loader/addFriendModeTransition.jsx";
-import FriendRequests from "./common/FriendRequests";
-import Options from "./common/actionBarBttns/options/Options.jsx";
-import OptionsMenu from "./common/actionBarBttns/OptionsMenu.jsx";
-
-import { setFriendsOnline } from "../app/friendsOnlineSlice";
-import socket from "../io.js";
-import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
+import FriendList from "./home/friendList";
+import Chat from "./home/Chat";
+import ActionsBar from "./home/ActionsBar";
+import Options from "./home/Options.jsx";
+import OptionsMenu from "./home/OptionsMenu.jsx";
+import FriendRequests from "./home/FriendRequests";
+import AddFriendModeTransition from "./common/addFriendModeTransition.jsx";
+
+import { setFriendsOnline } from "../app/friendsOnlineSlice";
+
+import socket from "../io.js";
+import axios from "axios";
 
 function Home() {
   const userState = useSelector((state) => state.userState);
@@ -41,11 +43,6 @@ function Home() {
     }
 
     socket.on("server:usersOnline", (e) => handleOnline(e));
-    // socket.on("server:updateFriendList", (e) => {
-    //   setTimeout(() => {
-    //     handleOnline(e);
-    //   }, 600);
-    // });
   }, [socket]);
 
   return (
@@ -55,7 +52,7 @@ function Home() {
       <OptionsMenu />
       <Chat />
       <FriendRequests />
-      <AddFriendModeTransition />
+      {/* <AddFriendModeTransition /> */}
       <Options />
     </div>
   );

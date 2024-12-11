@@ -1,0 +1,133 @@
+#camera {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100000;
+
+  background-color: black;
+
+  transition: top ease 0.3s;
+
+  &.active {
+    top: 0;
+  }
+
+  & > button {
+    width: 2rem;
+    height: 2rem;
+    position: absolute;
+    top: 0.6rem;
+    left: 0.3rem;
+    z-index: 100;
+
+    background-color: transparent;
+    border: none;
+    outline: none;
+
+    & > .icon {
+      width: 100%;
+      height: 100%;
+
+      color: $text;
+    }
+  }
+
+  & > video {
+    width: 100%;
+    height: auto;
+
+    &.inactive {
+      display: none;
+    }
+  }
+
+  & > img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+#cameraCanvas {
+  display: none;
+
+  &.active {
+    display: block;
+  }
+}
+
+#cameraBttnsCtn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 6rem;
+  position: absolute;
+  top: 85%;
+
+  & > .bttn {
+    width: 3.3rem;
+    height: 3.3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: transparent;
+    border: 0.2rem solid $text;
+    border-radius: 3rem;
+
+    & > .icon {
+      width: 100%;
+      height: 100%;
+
+      color: $text;
+    }
+
+    &.picsEnough {
+      position: absolute;
+      top: 0;
+      right: 1rem;
+
+      background-color: $base;
+      color: $first;
+      border: none;
+
+      & > .icon {
+        width: 50%;
+        height: 50%;
+
+        color: $first;
+      }
+
+      & > span {
+        width: 1.2rem;
+        height: 1.2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 0.3rem;
+        right: 0.3rem;
+
+        background-color: $base;
+        border-radius: 1rem;
+      }
+    }
+  }
+}
+
+#capture {
+  padding: 0.2rem;
+
+  &::after {
+    content: "";
+    width: 100%;
+    height: 100%;
+
+    background-color: $text;
+    border-radius: 3rem;
+  }
+}

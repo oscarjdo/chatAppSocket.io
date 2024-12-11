@@ -32,3 +32,11 @@
 -Create the menu of settings.
 
 -Create a verification email function.
+
+/NEW TO-DO FEATURES/
+
+-Create a low-quality files creator for a shorter time of load.
+
+-Make the chat to load in a better way.
+
+-Save chat data in cache for not fetching the same data.

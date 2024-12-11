@@ -8,6 +8,7 @@ const initialState = {
   fileUrl: undefined,
   color: undefined,
   mimetype: undefined,
+  duration: undefined,
 };
 
 const replyMessageSlice = createSlice({
@@ -35,9 +36,13 @@ const replyMessageSlice = createSlice({
       state.color = color;
       state.mimetype = mimetype;
     },
+    setReplyMssgDuration: (state, action) => {
+      state.duration = action.payload.duration;
+    },
   },
 });
 
-export const { setReplyMessageState } = replyMessageSlice.actions;
+export const { setReplyMessageState, setReplyMssgDuration } =
+  replyMessageSlice.actions;
 
 export default replyMessageSlice.reducer;

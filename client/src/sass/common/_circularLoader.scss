@@ -1,0 +1,108 @@
+#circular-loader-ctn {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100000;
+
+  background-color: $first;
+  clip-path: circle(100%);
+
+  &::before {
+    content: "";
+    width: 100%;
+    height: 90vh;
+    position: absolute;
+    top: 5vh;
+    z-index: -1;
+
+    background-color: $dark;
+    border: 0.2rem solid $second;
+    box-shadow: inset 0 0 0.2rem $second;
+
+    transform: skew(20deg);
+    border-radius: 2rem;
+  }
+
+  &::after {
+    content: "";
+    width: 100%;
+    height: 0.2rem;
+    position: absolute;
+    z-index: -1;
+
+    background-color: $first;
+    border: 0.2rem solid $second;
+    box-shadow: 0 0 0.4rem $second;
+  }
+
+  & > span {
+    width: 5.4rem;
+    height: 5.4rem;
+    display: block;
+    position: relative;
+
+    border-radius: 5rem;
+    background-color: $dark;
+
+    &::before,
+    &::after {
+      content: "";
+      width: 100%;
+      height: 100%;
+      padding: 0.8rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: -1;
+
+      transform: translate(-50%, -50%);
+
+      background: conic-gradient(from var(--angle), $base 50%, $first);
+      border-radius: 5rem;
+
+      animation: rotateBack 1s linear infinite;
+    }
+
+    &::after {
+      filter: blur(1rem);
+    }
+  }
+
+  &.out {
+    transition: clip-path ease 0.3s 0.6s;
+
+    clip-path: circle(0%);
+
+    &::before {
+      transition: transform ease 0.3s;
+
+      transform: skew(-40deg) scaleY(0);
+    }
+
+    &::after {
+      transition: transform ease 0.3s 0.3s;
+
+      transform: scaleX(0);
+    }
+  }
+}
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes rotateBack {
+  from {
+    --angle: 0deg;
+  }
+  to {
+    --angle: 360deg;
+  }
+}

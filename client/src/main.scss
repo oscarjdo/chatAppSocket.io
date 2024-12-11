@@ -30,23 +30,16 @@ body {
 }
 
 #page-ctn {
-  &.in-chat {
-    height: 100vh;
-    overflow-y: hidden;
-  }
-}
-
-#chat-app-ctn {
+  height: 100vh;
   position: relative;
+
   overflow: hidden;
 }
-@import "./sass/navbar";
+
+@import "./sass/home";
 @import "./sass/form";
-@import "./sass/friendList";
-@import "./sass/chat";
-@import "./sass/optionsMenu";
-@import "./sass/friendRequests";
-@import "./sass/options";
-@import "./sass/loader";
-@import "./sass/icons";
-@import "./sass/photo";
+@import "./sass/camera";
+@import "./sass/noti";
+@import "./sass/galleryOrCamera";
+@import "./sass/avatarMenu";
+@import "./sass/commons";

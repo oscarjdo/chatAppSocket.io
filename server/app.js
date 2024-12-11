@@ -69,9 +69,9 @@ io.on("connection", (socket) => {
   const socketsToSend = (users) =>
     users.map((item) => usersOnline[item]).filter((item) => item);
 
-  socket.on("client:reloadApp", (e) =>
-    io.to(socketsToSend(e.users)).emit("server:reloadApp", null)
-  );
+  socket.on("client:reloadApp", (e) => {
+    io.to(socketsToSend(e.users)).emit("server:reloadApp", {});
+  });
 
   socket.on("client:reloadChat", (e) =>
     io.to(socketsToSend(e.users)).emit("server:reloadChat", null)

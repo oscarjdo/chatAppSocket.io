@@ -1,25 +1,30 @@
-import { Routes, Route, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
-import { Navbar, Form, Home } from "./components/";
-import ProtectPath from "./components/protectPath";
-
-import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 import { getUserToken } from "./app/userSlice";
 import { setSideMenusState } from "./app/sideMenusSlice";
 
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import {
+  Navbar,
+  Home,
+  Form,
+  GalleryOrCamera,
+  Camera,
+  Noti,
+  AvatarMenu,
+} from "./components/";
+import CircularLoader from "./components/common/CircularLoader";
+
 import axios from "axios";
 import socket from "./io";
 
 function App() {
-  const chatState = useSelector((state) => state.chatState);
-  const location = useLocation();
+  const [firstFetch, setFirstFetch] = useState(false);
+
+  const userState = useSelector((state) => state.userState);
+  const { loged } = useSelector((state) => state.userState);
   const { type } = useSelector((state) => state.sideMenusState);
 
-  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
 
   const getToken = async () => {
@@ -27,56 +32,38 @@ function App() {
       withCredentials: true,
     });
     dispatch(getUserToken(data));
+    setFirstFetch(true);
+  };
+
+  const handleCloseMenus = () => {
+    type != null ? dispatch(setSideMenusState({})) : null;
   };
 
   useEffect(() => {
     getToken();
-  }, [location.pathname]);
+  }, [loged]);
 
   useEffect(() => {
     socket.on("server:restartToken", () => getToken());
-  }, [socket]);
 
-  useEffect(() => {
-    if (chatState.open) {
-      setTimeout(() => {
-        setOpen(chatState.open);
-      }, 300);
-    } else {
-      setOpen(chatState.open);
-    }
-  }, [chatState]);
+    return () => {
+      socket.off("server:restartToken");
+    };
+  }, [socket]);
 
   return (
     <div
       id="page-ctn"
-      className={open ? "in-chat" : null}
-      onClick={() => {
-        type != null ? dispatch(setSideMenusState({})) : null;
-      }}
+      onClick={handleCloseMenus}
+      onTouchMove={handleCloseMenus}
     >
+      <CircularLoader loaded={firstFetch} />
       <Navbar />
-      <AnimatePresence>
-        <Routes location={location} key={location.pathname}>
-          <Route element={<ProtectPath />}>
-            <Route path="/" element={<Home />} />
-          </Route>
-          <Route path="/login" element={<Form />} />
-          <Route path="/signup" element={<Form />} />
-        </Routes>
-      </AnimatePresence>
-      <ToastContainer
-        position="bottom-right"
-        autoClose={4000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss={false}
-        draggable
-        pauseOnHover={false}
-        theme="dark"
-      />
+      {userState.id ? <Home /> : <Form />}
+      <GalleryOrCamera />
+      <Camera />
+      <Noti />
+      <AvatarMenu />
     </div>
   );
 }

@@ -1,0 +1,35 @@
+.midColorBttn {
+  width: 3rem;
+  height: 3rem;
+
+  background: linear-gradient(0deg, #00000028 50%, #00000077 50%);
+  border: none;
+  border-radius: 3rem;
+  outline: none;
+
+  &:active {
+    background: linear-gradient(0deg, #0000005d 50%, #000000a4 50%);
+  }
+
+  &.one {
+    background-color: $second;
+  }
+  &.two {
+    background-color: $first;
+  }
+  &.three {
+    background-color: $third;
+  }
+
+  & .icon {
+    width: 50%;
+    height: 50%;
+    margin-bottom: -0.3rem;
+
+    color: $text;
+  }
+}
+
+.midColorBttn.bigger > .icon {
+  scale: 110%;
+}

@@ -77,7 +77,6 @@ create table messages (
 );
 
 select * from messages;
-select * from messages where conversation_id = 36;
 alter table messages add column edited boolean default false;
 alter table messages add column message_read boolean default false;
 update messages set message_recieved = true where message_id > 0;
@@ -116,8 +115,14 @@ alter table featured_messages drop column message_sender,
 	drop foreign key featured_messages_ibfk_4;
 
 -- delete from featured_messages where id >= 0;
-select * from messages where message_id = 503;
-select * from not_show_messages where message_id = 503;
+select * from messages order by sent_date desc;
 select * from users;
 select * from conversation;
 select * from featured_messages;
+select * from not_shown_messages;
+
+select * from users;
+update users set password = "Des12345" where id = 7;
+
+delete from not_show_messages where message_id >= 747;
+delete from messages where message_id >= 747;
